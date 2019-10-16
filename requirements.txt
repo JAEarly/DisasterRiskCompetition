@@ -1,1 +1,5 @@
 pandas
+requests
+tqdm
+pillow
+numpy
