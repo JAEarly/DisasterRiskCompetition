@@ -1,5 +1,7 @@
 pandas
 requests
 tqdm
-pillow
 numpy
+rasterio
+geopandas
+pillow
