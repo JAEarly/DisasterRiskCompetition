@@ -1,5 +1,8 @@
 
-CLASS_ORDER = ['concrete_cement', 'healthy_metal', 'incomplete', 'irregular_metal', 'other']
+CLASSES = ['concrete_cement', 'healthy_metal', 'incomplete', 'irregular_metal', 'other']
+LOCATIONS = {'colombia': ['borde_rural', 'borde_soacha'],
+             'guatemala': ['mixco_1_and_ebenezer', 'mixco_3'],
+             'st_lucia': ['castries', 'dennery', 'gros_inlet']}
 
 
 class UnknownClassException(Exception):
@@ -7,11 +10,11 @@ class UnknownClassException(Exception):
 
 
 def get_indexed_class_names():
-    return [str(i) + "_" + class_name for (i, class_name) in enumerate(CLASS_ORDER)]
+    return [str(i) + "_" + class_name for (i, class_name) in enumerate(CLASSES)]
 
 
 def get_indexed_class_name(class_name):
-    if class_name in CLASS_ORDER:
-        return str(CLASS_ORDER.index(class_name)) + "_" + class_name
+    if class_name in CLASSES:
+        return str(CLASSES.index(class_name)) + "_" + class_name
     else:
         raise UnknownClassException(f'Unknown class "{class_name}"')
