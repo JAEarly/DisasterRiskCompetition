@@ -1,4 +1,4 @@
-from utils import create_submission
+from models.submission_handler import create_submission
 import pandas as pd
 
 

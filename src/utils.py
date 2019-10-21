@@ -1,23 +1,17 @@
-import pandas as pd
-import os
 
-SUBMISSION_FOLDER = '../submissions'
-SUBMISSION_FORMAT_PATH = '../data/submission_format.csv'
+CLASS_ORDER = ['concrete_cement', 'healthy_metal', 'incomplete', 'irregular_metal', 'other']
 
 
-def create_submission(test_labels, submission_name) -> None:
-    """
-    Write the test labels to a submission file.
+class UnknownClassException(Exception):
+    pass
 
-    :param test_labels: Class probabilities for each datapoint in the test set.
-    :param submission_name: Name of submission (not file name)
-    """
-    # Get correct submission format from example submission file
-    submission = pd.read_csv(SUBMISSION_FORMAT_PATH, index_col='id')
-    # Add test labels for this submission
-    submission.loc[:, 0:5] = test_labels
 
-    # Actually write to csv file
-    if not os.path.exists(SUBMISSION_FOLDER):
-        os.makedirs(SUBMISSION_FOLDER)
-    submission.to_csv(os.path.join(SUBMISSION_FOLDER, submission_name + ".csv"))
+def get_indexed_class_names():
+    return [str(i) + "_" + class_name for (i, class_name) in enumerate(CLASS_ORDER)]
+
+
+def get_indexed_class_name(class_name):
+    if class_name in CLASS_ORDER:
+        return str(CLASS_ORDER.index(class_name)) + "_" + class_name
+    else:
+        raise UnknownClassException(f'Unknown class "{class_name}"')

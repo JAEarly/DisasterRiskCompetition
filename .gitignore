@@ -1,3 +1,4 @@
 .idea/*
 */__pycache__/*
-data/stac*
+data/raw/stac*
+data/interim/*
