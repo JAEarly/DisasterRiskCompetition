@@ -1,4 +1,6 @@
 import os
+import time
+from abc import ABC, abstractmethod
 
 import geopandas as gpd
 import numpy as np
@@ -6,10 +8,8 @@ import rasterio
 from PIL import Image
 from rasterio.mask import mask
 from tqdm import tqdm
-from abc import ABC, abstractmethod
 
 import utils
-import sys
 
 INPUT_DIR = "../data/raw/stac/"
 OUTPUT_DIR = "../data/interim/"
@@ -21,29 +21,31 @@ class ImageExtractor(ABC):
         self.tiff_path = os.path.join(INPUT_DIR, tiff_path)
         self.geojson_path = os.path.join(INPUT_DIR, geojson_path)
         self.output_path = os.path.join(OUTPUT_DIR, output_path)
+        self.files_valid = True
 
         print('Tiff:', self.tiff_path)
         if not os.path.exists(self.tiff_path):
-            print('Could not find Tiff, exiting')
-            sys.exit(0)
+            print('Could not find Tiff, skipping')
+            self.files_valid = False
         print('GeoJson:', self.geojson_path)
         if not os.path.exists(self.geojson_path):
-            print('Could not find GeoJson, exiting')
-            sys.exit(0)
+            print('Could not find GeoJson, skipping')
+            self.files_valid = False
         print('Output:', self.output_path)
 
         # Read GeoJson file
-        df_roof_geometries = gpd.read_file(self.geojson_path)
+        if self.files_valid:
+            df_roof_geometries = gpd.read_file(self.geojson_path)
 
-        # Create new column in for projected geometries
-        with rasterio.open(self.tiff_path) as tiff:
-            tiff_crs = tiff.crs.data
-            df_roof_geometries['projected_geometry'] = (
-                df_roof_geometries['geometry'].to_crs(tiff_crs)
-            )
+            # Create new column in for projected geometries
+            with rasterio.open(self.tiff_path) as tiff:
+                tiff_crs = tiff.crs.data
+                df_roof_geometries['projected_geometry'] = (
+                    df_roof_geometries['geometry'].to_crs(tiff_crs)
+                )
 
-        self.roof_geometries = self.create_roof_geometry_dataframe(df_roof_geometries)
-        self.setup_output_dirs()
+            self.roof_geometries = self.create_roof_geometry_dataframe(df_roof_geometries)
+            self.setup_output_dirs()
 
     @abstractmethod
     def create_roof_geometry_dataframe(self, df_roof_geometries):
@@ -63,6 +65,8 @@ class ImageExtractor(ABC):
                             desc="Extracting images"):
             roof_image = self.extract_image(roof.id)
             roof_image.save(self.get_save_path(roof))
+        time.sleep(1)
+        print('')
 
     def extract_image(self, roof_id):
         with rasterio.open(self.tiff_path) as tiff:
@@ -88,12 +92,14 @@ class ImageExtractor(ABC):
         output_test_path = os.path.join(country, region, "test")
 
         print('Running image extraction for', country, region, "train")
-        rh = TrainImageExtractor(tiff_path, geojson_train_path, output_train_path)
-        rh.create_dataset()
+        extractor = TrainImageExtractor(tiff_path, geojson_train_path, output_train_path)
+        if extractor.files_valid:
+            extractor.create_dataset()
 
         print('Running image extraction for', country, region, "test")
-        rh = TestImageExtractor(tiff_path, geojson_test_path, output_test_path)
-        rh.create_dataset()
+        extractor = TestImageExtractor(tiff_path, geojson_test_path, output_test_path)
+        if extractor.files_valid:
+            extractor.create_dataset()
 
 
 class TrainImageExtractor(ImageExtractor):
