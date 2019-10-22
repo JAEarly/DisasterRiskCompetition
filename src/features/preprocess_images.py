@@ -11,7 +11,13 @@ TRAIN_OUTPUT_PATH = "../data/processed/train"
 TEST_OUTPUT_PATH = "../data/processed/test"
 
 
-def setup_output_dirs():
+def preprocess_images_basic():
+    print("Running basic image preprocessing")
+    _setup_output_dirs()
+    _aggregate_training_images()
+
+
+def _setup_output_dirs():
     print('Creating output dirs')
     for class_name in utils.get_indexed_class_names():
         path = os.path.join(TRAIN_OUTPUT_PATH, class_name)
@@ -21,7 +27,7 @@ def setup_output_dirs():
         os.makedirs(TEST_OUTPUT_PATH)
 
 
-def aggregate_training_images():
+def _aggregate_training_images():
     print('Aggregating training images')
     for country, regions in utils.LOCATIONS.items():
         for region in regions:
@@ -41,8 +47,3 @@ def aggregate_training_images():
                     image_output_path = os.path.join(TEST_OUTPUT_PATH, image_name)
                     shutil.copyfile(image_input_path, image_output_path)
             time.sleep(1)
-
-
-if __name__ == "__main__":
-    setup_output_dirs()
-    aggregate_training_images()

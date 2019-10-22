@@ -15,6 +15,13 @@ INPUT_DIR = "../data/raw/stac/"
 OUTPUT_DIR = "../data/interim/"
 
 
+def extract_images():
+    print("Extracting images")
+    for country, regions in utils.LOCATIONS.items():
+        for region in regions:
+            ImageExtractor.run_for_location(country, region)
+
+
 class ImageExtractor(ABC):
 
     def __init__(self, tiff_path, geojson_path, output_path):
@@ -135,9 +142,3 @@ class TestImageExtractor(ImageExtractor):
     def get_save_path(self, roof):
         return os.path.join(self.output_path,
                             roof.id + ".png")
-
-
-if __name__ == "__main__":
-    for country, regions in utils.LOCATIONS.items():
-        for region in regions:
-            ImageExtractor.run_for_location(country, region)
