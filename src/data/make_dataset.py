@@ -5,8 +5,8 @@ import os
 
 
 DATASET_URL = "https://drivendata-public-assets-eu.s3.eu-central-1.amazonaws.com/stac.tar"
-DATASET_PATH = "../data/stac.tar"
-EXTRACT_PATH = "../data/"
+DATASET_PATH = "data/raw/stac.tar"
+EXTRACT_PATH = "data/raw/"
 
 
 def download_dataset():

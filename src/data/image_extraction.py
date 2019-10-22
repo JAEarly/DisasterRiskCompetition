@@ -11,8 +11,15 @@ from tqdm import tqdm
 
 import utils
 
-INPUT_DIR = "../data/raw/stac/"
-OUTPUT_DIR = "../data/interim/"
+INPUT_DIR = "data/raw/stac/"
+OUTPUT_DIR = "data/interim/"
+
+
+def extract_images():
+    print("Extracting images")
+    for country, regions in utils.LOCATIONS.items():
+        for region in regions:
+            ImageExtractor.run_for_location(country, region)
 
 
 class ImageExtractor(ABC):
@@ -21,20 +28,18 @@ class ImageExtractor(ABC):
         self.tiff_path = os.path.join(INPUT_DIR, tiff_path)
         self.geojson_path = os.path.join(INPUT_DIR, geojson_path)
         self.output_path = os.path.join(OUTPUT_DIR, output_path)
-        self.files_valid = True
+        self.extraction_required = True
 
-        print('Tiff:', self.tiff_path)
+        # Check files exist
         if not os.path.exists(self.tiff_path):
             print('Could not find Tiff, skipping')
-            self.files_valid = False
-        print('GeoJson:', self.geojson_path)
+            self.extraction_required = False
         if not os.path.exists(self.geojson_path):
             print('Could not find GeoJson, skipping')
-            self.files_valid = False
-        print('Output:', self.output_path)
+            self.extraction_required = False
 
-        # Read GeoJson file
-        if self.files_valid:
+        if self.extraction_required:
+            # Read GeoJson file
             df_roof_geometries = gpd.read_file(self.geojson_path)
 
             # Create new column in for projected geometries
@@ -44,8 +49,18 @@ class ImageExtractor(ABC):
                     df_roof_geometries['geometry'].to_crs(tiff_crs)
                 )
 
+            # Setup roof geometry dataframe
             self.roof_geometries = self.create_roof_geometry_dataframe(df_roof_geometries)
+
+            # Create output dirs if they don't exist
             self.setup_output_dirs()
+
+            # Check if files are already extracted
+            num_roofs = len(self.roof_geometries.index)
+            num_existing = sum([len(files) for r, d, files in os.walk(self.output_path)])
+            if num_existing == num_roofs:
+                self.extraction_required = False
+                print('Already found images')
 
     @abstractmethod
     def create_roof_geometry_dataframe(self, df_roof_geometries):
@@ -59,10 +74,11 @@ class ImageExtractor(ABC):
     def get_save_path(self, roof):
         pass
 
-    def create_dataset(self):
+    def extract_images(self):
         for _, roof in tqdm(self.roof_geometries.iterrows(),
                             total=len(self.roof_geometries.index),
-                            desc="Extracting images"):
+                            desc="Extracting images",
+                            leave=False):
             roof_image = self.extract_image(roof.id)
             roof_image.save(self.get_save_path(roof))
         time.sleep(1)
@@ -93,13 +109,13 @@ class ImageExtractor(ABC):
 
         print('Running image extraction for', country, region, "train")
         extractor = TrainImageExtractor(tiff_path, geojson_train_path, output_train_path)
-        if extractor.files_valid:
-            extractor.create_dataset()
+        if extractor.extraction_required:
+            extractor.extract_images()
 
         print('Running image extraction for', country, region, "test")
         extractor = TestImageExtractor(tiff_path, geojson_test_path, output_test_path)
-        if extractor.files_valid:
-            extractor.create_dataset()
+        if extractor.extraction_required:
+            extractor.extract_images()
 
 
 class TrainImageExtractor(ImageExtractor):
@@ -135,9 +151,3 @@ class TestImageExtractor(ImageExtractor):
     def get_save_path(self, roof):
         return os.path.join(self.output_path,
                             roof.id + ".png")
-
-
-if __name__ == "__main__":
-    for country, regions in utils.LOCATIONS.items():
-        for region in regions:
-            ImageExtractor.run_for_location(country, region)
