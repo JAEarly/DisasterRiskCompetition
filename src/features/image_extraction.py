@@ -132,11 +132,6 @@ class TestImageExtractor(ImageExtractor):
 
 
 if __name__ == "__main__":
-    ImageExtractor.run_for_location("colombia", "borde_rural")
-
-
-
-
-
-
-
+    for country, regions in utils.LOCATIONS.items():
+        for region in regions:
+            ImageExtractor.run_for_location(country, region)

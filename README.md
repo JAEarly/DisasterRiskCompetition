@@ -1,5 +1,9 @@
 ### Open AI Caribean Challenge: Mapping Disaster Risk from Aerial Imagery ###
 
+#### Running scripts ####
+
+Execute from src directory.
+
 #### Intended Project Structure ###
 
 Taken from https://drivendata.github.io/cookiecutter-data-science/#example
