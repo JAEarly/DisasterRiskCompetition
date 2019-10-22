@@ -32,17 +32,19 @@ def _aggregate_training_images():
     for country, regions in utils.LOCATIONS.items():
         for region in regions:
             # Copy training images
-            for class_name in tqdm(utils.get_indexed_class_names(), desc=country + " " + region + " train"):
+            for class_name in utils.get_indexed_class_names():
                 training_path = os.path.join(INPUT_PATH, country, region, "train", class_name)
-                for image_name in os.listdir(training_path):
+                for image_name in tqdm(os.listdir(training_path),
+                                       desc=country + " " + region + " train " + class_name,
+                                       leave=False):
                     image_input_path = os.path.join(training_path, image_name)
                     image_output_path = os.path.join(TRAIN_OUTPUT_PATH, class_name, image_name)
                     shutil.copyfile(image_input_path, image_output_path)
-            time.sleep(1)
+            time.sleep(0.1)
             # Copy test images
             test_path = os.path.join(INPUT_PATH, country, region, "test")
             if os.path.exists(test_path):
-                for image_name in tqdm(os.listdir(test_path), desc=country + " " + region + " test"):
+                for image_name in tqdm(os.listdir(test_path), desc=country + " " + region + " test", leave=False):
                     image_input_path = os.path.join(test_path, image_name)
                     image_output_path = os.path.join(TEST_OUTPUT_PATH, image_name)
                     shutil.copyfile(image_input_path, image_output_path)

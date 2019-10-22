@@ -77,7 +77,8 @@ class ImageExtractor(ABC):
     def extract_images(self):
         for _, roof in tqdm(self.roof_geometries.iterrows(),
                             total=len(self.roof_geometries.index),
-                            desc="Extracting images"):
+                            desc="Extracting images",
+                            leave=False):
             roof_image = self.extract_image(roof.id)
             roof_image.save(self.get_save_path(roof))
         time.sleep(1)
