@@ -11,8 +11,8 @@ from tqdm import tqdm
 
 import utils
 
-INPUT_DIR = "../data/raw/stac/"
-OUTPUT_DIR = "../data/interim/"
+INPUT_DIR = "data/raw/stac/"
+OUTPUT_DIR = "data/interim/"
 
 
 def extract_images():
@@ -30,15 +30,12 @@ class ImageExtractor(ABC):
         self.output_path = os.path.join(OUTPUT_DIR, output_path)
         self.files_valid = True
 
-        print('Tiff:', self.tiff_path)
         if not os.path.exists(self.tiff_path):
             print('Could not find Tiff, skipping')
             self.files_valid = False
-        print('GeoJson:', self.geojson_path)
         if not os.path.exists(self.geojson_path):
             print('Could not find GeoJson, skipping')
             self.files_valid = False
-        print('Output:', self.output_path)
 
         # Read GeoJson file
         if self.files_valid:

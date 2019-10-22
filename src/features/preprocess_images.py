@@ -6,9 +6,9 @@ from tqdm import tqdm
 
 import utils
 
-INPUT_PATH = "../data/interim/"
-TRAIN_OUTPUT_PATH = "../data/processed/train"
-TEST_OUTPUT_PATH = "../data/processed/test"
+INPUT_PATH = "data/interim/"
+TRAIN_OUTPUT_PATH = "data/processed/train"
+TEST_OUTPUT_PATH = "data/processed/test"
 
 
 def preprocess_images_basic():
