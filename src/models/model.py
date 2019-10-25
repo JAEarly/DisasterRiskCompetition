@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from torchvision import transforms
+
 
 class Model(ABC):
 
@@ -8,5 +10,11 @@ class Model(ABC):
         pass
 
     @abstractmethod
-    def get_transform(self):
+    def predict_batch(self, batch):
         pass
+
+    def get_transform(self):
+        transform = transforms.Compose([
+            transforms.Resize((100, 100)),
+            transforms.ToTensor()])
+        return transform

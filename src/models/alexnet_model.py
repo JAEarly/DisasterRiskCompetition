@@ -29,10 +29,7 @@ class AlexNetModel(Model):
             self.cnn_model.eval()
 
     def predict(self, image_tensor):
-        return self.cnn_model(image_tensor.unsqueeze(0)).cpu().detach().numpy()
+        return self.cnn_model(image_tensor.unsqueeze(0))
 
-    def get_transform(self):
-        transform = transforms.Compose([
-            transforms.Resize((100, 100)),
-            transforms.ToTensor()])
-        return transform
+    def predict_batch(self, batch):
+        return self.cnn_model(batch)

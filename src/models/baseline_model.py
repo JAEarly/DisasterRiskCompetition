@@ -11,5 +11,5 @@ class BaselineModel(Model):
     def predict(self, image_tensor):
         return self.class_dist
 
-    def get_transform(self):
-        return None
+    def predict_batch(self, dataset_tensor):
+        return [self.class_dist] * len(dataset_tensor)
