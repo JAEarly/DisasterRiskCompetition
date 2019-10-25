@@ -8,7 +8,7 @@ import utils
 
 INPUT_PATH = "data/interim/"
 TRAIN_OUTPUT_PATH = "data/processed/train"
-TEST_OUTPUT_PATH = "data/processed/test"
+TEST_OUTPUT_PATH = "data/processed/comp"
 
 
 def preprocess_images_basic():
