@@ -6,6 +6,7 @@ from .model import Model
 class BaselineModel(Model):
 
     def __init__(self):
+        super().__init__("baseline")
         self.class_dist = pd.read_csv('./data/raw/train_labels.csv').groupby(['verified']).mean()[-1:].values[0]
 
     def predict(self, image_tensor):

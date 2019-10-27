@@ -5,6 +5,9 @@ from torchvision import transforms
 
 class Model(ABC):
 
+    def __init__(self, name):
+        self.name = name
+
     @abstractmethod
     def predict(self, image_tensor):
         pass

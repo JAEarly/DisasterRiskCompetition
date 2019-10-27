@@ -10,6 +10,8 @@ class AlexNetModel(Model):
     num_classes = 5
 
     def __init__(self, state_dict_path=None, eval_mode=False):
+        super().__init__("alexnet")
+
         # Create AlexNet model setup for this task
         self.cnn_model = models.alexnet(pretrained=True)
         self.cnn_model.classifier = nn.Linear(9216, self.num_classes)

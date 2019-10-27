@@ -4,14 +4,14 @@ import pandas as pd
 from tqdm import tqdm
 
 from features.competition_dataset import CompetitionDataset
-from models import Model, BaselineModel
+from models import Model, BaselineModel, AlexNetModel
 
 SUBMISSION_FOLDER = './submissions'
 SUBMISSION_FORMAT_PATH = './data/raw/submission_format.csv'
 COMP_DATASET_DIR = "./data/processed/comp"
 
 
-def create_submission_from_model(model: Model, submission_name: str) -> None:
+def create_submission_from_model(model: Model) -> None:
     competition_dataset = CompetitionDataset(COMP_DATASET_DIR, transform=model.get_transform())
     competition_labels = []
     for x in tqdm(competition_dataset, desc="Predicting competition dataset"):
@@ -26,9 +26,13 @@ def create_submission_from_model(model: Model, submission_name: str) -> None:
     # Actually write to csv file
     if not os.path.exists(SUBMISSION_FOLDER):
         os.makedirs(SUBMISSION_FOLDER)
-    submission.to_csv(os.path.join(SUBMISSION_FOLDER, submission_name + ".csv"))
+    # TODO add timestamp to submission files
+    filename = model.name + ".csv"
+    submission.to_csv(os.path.join(SUBMISSION_FOLDER, filename))
 
 
 if __name__ == "__main__":
-    create_submission_from_model(BaselineModel(), "baseline")
-    #create_submission_from_model(AlexNetModel(state_dict_path="./models/alexnet_transfer", eval_mode=True), "alexnet")
+    # _model = BaselineModel()
+    _model = AlexNetModel(state_dict_path="./models/alexnet_transfer", eval_mode=True)
+
+    create_submission_from_model(_model)
