@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from torchvision import models, transforms
+from torchvision import models
 
 from .model import Model
 
@@ -32,4 +32,4 @@ class AlexNetModel(Model):
         return self.cnn_model(image_tensor.unsqueeze(0))
 
     def predict_batch(self, batch):
-        return self.cnn_model(batch)
+        return self.cnn_model(batch).cpu().detach().numpy()

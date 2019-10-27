@@ -24,5 +24,8 @@ def evaluate_model(model: Model):
 
 
 if __name__ == "__main__":
-    #evaluate_model(BaselineModel())  # 1.01356
+    # Baseline - 1.01356
+    # evaluate_model(BaselineModel())
+
+    # AlexNet Linear - 4.52184
     evaluate_model(AlexNetModel(state_dict_path="./models/alexnet_transfer", eval_mode=True))
