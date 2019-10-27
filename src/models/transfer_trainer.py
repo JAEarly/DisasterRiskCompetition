@@ -7,7 +7,7 @@ from torch import nn
 from torch import optim
 from torchbearer import Trial
 
-from models import TransferModel, AlexNetModel, Trainer
+from models import TransferModel, AlexNetSoftmaxModel, Trainer
 
 
 class TransferTrainer(Trainer):
@@ -47,6 +47,6 @@ class TransferTrainer(Trainer):
 
 
 if __name__ == "__main__":
-    alexnet_model = AlexNetModel()
+    alexnet_model = AlexNetSoftmaxModel()
     trainer = TransferTrainer(alexnet_model)
     trainer.train()
