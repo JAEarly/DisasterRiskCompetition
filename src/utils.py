@@ -2,7 +2,7 @@
 CLASSES = ['concrete_cement', 'healthy_metal', 'incomplete', 'irregular_metal', 'other']
 LOCATIONS = {'colombia': ['borde_rural', 'borde_soacha'],
              'guatemala': ['mixco_1_and_ebenezer', 'mixco_3'],
-             'st_lucia': ['castries', 'dennery', 'gros_inlet']}
+             'st_lucia': ['castries', 'dennery', 'gros_islet']}
 
 
 class UnknownClassException(Exception):

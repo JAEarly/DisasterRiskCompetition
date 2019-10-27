@@ -5,3 +5,8 @@ numpy
 rasterio
 geopandas
 pillow
+torchvision
+torch
+matplotlib
+torchbearer
+sklearn

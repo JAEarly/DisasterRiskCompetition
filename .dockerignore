@@ -1,0 +1,7 @@
+.git
+.dockerignore
+.idea/*
+*/__pycache__/*
+data/raw/stac*
+data/interim/*
+data/processed/*
