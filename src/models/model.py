@@ -18,6 +18,10 @@ class Model(ABC):
     def predict_batch(self, batch):
         pass
 
+    @abstractmethod
+    def save(self, save_path):
+        pass
+
     def get_transform(self):
         transform = transforms.Compose([
             transforms.Resize((100, 100)),

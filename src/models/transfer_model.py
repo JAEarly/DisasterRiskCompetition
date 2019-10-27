@@ -1,5 +1,7 @@
 from abc import abstractmethod, ABC
 
+import torch
+
 from .model import Model
 
 
@@ -18,3 +20,6 @@ class TransferModel(Model, ABC):
 
     def predict_batch(self, batch):
         return self.transfer_model(batch).cpu().detach().numpy()
+
+    def save(self, save_path):
+        torch.save(self.transfer_model.state_dict(), save_path)

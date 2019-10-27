@@ -14,3 +14,6 @@ class BaselineModel(Model):
 
     def predict_batch(self, dataset_tensor):
         return [self.class_dist] * len(dataset_tensor)
+
+    def save(self, save_path):
+        pass
