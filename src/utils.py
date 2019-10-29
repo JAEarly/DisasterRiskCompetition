@@ -1,4 +1,5 @@
 import datetime
+import os
 
 
 CLASSES = ['concrete_cement', 'healthy_metal', 'incomplete', 'irregular_metal', 'other']
@@ -25,3 +26,16 @@ def get_indexed_class_name(class_name):
 def create_timestamp_str():
     today = datetime.datetime.now()
     return today.strftime("%Y-%m-%d_%X")
+
+
+def create_dirs_if_not_found(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+
+def count_files_recursive(path, contains=None):
+    file_count = 0
+    for dir_name, _, files in os.walk(path):
+        if contains is None or contains in dir_name:
+            file_count += len(files)
+    return file_count
