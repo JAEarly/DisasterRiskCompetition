@@ -7,7 +7,8 @@ from torch import nn
 from torch import optim
 from torchbearer import Trial
 
-from models import TransferModel, AlexNetSoftmaxModel, Trainer
+import models
+from models import TransferModel, Trainer
 from utils import create_timestamp_str
 
 
@@ -31,15 +32,10 @@ class TransferTrainer(Trainer):
         # Setup trial
         device = "cuda:0" if torch.cuda.is_available() else "cpu"
         trial = Trial(transfer_model, optimiser, self.loss_function, metrics=['loss', 'accuracy']).to(device)
-        trial.with_generators(self.train_loader, test_generator=self.test_loader)
+        trial.with_generators(self.train_loader)
 
         # Actually run the training
         trial.run(epochs=self.num_epochs)
-
-        # Evaluate and show results
-        time.sleep(1)  # Ensure training has finished
-        results = trial.evaluate(data_key=torchbearer.TEST_DATA)
-        print(results)
 
         # Save model weights
         save_path = os.path.join(self.save_dir, self.model.name + "_" + create_timestamp_str() + ".pth")
@@ -47,6 +43,6 @@ class TransferTrainer(Trainer):
 
 
 if __name__ == "__main__":
-    alexnet_model = AlexNetSoftmaxModel()
+    alexnet_model = models.AlexNetModel()
     trainer = TransferTrainer(alexnet_model)
     trainer.train()

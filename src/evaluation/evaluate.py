@@ -5,7 +5,7 @@ from tqdm import tqdm
 
 import models
 
-TEST_DATA_DIR = "./data/processed/train"
+TEST_DATA_DIR = "./data/processed/test"
 BATCH_SIZE = 8
 
 
@@ -24,11 +24,11 @@ def evaluate_model(model: models.Model):
 
 
 if __name__ == "__main__":
-    # Baseline - 1.01356
+    # Baseline - 1.004
     # evaluate_model(models.BaselineModel())
 
-    # AlexNet Linear - 4.52184
-    # evaluate_model(models.AlexNetModel(state_dict_path="./models/alexnet_transfer", eval_mode=True))
+    # AlexNet Linear - 4.974
+    evaluate_model(models.AlexNetModel(state_dict_path="./models/alexnet_2019-10-29_13:04:46.pth", eval_mode=True))
 
-    # AlexNet Softmax - 2.04120
-    evaluate_model(models.AlexNetSoftmaxModel(state_dict_path="./models/alexnet_softmax.model", eval_mode=True))
+    # AlexNet Softmax - 2.037
+    # evaluate_model(models.AlexNetSoftmaxModel(state_dict_path="./models/alexnet_softmax_2019-10-29_12:59:25.pth", eval_mode=True))

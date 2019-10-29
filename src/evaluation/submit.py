@@ -10,7 +10,7 @@ from utils import create_timestamp_str
 
 SUBMISSION_FOLDER = './submissions'
 SUBMISSION_FORMAT_PATH = './data/raw/submission_format.csv'
-COMP_DATASET_DIR = "./data/processed/comp"
+COMP_DATASET_DIR = "./data/processed/competition"
 BATCH_SIZE = 8
 
 
@@ -35,6 +35,5 @@ def create_submission_from_model(model: models.Model) -> None:
 
 
 if __name__ == "__main__":
-    _model = models.AlexNetSoftmaxModel(state_dict_path="./models/alexnet_softmax_2019-10-29_11:55:48.pth",
-                                        eval_mode=True)
+    _model = models.AlexNetModel(state_dict_path="./models/alexnet_2019-10-29_13:04:46.pth", eval_mode=True)
     create_submission_from_model(_model)
