@@ -3,13 +3,13 @@ from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
 from tqdm import tqdm
 
-from models import Model, BaselineModel, AlexNetModel
+import models
 
-TEST_DATA_DIR = "./data/processed/train"
+TEST_DATA_DIR = "./data/processed/test"
 BATCH_SIZE = 8
 
 
-def evaluate_model(model: Model):
+def evaluate_model(model: models.Model):
     dataset = ImageFolder(TEST_DATA_DIR, transform=model.get_transform())
     dataloader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=False)
 
@@ -24,8 +24,11 @@ def evaluate_model(model: Model):
 
 
 if __name__ == "__main__":
-    # Baseline - 1.01356
-    # evaluate_model(BaselineModel())
+    # Baseline - 1.004
+    # evaluate_model(models.BaselineModel())
 
-    # AlexNet Linear - 4.52184
-    evaluate_model(AlexNetModel(state_dict_path="./models/alexnet_transfer", eval_mode=True))
+    # AlexNet Linear - 4.414
+    # evaluate_model(models.AlexNetModel(state_dict_path="./models/alexnet_2019-10-29_13:35:51.pth", eval_mode=True))
+
+    # AlexNet Softmax - 1.338
+    evaluate_model(models.AlexNetSoftmaxModel(state_dict_path="./models/alexnet_softmax_2019-10-29_13:51:45.pth", eval_mode=True))
