@@ -1,3 +1,5 @@
+import datetime
+
 
 CLASSES = ['concrete_cement', 'healthy_metal', 'incomplete', 'irregular_metal', 'other']
 LOCATIONS = {'colombia': ['borde_rural', 'borde_soacha'],
@@ -18,3 +20,8 @@ def get_indexed_class_name(class_name):
         return str(CLASSES.index(class_name)) + "_" + class_name
     else:
         raise UnknownClassException(f'Unknown class "{class_name}"')
+
+
+def create_timestamp_str():
+    today = datetime.datetime.now()
+    return today.strftime("%Y-%m-%d_%X")

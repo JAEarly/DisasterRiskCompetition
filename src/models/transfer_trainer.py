@@ -8,6 +8,7 @@ from torch import optim
 from torchbearer import Trial
 
 from models import TransferModel, AlexNetSoftmaxModel, Trainer
+from utils import create_timestamp_str
 
 
 class TransferTrainer(Trainer):
@@ -41,8 +42,7 @@ class TransferTrainer(Trainer):
         print(results)
 
         # Save model weights
-        # TODO timestamp and find appropriate file extension
-        save_path = os.path.join(self.save_dir, self.model.name + ".model")
+        save_path = os.path.join(self.save_dir, self.model.name + "_" + create_timestamp_str() + ".pth")
         self.model.save(save_path)
 
 
