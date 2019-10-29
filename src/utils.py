@@ -39,3 +39,12 @@ def count_files_recursive(path, contains=None):
         if contains is None or contains in dir_name:
             file_count += len(files)
     return file_count
+
+
+def class_distribution(path):
+    class_dist = []
+    for class_name in get_indexed_class_names():
+        class_dir = os.path.join(path, class_name)
+        class_count = count_files_recursive(class_dir)
+        class_dist.append(class_count)
+    return class_dist

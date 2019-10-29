@@ -35,5 +35,5 @@ def create_submission_from_model(model: models.Model) -> None:
 
 
 if __name__ == "__main__":
-    _model = models.AlexNetModel(state_dict_path="./models/alexnet_2019-10-29_13:04:46.pth", eval_mode=True)
+    _model = models.AlexNetSoftmaxModel(state_dict_path="./models/alexnet_softmax_2019-10-29_13:51:45.pth", eval_mode=True)
     create_submission_from_model(_model)

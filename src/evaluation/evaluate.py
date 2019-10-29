@@ -27,8 +27,8 @@ if __name__ == "__main__":
     # Baseline - 1.004
     # evaluate_model(models.BaselineModel())
 
-    # AlexNet Linear - 4.974
-    evaluate_model(models.AlexNetModel(state_dict_path="./models/alexnet_2019-10-29_13:04:46.pth", eval_mode=True))
+    # AlexNet Linear - 4.414
+    # evaluate_model(models.AlexNetModel(state_dict_path="./models/alexnet_2019-10-29_13:35:51.pth", eval_mode=True))
 
-    # AlexNet Softmax - 2.037
-    # evaluate_model(models.AlexNetSoftmaxModel(state_dict_path="./models/alexnet_softmax_2019-10-29_12:59:25.pth", eval_mode=True))
+    # AlexNet Softmax - 1.338
+    evaluate_model(models.AlexNetSoftmaxModel(state_dict_path="./models/alexnet_softmax_2019-10-29_13:51:45.pth", eval_mode=True))

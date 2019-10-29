@@ -27,5 +27,5 @@ class Trainer(ABC):
         self.test_loader = data.DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False)
 
     @abstractmethod
-    def train(self):
+    def train(self, class_weight=None):
         pass
