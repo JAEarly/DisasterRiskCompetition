@@ -2,34 +2,31 @@ import torch
 from torch import nn
 from torchvision import models
 
-from .model import Model
+from .transfer_model import TransferModel
 
 
-class AlexNetModel(Model):
-
-    num_classes = 5
+class AlexNetModel(TransferModel):
 
     def __init__(self, state_dict_path=None, eval_mode=False):
-        # Create AlexNet model setup for this task
-        self.cnn_model = models.alexnet(pretrained=True)
-        self.cnn_model.classifier = nn.Linear(9216, self.num_classes)
+        super().__init__("alexnet", state_dict_path=state_dict_path, eval_mode=eval_mode)
 
-        # Fix all layers except final layer
-        for param in self.cnn_model.parameters():
+    def setup_transfer_model(self, state_dict_path, eval_mode):
+        # Create AlexNet model with linear output layer
+        linear_alexnet_model = models.alexnet(pretrained=True)
+        linear_alexnet_model.classifier = nn.Linear(9216, self.num_classes)
+
+        # Keep all layers fixed except final layer
+        for param in linear_alexnet_model.parameters():
             param.requires_grad = False
-        self.cnn_model.classifier.weight.requires_grad = True
-        self.cnn_model.classifier.bias.requires_grad = True
+        linear_alexnet_model.classifier.weight.requires_grad = True
+        linear_alexnet_model.classifier.bias.requires_grad = True
 
         # Load existing weights if given
         if state_dict_path is not None:
-            self.cnn_model.load_state_dict(torch.load(state_dict_path))
+            linear_alexnet_model.load_state_dict(torch.load(state_dict_path))
 
-        # Put into evaluation mode if request
+        # Put into evaluation mode if required
         if eval_mode:
-            self.cnn_model.eval()
+            linear_alexnet_model.eval()
 
-    def predict(self, image_tensor):
-        return self.cnn_model(image_tensor.unsqueeze(0))
-
-    def predict_batch(self, batch):
-        return self.cnn_model(batch).cpu().detach().numpy()
+        return linear_alexnet_model

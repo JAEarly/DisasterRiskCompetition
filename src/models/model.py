@@ -5,12 +5,21 @@ from torchvision import transforms
 
 class Model(ABC):
 
+    num_classes = 5
+
+    def __init__(self, name):
+        self.name = name
+
     @abstractmethod
     def predict(self, image_tensor):
         pass
 
     @abstractmethod
     def predict_batch(self, batch):
+        pass
+
+    @abstractmethod
+    def save(self, save_path):
         pass
 
     def get_transform(self):
