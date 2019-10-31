@@ -4,7 +4,8 @@ from torchvision.datasets import ImageFolder
 from tqdm import tqdm
 
 import models
-import models.feature_extraction as feature_extraction
+import features
+from features import DatasetType
 
 TEST_DATA_DIR = "./data/processed/test"
 BATCH_SIZE = 8
@@ -25,12 +26,12 @@ def evaluate_model(model: models.Model):
 
 
 def evaluate_from_features(model: models.Model, feature_extractor: features.feature_extractor):
-    features, labels = feature_extractor.extract(feature_extractor.test_loader, "test")
+    test_features, labels = feature_extractor.extract(DatasetType.Test)
 
     y_true = []
     y_pred = []
 
-    for feature, label in zip(features, labels):
+    for feature, label in tqdm(zip(test_features, labels), total=len(labels)):
         y_pred.append(model.predict(feature.unsqueeze(0)))
         y_true.append(label)
 
@@ -45,9 +46,14 @@ if __name__ == "__main__":
     # evaluate_model(models.AlexNetModel(state_dict_path="./models/alexnet_2019-10-29_13:35:51.pth", eval_mode=True))
 
     # AlexNet Softmax - 1.338
-    #evaluate_model(models.AlexNetSoftmaxModel(state_dict_path="./models/alexnet_softmax_2019-10-29_13:51:45.pth", eval_mode=True))
+    # evaluate_model(models.AlexNetSoftmaxModel(state_dict_path="./models/alexnet_softmax_2019-10-29_13:51:45.pth", eval_mode=True))
 
     # KMeans AlexNet - 25.484
-    _model = models.KMeansModel("kmeans_alexnet", model_path="./models/kmeans_alexnet_2019-10-31_13:05:46.pkl")
-    _feature_extractor = feature_extraction.AlexNet256()
+    # _model = models.KMeansModel("kmeans_alexnet", model_path="./models/kmeans_alexnet_2019-10-31_13:05:46.pkl")
+    # _feature_extractor = feature_extraction.AlexNet256()
+    # evaluate_from_features(_model, _feature_extractor)
+
+    # LDA AlexNet256 - 8.53
+    _model = models.LDAModel("lda_alexnet256", model_path="./models/lda_alexnet256_2019-10-31_17:25:25.pkl")
+    _feature_extractor = features.AlexNet256()
     evaluate_from_features(_model, _feature_extractor)
