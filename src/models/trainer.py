@@ -18,6 +18,7 @@ class Trainer(ABC):
     def __init__(self, model: Model):
         self.model = model
 
+        # TODO create dataset class
         self.train_dataset = datasets.ImageFolder(self.train_dir, transform=self.model.get_transform())
         self.validation_dataset = datasets.ImageFolder(self.validation_dir, transform=self.model.get_transform())
         self.test_dataset = datasets.ImageFolder(self.test_dir, transform=self.model.get_transform())
