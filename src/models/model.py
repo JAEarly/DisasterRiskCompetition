@@ -19,7 +19,11 @@ class Model(ABC):
         pass
 
     @abstractmethod
-    def save(self, save_path):
+    def load(self, path):
+        pass
+
+    @abstractmethod
+    def save(self, path):
         pass
 
     def get_transform(self):
