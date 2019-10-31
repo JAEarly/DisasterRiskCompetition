@@ -62,10 +62,10 @@ class FeatureExtractor(ABC):
         return None, None
 
     def _get_features_filepath(self, dataset_type: DatasetType):
-        return os.path.join(self.save_dir, self.name + "_" + dataset_type.name + "_features.pkl")
+        return os.path.join(self.save_dir, self.name + "_" + dataset_type.name.lower() + "_features.pkl")
 
     def _get_labels_filepath(self, dataset_type: DatasetType):
-        return os.path.join(self.save_dir, self.name + "_" + dataset_type.name + "_labels.pkl")
+        return os.path.join(self.save_dir, self.name + "_" + dataset_type.name.lower() + "_labels.pkl")
 
 
 class IdentityLayer(nn.Module):

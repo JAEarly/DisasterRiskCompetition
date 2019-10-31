@@ -24,7 +24,7 @@ def evaluate_model(model: models.Model):
     print("Log loss:", log_loss(y_true, y_pred, labels=[0, 1, 2, 3, 4]))
 
 
-def evaluate_from_features(model: models.Model, feature_extractor: feature_extraction.feature_extractor):
+def evaluate_from_features(model: models.Model, feature_extractor: features.feature_extractor):
     features, labels = feature_extractor.extract(feature_extractor.test_loader, "test")
 
     y_true = []
