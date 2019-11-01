@@ -9,10 +9,10 @@ class Trainer(ABC):
     save_dir = "./models"
     num_classes = 5
 
-    def __init__(self, model: Model):
-        self.model = model
-        self.image_datasets = ImageDatasets(model.get_transform())
+    #def __init__(self):
+        # TODO extract into image trainer
+        #self.image_datasets = ImageDatasets(model.get_transform())
 
     @abstractmethod
-    def train(self, class_weight=None):
+    def train(self, model, class_weight=None):
         pass

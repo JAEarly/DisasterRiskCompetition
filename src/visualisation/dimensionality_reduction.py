@@ -1,11 +1,10 @@
-from features import AlexNet256, DatasetType
-import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.decomposition import PCA
+import pandas as pd
+# noinspection PyUnresolvedReferences - Import must remain for projection='3d' to work
 from sklearn.preprocessing import StandardScaler
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.manifold import TSNE
+
 import models
+from features import DatasetType, AlexNet256
 
 
 def run_dimensionality_reduction(feature_extractor, reduction_method, supervised, already_fit=False):
@@ -30,8 +29,6 @@ def run_dimensionality_reduction(feature_extractor, reduction_method, supervised
 
 
 def visualise_reduction(dataframe):
-    # Import must remain for projection='3d' to work
-    from mpl_toolkits.mplot3d import Axes3D
     fig = plt.figure()
     axis = fig.add_subplot(111, projection='3d')
 
@@ -58,15 +55,5 @@ if __name__ == "__main__":
     # visualise_reduction(run_dimensionality_reduction(AlexNet256(), PCA(n_components=3), supervised=False))
 
     # Alexnet256 LDA - has been good
-    # lda_model = models.LDAModel("lda_alexnet256", model_path="./models/lda_alexnet256_2019-10-31_17:25:25.pkl")
-    # visualise_reduction(run_dimensionality_reduction(AlexNet256(), lda_model.lda, supervised=True, already_fit=True))
-
-    # Alexnet256 T-SNE
-    visualise_reduction(run_dimensionality_reduction(AlexNet256(), TSNE(n_components=3), supervised=False))
-
-
-
-
-
-
-
+    lda_model = models.LDAModel("lda_alexnet256", model_path="./models/lda_alexnet256_2019-10-31_17:25:25.pkl")
+    visualise_reduction(run_dimensionality_reduction(AlexNet256(), lda_model.lda, supervised=True, already_fit=True))

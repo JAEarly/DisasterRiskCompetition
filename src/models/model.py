@@ -26,7 +26,8 @@ class Model(ABC):
     def save(self, path):
         pass
 
-    def get_transform(self):
+    @staticmethod
+    def get_transform():
         transform = transforms.Compose([
             transforms.Resize((100, 100)),
             transforms.ToTensor()])

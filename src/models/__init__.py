@@ -5,5 +5,7 @@ from .alexnet_model import AlexNetModel
 from .alexnet_softmax_model import AlexNetSoftmaxModel
 from .trainer import Trainer
 from .transfer_trainer import TransferTrainer
+from .feature_trainer import FeatureTrainer
 from .kmeans_model import KMeansModel
 from .lda_model import LDAModel
+from .nn_model import NNModel

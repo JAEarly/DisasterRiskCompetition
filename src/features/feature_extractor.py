@@ -27,7 +27,7 @@ class FeatureExtractor(ABC):
     def get_transform(self):
         pass
 
-    def extract(self, dataset_type: DatasetType):
+    def extract(self, dataset_type: DatasetType) -> (torch.Tensor, torch.Tensor):
         features, labels = self.load(dataset_type)
         if features is None or labels is None:
             features = []
@@ -39,6 +39,7 @@ class FeatureExtractor(ABC):
             features = torch.stack(features)
             features = features.cpu().detach()
             self.save(features, labels, dataset_type)
+        labels = torch.tensor(labels)
         return features, labels
 
     def save(self, features, labels, dataset_type: DatasetType):
