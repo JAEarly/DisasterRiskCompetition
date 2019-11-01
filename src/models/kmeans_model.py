@@ -1,5 +1,4 @@
 import pickle
-from abc import ABC
 
 from sklearn.cluster import KMeans
 from torch import Tensor
@@ -7,7 +6,7 @@ from torch import Tensor
 from .model import Model
 
 
-class KMeansModel(Model, ABC):
+class KMeansModel(Model):
 
     def __init__(self, name, model_path=None):
         super().__init__(name)
@@ -22,7 +21,6 @@ class KMeansModel(Model, ABC):
         return prediction
 
     def predict_batch(self, feature_vector_batch: Tensor):
-        print(feature_vector_batch.shape)
         clzs = self.km.predict(feature_vector_batch.cpu().detach())
         predictions = []
         for clz in clzs:
