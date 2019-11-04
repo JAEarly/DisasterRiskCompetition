@@ -11,3 +11,6 @@ matplotlib
 torchbearer
 sklearn
 texttable
+black
+pylint
+pydocstyle
