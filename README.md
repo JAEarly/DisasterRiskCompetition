@@ -4,13 +4,6 @@
 
 Execute from src directory.
 
-#### Docker ####
-
-Build docker image locally: `docker build -t disaster-risk .`  
-Push docker image: `docker push jearly97/uniwork:disaster-risk`  
-Pull on remote: `docker pull jearly97/uniwork:disaster-risk`  
-Execute: `docker run -it jearly97/uniwork:disaster-risk /bin/bash`  
-
 #### Intended Project Structure ###
 
 Taken from https://drivendata.github.io/cookiecutter-data-science/#example
