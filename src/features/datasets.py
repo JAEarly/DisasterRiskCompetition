@@ -1,7 +1,7 @@
 """
 Contains the abstract and implemented classes for a datasets wrapper.
 
-A datasets class contains train, validation and test datasets.
+A datasets class contains train, validation and test datasets (all labelled data).
 These datasets are either backed by images (raw data) or features (extracted from images).
 """
 
