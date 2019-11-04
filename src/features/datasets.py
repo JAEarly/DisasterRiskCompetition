@@ -8,6 +8,7 @@ class DatasetType(Enum):
     Train = 1
     Validation = 2
     Test = 3
+    Competition = 4
 
 
 class Datasets(ABC):

@@ -15,7 +15,7 @@ from utils import create_timestamp_str, class_distribution
 
 class NNTrainer(FeatureTrainer):
 
-    num_epochs = 3
+    num_epochs = 10
     loss = nn.CrossEntropyLoss
 
     def __init__(self, feature_extractor: FeatureExtractor):

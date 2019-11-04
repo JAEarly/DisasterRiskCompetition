@@ -1,14 +1,25 @@
 import os
 
-import numpy as np
 from PIL import Image
+from torch.utils import data
 from torch.utils.data import Dataset
+
+from features import DatasetType
 
 
 class CompetitionDataset(Dataset):
 
-    def __init__(self, data_dir, transform=None):
-        self.data_dir = data_dir
+    def __init__(self, batch_size=8):
+        self.batch_size = batch_size
+        self.data_loader = data.DataLoader(self, batch_size=self.batch_size, shuffle=False)
+
+
+class CompetitionImageDataset(CompetitionDataset):
+
+    data_dir = "./data/processed/competition"
+
+    def __init__(self, transform=None):
+        super().__init__()
         self.id_list = os.listdir(self.data_dir)
         self.transform = transform
 
@@ -21,3 +32,16 @@ class CompetitionDataset(Dataset):
         if self.transform is not None:
             image = self.transform(image)
         return image
+
+
+class CompetitionFeatureDataset(CompetitionDataset):
+
+    def __init__(self, feature_extractor):
+        super().__init__()
+        self.features, _ = feature_extractor.extract(DatasetType.Competition)
+
+    def __len__(self):
+        return len(self.features)
+
+    def __getitem__(self, index):
+        return self.features[index]

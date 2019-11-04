@@ -1,8 +1,5 @@
 from abc import ABC, abstractmethod
 
-from features import ImageDatasets
-from models import Model
-
 
 class Trainer(ABC):
 

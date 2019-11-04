@@ -1,7 +1,7 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 
 from features import FeatureDatasets, FeatureExtractor
-from models import Model, Trainer
+from models import Trainer
 
 
 class FeatureTrainer(Trainer, ABC):
