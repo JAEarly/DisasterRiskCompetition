@@ -1,6 +1,8 @@
+"""Setup script."""
+
 from data.make_dataset import download_dataset, extract_dataset
 from data.image_extraction import extract_images
-from features.preprocess_images import preprocess_images_basic, validate_dataset
+from data.preprocess_images import preprocess_images_basic, validate_dataset
 
 num_stages = 5
 print("Starting setup")

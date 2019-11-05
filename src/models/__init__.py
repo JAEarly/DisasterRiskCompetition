@@ -1,7 +1,5 @@
+from .trainer import Trainer, FeatureTrainer
 from .model import Model
-from .transfer_model import TransferModel
+from .lda_model import LDAModel
 from .baseline_model import BaselineModel
-from .alexnet_model import AlexNetModel
-from .alexnet_softmax_model import AlexNetSoftmaxModel
-from .trainer import Trainer
-from .transfer_trainer import TransferTrainer
+from .nn_model import NNModel, BasicNN
