@@ -2,7 +2,7 @@
 
 #### Running scripts ####
 
-Execute from src directory.
+Execute from root directory.
 
 #### Intended Project Structure ###
 

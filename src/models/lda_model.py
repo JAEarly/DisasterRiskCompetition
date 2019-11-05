@@ -1,6 +1,5 @@
 """LDA solution."""
 
-import os
 import pickle
 
 import torch
@@ -8,10 +7,9 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.preprocessing import StandardScaler
 
 import models
-from features import FeatureExtractor, AlexNet256, DatasetType
+from features import AlexNet256
 from models import FeatureTrainer
 from models import Model
-from utils import create_timestamp_str
 
 
 class LDAModel(Model):
@@ -59,27 +57,9 @@ class LDAModel(Model):
         self.lda.fit(features, labels)
 
 
-class LDATrainer(FeatureTrainer):
-    """LDA Trainer implementation."""
-
-    def __init__(self, feature_extractor: FeatureExtractor):
-        super().__init__(feature_extractor)
-
-    def train(self, model, class_weights=None):
-        print("Loading features")
-        features, labels = self.feature_dataset.get_features_and_labels(DatasetType.Train)
-        print("Fitting model")
-        model.fit(features, labels)
-        print("Saving model")
-        save_path = os.path.join(
-            self.save_dir, model.name + "_" + create_timestamp_str() + ".pkl"
-        )
-        model.save(save_path)
-
-
 if __name__ == "__main__":
     print("Creating LDA model")
     lda_model = models.LDAModel("lda_alexnet256")
     print("Creating feature extractor")
-    trainer = LDATrainer(AlexNet256())
+    trainer = FeatureTrainer(AlexNet256())
     trainer.train(lda_model)

@@ -47,5 +47,5 @@ def create_submission(
 
 if __name__ == "__main__":
     _feature_extractor = AlexNet256()
-    _model = models.BaselineModel()
+    _model = models.SVMModel("svm_alexnet_rbf", "./models/svm_alexnet256_2019-11-05_16:07:54.pkl")
     create_submission(_model, CompetitionFeatureDataset(_feature_extractor))
