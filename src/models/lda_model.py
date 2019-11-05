@@ -67,12 +67,7 @@ class LDATrainer(FeatureTrainer):
 
     def train(self, model, class_weights=None):
         print("Loading features")
-        features = []
-        labels = []
-        for batch, batch_labels in self.feature_dataset.get_loader(DatasetType.Train):
-            features.extend(batch)
-            labels.extend(batch_labels)
-        features = torch.stack(features)
+        features, labels = self.feature_dataset.get_features_and_labels(DatasetType.Train)
         print("Fitting model")
         model.fit(features, labels)
         print("Saving model")

@@ -11,6 +11,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Tuple
 
+import torch
 from torch.utils import data
 from torch.utils.data import Dataset
 from torchvision import datasets as torch_datasets
@@ -158,3 +159,20 @@ class FeatureDatasets(Datasets):
             self.feature_extractor.get_labels_filepath(DatasetType.Test),
         )
         return train_dataset, validation_dataset, test_dataset
+
+    def get_features_and_labels(
+        self, dataset_type: DatasetType
+    ) -> (torch.Tensor, torch.Tensor):
+        """
+        Get all the features and labels for a dataset.
+        :param dataset_type: Dataset to fetch labels for.
+        :return: Tensor of features and tensor of labels.
+        """
+        features = []
+        labels = []
+        for batch, batch_labels in self.get_loader(dataset_type):
+            features.extend(batch)
+            labels.extend(batch_labels)
+        features = torch.stack(features)
+        labels = torch.tensor(labels)
+        return features, labels
