@@ -13,14 +13,14 @@ class AlexNet256(FeatureExtractor):
     def __init__(self):
         super().__init__("alexnet")
 
-    def setup_model(self) -> nn.Module:
+    def setup_model(self) -> (nn.Module, int):
         """
         Create a pre-trained AlexNet model with the final layer replace.
         :return: AlexNet model.
         """
         alexnet = models.alexnet(pretrained=True)
         alexnet.classifier = IdentityLayer()
-        return alexnet
+        return alexnet, 9216
 
     def get_transform(self) -> transforms.Compose:
         """

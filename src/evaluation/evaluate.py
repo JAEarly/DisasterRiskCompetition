@@ -75,11 +75,11 @@ if __name__ == "__main__":
     # Basic NN AlexNet256 2019-11-01_17:05:33 - 0.739, 0.672
     # Basic NN AlexNet256 2019-11-01_17:12:59 - 0.764, 0.631
     # Basic NN AlexNet256 2019-11-05_12:45:34 - 0.635, 1.052
+    _feature_extractor = features.AlexNet256()
     _model = models.NNModel(
-        9216,
+        _feature_extractor.feature_size,
         state_dict_path="./models/basic_nn_2019-11-05_12:45:34.pth",
         eval_mode=True,
     )
-    _feature_extractor = features.AlexNet256()
     _features_datasets = FeatureDatasets(_feature_extractor)
     evaluate(_model, _features_datasets.get_loader(DatasetType.Test))

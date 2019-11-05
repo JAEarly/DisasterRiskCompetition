@@ -24,12 +24,12 @@ class FeatureExtractor(ABC):
 
     def __init__(self, name):
         self.name = name
-        self.extractor_model = self.setup_model()
+        self.extractor_model, self.feature_size = self.setup_model()
         self.image_datasets = ImageDatasets(self.get_transform())
         self.competition_dataset = CompetitionImageDataset(self.get_transform())
 
     @abstractmethod
-    def setup_model(self) -> nn.Module:
+    def setup_model(self) -> (nn.Module, int):
         """
         Create the extraction model.
         :return: The pre-trained model with the correct output size.
@@ -49,9 +49,14 @@ class FeatureExtractor(ABC):
         :return: None.
         """
         features_dir = self.get_features_dir(dataset_type)
-        # Only extract if missing featres
+        image_dataset = (
+            self.competition_dataset
+            if dataset_type == DatasetType.Competition
+            else self.image_datasets.get_dataset(dataset_type)
+        )
+        # Only extract if missing features
         if not os.path.exists(features_dir) or len(os.listdir(features_dir)) != len(
-            self.image_datasets.get_dataset(dataset_type)
+            image_dataset
         ):
             create_dirs_if_not_found(features_dir)
             if dataset_type is DatasetType.Competition:

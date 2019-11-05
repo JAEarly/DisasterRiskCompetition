@@ -54,9 +54,10 @@ class NNTrainer(FeatureTrainer):
 
 
 if __name__ == "__main__":
-    trainer = NNTrainer(AlexNet256())
-    model = NNModel(trainer.feature_dataset.feature_size)
-    class_distribution = class_distribution("data/processed/train")
-    _class_weights = [1 - x/sum(class_distribution) for x in class_distribution]
+    _feature_extractor = AlexNet256()
+    _trainer = NNTrainer(_feature_extractor)
+    _model = NNModel(_feature_extractor.feature_size)
+    _class_distribution = class_distribution("data/processed/train")
+    _class_weights = [1 - x/sum(_class_distribution) for x in _class_distribution]
     _class_weights = torch.from_numpy(np.array(_class_weights)).float()
-    trainer.train(model, class_weights=_class_weights)
+    _trainer.train(_model, class_weights=_class_weights)

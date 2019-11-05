@@ -138,7 +138,6 @@ class FeatureDatasets(Datasets):
     def __init__(self, feature_extractor):
         # Ensure features are extracted
         self.feature_extractor = feature_extractor
-        self.feature_size = -1
         self.feature_extractor.extract(DatasetType.Train)
         self.feature_extractor.extract(DatasetType.Validation)
         self.feature_extractor.extract(DatasetType.Test)
@@ -158,7 +157,4 @@ class FeatureDatasets(Datasets):
             self.feature_extractor.get_features_dir(DatasetType.Test),
             self.feature_extractor.get_labels_filepath(DatasetType.Test),
         )
-
-        self.feature_size = train_dataset[0][0].shape[0]
-
         return train_dataset, validation_dataset, test_dataset
