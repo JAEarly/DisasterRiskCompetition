@@ -13,8 +13,6 @@ from torch.utils import data
 from torchvision import datasets as torch_datasets
 from torchvision.transforms import transforms
 
-from features import FeatureExtractor
-
 
 class DatasetType(Enum):
     """Enum for dataset types."""
@@ -114,7 +112,7 @@ class ImageDatasets(Datasets):
 class FeatureDatasets(Datasets):
     """Implementation of Datasets back with a feature extractor."""
 
-    def __init__(self, feature_extractor: FeatureExtractor):
+    def __init__(self, feature_extractor):
         self.feature_extractor = feature_extractor
         self.feature_size = -1
         super().__init__()
