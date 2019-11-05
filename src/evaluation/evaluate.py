@@ -50,21 +50,22 @@ if __name__ == "__main__":
     #     apply_softmax=False
     # )
 
+    _feature_extractor = features.AlexNet256()
+    _features_datasets = FeatureDatasets(_feature_extractor)
+
     # LDA AlexNet256 - 0.448, 1.457
-    _model = models.LDAModel(
-        "lda_alexnet256", model_path="./models/lda_alexnet256_2019-11-05_14:30:22.pkl"
-    )
-    _features_datasets = FeatureDatasets(features.AlexNet256())
-    evaluate(
-        _model, _features_datasets.get_loader(DatasetType.Test), apply_softmax=True
-    )
+    # _model = models.LDAModel(
+    #     "lda_alexnet256", model_path="./models/lda_alexnet256_2019-11-05_14:30:22.pkl"
+    # )
+    # evaluate(
+    #     _model, _features_datasets.get_loader(DatasetType.Test), apply_softmax=True
+    # )
 
     # Basic NN AlexNet256 10 epochs 2019-11-05_13:54:05 - 0.517, 1.113
-    # _feature_extractor = features.AlexNet256()
-    # _model = models.NNModel(
-    #     _feature_extractor.feature_size,
-    #     state_dict_path="./models/basic_nn_2019-11-05_13:54:05.pth",
-    #     eval_mode=True,
-    # )
-    # _features_datasets = FeatureDatasets(_feature_extractor)
-    # evaluate(_model, _features_datasets.get_loader(DatasetType.Test))
+    _model = models.NNModel(
+        models.BasicNN,
+        _feature_extractor.feature_size,
+        state_dict_path="./models/basic_nn_2019-11-05_13:54:05.pth",
+        eval_mode=True,
+    )
+    evaluate(_model, _features_datasets.get_loader(DatasetType.Test))

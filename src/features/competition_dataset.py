@@ -61,5 +61,5 @@ class CompetitionFeatureDataset(CompetitionDataset):
     def __getitem__(self, index):
         filepath = os.path.join(self.data_dir, self.filenames[index])
         with open(filepath, "rb") as file:
-            feature = pickle.load(file)
+            feature = pickle.load(file)[0]
         return feature

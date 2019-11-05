@@ -47,9 +47,5 @@ def create_submission(
 
 if __name__ == "__main__":
     _feature_extractor = AlexNet256()
-    _model = models.NNModel(
-        _feature_extractor.feature_size,
-        state_dict_path="./models/basic_nn_2019-11-01_17:12:59.pth",
-        eval_mode=True,
-    )
+    _model = models.BaselineModel()
     create_submission(_model, CompetitionFeatureDataset(_feature_extractor))
