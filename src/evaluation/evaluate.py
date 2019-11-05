@@ -10,7 +10,7 @@ import models
 from features import DatasetType, FeatureDatasets
 
 
-def evaluate(model: models.Model, data_loader: DataLoader) -> None:
+def evaluate(model: models.Model, data_loader: DataLoader, apply_softmax=True) -> None:
     """
     Evaluate a model on a given dataset.
     :param model: Model to evaluate.
@@ -21,7 +21,7 @@ def evaluate(model: models.Model, data_loader: DataLoader) -> None:
     y_true = []
     y_pred = []
     for batch, labels in tqdm(data_loader):
-        y_pred.extend(model.predict(batch))
+        y_pred.extend(model.predict_batch(batch))
         y_true.extend(labels)
 
     # Format as tensors
@@ -31,8 +31,11 @@ def evaluate(model: models.Model, data_loader: DataLoader) -> None:
     # Convert from one hot to class ids
     _, y_pred_classes = y_pred.max(1)
 
-    # Calculate prediction probabilities (rather than raw network output
-    y_probabilities = torch.softmax(y_pred, 1)
+    # Calculate prediction probabilities if required
+    if apply_softmax:
+        y_probabilities = torch.softmax(y_pred, 1)
+    else:
+        y_probabilities = y_pred
 
     # Print accuracy and log loss
     print("Accuracy:", accuracy_score(y_true, y_pred_classes))
@@ -40,46 +43,28 @@ def evaluate(model: models.Model, data_loader: DataLoader) -> None:
 
 
 if __name__ == "__main__":
-    # Baseline - 1.004
-    # evaluate_model(models.BaselineModel())
-
-    # AlexNet Linear - 4.414
-    # evaluate_model(
-    #     models.AlexNetModel(
-    #         state_dict_path="./models/alexnet_2019-10-29_13:35:51.pth", eval_mode=True
-    #     )
+    # Baseline - 0.660, 1.000
+    # evaluate(
+    #     models.BaselineModel(),
+    #     FeatureDatasets(features.AlexNet256()).get_loader(DatasetType.Test),
+    #     apply_softmax=False
     # )
 
-    # AlexNet Softmax - 1.338
-    # evaluate_model(
-    #     models.AlexNetSoftmaxModel(
-    #         state_dict_path="./models/alexnet_softmax_2019-10-29_13:51:45.pth",
-    #         eval_mode=True,
-    #     )
-    # )
-
-    # KMeans AlexNet - 25.484
-    # _model = models.KMeansModel(
-    #     "kmeans_alexnet", model_path="./models/kmeans_alexnet_2019-10-31_13:05:46.pkl"
-    # )
-    # _feature_extractor = feature_extraction.AlexNet256()
-    # evaluate_from_features(_model, _feature_extractor)
-
-    # LDA AlexNet256 - 8.53
-    # _model = models.LDAModel(
-    #     "lda_alexnet256", model_path="./models/lda_alexnet256_2019-10-31_17:25:25.pkl"
-    # )
-    # _feature_extractor = features.AlexNet256()
-    # evaluate_from_features(_model, _feature_extractor)
-
-    # Basic NN AlexNet256 2019-11-01_17:05:33 - 0.739, 0.672
-    # Basic NN AlexNet256 2019-11-01_17:12:59 - 0.764, 0.631
-    # Basic NN AlexNet256 2019-11-05_12:45:34 - 0.635, 1.052
-    _feature_extractor = features.AlexNet256()
-    _model = models.NNModel(
-        _feature_extractor.feature_size,
-        state_dict_path="./models/basic_nn_2019-11-05_12:45:34.pth",
-        eval_mode=True,
+    # LDA AlexNet256 - 0.448, 1.457
+    _model = models.LDAModel(
+        "lda_alexnet256", model_path="./models/lda_alexnet256_2019-11-05_14:30:22.pkl"
     )
-    _features_datasets = FeatureDatasets(_feature_extractor)
-    evaluate(_model, _features_datasets.get_loader(DatasetType.Test))
+    _features_datasets = FeatureDatasets(features.AlexNet256())
+    evaluate(
+        _model, _features_datasets.get_loader(DatasetType.Test), apply_softmax=True
+    )
+
+    # Basic NN AlexNet256 10 epochs 2019-11-05_13:54:05 - 0.517, 1.113
+    # _feature_extractor = features.AlexNet256()
+    # _model = models.NNModel(
+    #     _feature_extractor.feature_size,
+    #     state_dict_path="./models/basic_nn_2019-11-05_13:54:05.pth",
+    #     eval_mode=True,
+    # )
+    # _features_datasets = FeatureDatasets(_feature_extractor)
+    # evaluate(_model, _features_datasets.get_loader(DatasetType.Test))

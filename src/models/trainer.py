@@ -1,15 +1,28 @@
-from abc import ABC, abstractmethod
+"""Trainer base classes."""
+
+from abc import ABC
+from abc import abstractmethod
+
+from features import FeatureDatasets, FeatureExtractor
 
 
 class Trainer(ABC):
+    """Base implementation for trainer classes."""
 
     save_dir = "./models"
-    num_classes = 5
-
-    #def __init__(self):
-        # TODO extract into image trainer
-        #self.image_datasets = ImageDatasets(model.get_transform())
 
     @abstractmethod
-    def train(self, model, class_weight=None):
-        pass
+    def train(self, model, class_weight=None) -> None:
+        """
+        Train a model.
+        :param model: Model to train.
+        :param class_weight: Weight each class during training.
+        :return: None.
+        """
+
+
+class FeatureTrainer(Trainer, ABC):
+    """Base implementation for feature based trainers."""
+
+    def __init__(self, feature_extractor: FeatureExtractor):
+        self.feature_dataset = FeatureDatasets(feature_extractor)
