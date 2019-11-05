@@ -5,6 +5,7 @@ Different to Datasets as it works with unlabelled data (i.e. class labels not gi
 """
 
 import os
+import pickle
 
 from PIL import Image
 from torch.utils import data
@@ -45,15 +46,20 @@ class CompetitionImageDataset(CompetitionDataset):
 
 
 class CompetitionFeatureDataset(CompetitionDataset):
-    """Competition dataset backed with a feature extractor."""
+    """Competition dataset backed with extracted features."""
 
     def __init__(self, feature_extractor):
         super().__init__()
-        # Extract features (no labels as competition dataset).
-        self.features, _ = feature_extractor.extract(DatasetType.Competition)
+        self.feature_extractor = feature_extractor
+        self.feature_extractor.extract(DatasetType.Competition)
+        self.data_dir = self.feature_extractor.get_features_dir(DatasetType.Competition)
+        self.filenames = os.listdir(self.data_dir)
 
     def __len__(self):
-        return len(self.features)
+        return len(self.filenames)
 
     def __getitem__(self, index):
-        return self.features[index]
+        filepath = os.path.join(self.data_dir, self.filenames[index])
+        with open(filepath, "rb") as file:
+            feature = pickle.load(file)
+        return feature

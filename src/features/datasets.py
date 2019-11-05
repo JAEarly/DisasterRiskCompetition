@@ -5,11 +5,14 @@ A datasets class contains train, validation and test datasets (all labelled data
 These datasets are either backed by images (raw data) or features (extracted from images).
 """
 
+import os
+import pickle
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Tuple
 
 from torch.utils import data
+from torch.utils.data import Dataset
 from torchvision import datasets as torch_datasets
 from torchvision.transforms import transforms
 
@@ -109,27 +112,53 @@ class ImageDatasets(Datasets):
         return train_dataset, validation_dataset, test_dataset
 
 
+class FeatureDataset(Dataset):
+    """Feature dataset implementation. Uses pickled tensors for each feature vector."""
+
+    def __init__(self, features_dir, labels_path):
+        super().__init__()
+        self.data_dir = features_dir
+        self.filenames = os.listdir(self.data_dir)
+        with open(labels_path, "rb") as file:
+            self.labels = pickle.load(file)
+
+    def __len__(self):
+        return len(self.filenames)
+
+    def __getitem__(self, index):
+        filepath = os.path.join(self.data_dir, self.filenames[index])
+        with open(filepath, "rb") as file:
+            feature = pickle.load(file)[0]
+        return feature, self.labels[index]
+
+
 class FeatureDatasets(Datasets):
     """Implementation of Datasets back with a feature extractor."""
 
     def __init__(self, feature_extractor):
+        # Ensure features are extracted
         self.feature_extractor = feature_extractor
         self.feature_size = -1
+        self.feature_extractor.extract(DatasetType.Train)
+        self.feature_extractor.extract(DatasetType.Validation)
+        self.feature_extractor.extract(DatasetType.Test)
         super().__init__()
 
     def create_datasets(self):
-        # Extract the features and labels using the feature extractor.
-        train_features, train_labels = self.feature_extractor.extract(DatasetType.Train)
-        validation_features, validation_labels = self.feature_extractor.extract(
-            DatasetType.Validation
+        # Create feature datasets
+        train_dataset = FeatureDataset(
+            self.feature_extractor.get_features_dir(DatasetType.Train),
+            self.feature_extractor.get_labels_filepath(DatasetType.Train),
         )
-        test_features, test_labels = self.feature_extractor.extract(DatasetType.Test)
+        validation_dataset = FeatureDataset(
+            self.feature_extractor.get_features_dir(DatasetType.Validation),
+            self.feature_extractor.get_labels_filepath(DatasetType.Validation),
+        )
+        test_dataset = FeatureDataset(
+            self.feature_extractor.get_features_dir(DatasetType.Test),
+            self.feature_extractor.get_labels_filepath(DatasetType.Test),
+        )
 
-        self.feature_size = train_features.shape[1]
-
-        # Create datasets.
-        train_dataset = data.TensorDataset(train_features, train_labels)
-        validation_dataset = data.TensorDataset(validation_features, validation_labels)
-        test_dataset = data.TensorDataset(test_features, test_labels)
+        self.feature_size = train_dataset[0][0].shape[0]
 
         return train_dataset, validation_dataset, test_dataset

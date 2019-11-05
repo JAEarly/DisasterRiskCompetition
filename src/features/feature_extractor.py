@@ -7,7 +7,6 @@ Using pre-trained models to take feature vectors from images.
 import os
 import pickle
 from abc import ABC, abstractmethod
-from typing import Optional
 
 import torch
 from torch import nn
@@ -43,123 +42,87 @@ class FeatureExtractor(ABC):
         :return: The torchvision image transform.
         """
 
-    def extract(self, dataset_type: DatasetType) -> (torch.Tensor, torch.Tensor):
+    def extract(self, dataset_type: DatasetType) -> None:
         """
-        Extract a dataset into features and labels.
-
-        Will attempt to find existing extracted information, if not will run extraction.
-        :param dataset_type: Which dataset to extract (training, validation or test)
-        :return: The extracted features and their labels.
-        """
-        # Attempt to load existing dataset
-        features, labels = self.load(dataset_type)
-        # If missing information, run extraction
-        if features is None or (
-            labels is None and dataset_type is not DatasetType.Competition
-        ):
-            if dataset_type is DatasetType.Competition:
-                features = self._run_unlabelled_extraction()
-            else:
-                features, labels = self._run_labelled_extraction(dataset_type)
-            self.save(features, labels, dataset_type)
-        return features, labels
-
-    def _run_labelled_extraction(
-        self, dataset_type: DatasetType
-    ) -> (torch.Tensor, torch.Tensor):
-        """
-        Run a labelled extraction from a dataset.
-        :param dataset_type: Which dataset to extract (training, validation or test)
-        :return: A
-        """
-        features = []
-        labels = []
-        dataset_loader = self.image_datasets.get_loader(dataset_type)
-        for batch, batch_labels in tqdm(
-            dataset_loader, desc="Extracting features  - " + dataset_type.name
-        ):
-            features.extend(self.extractor_model(batch))
-            labels.extend(batch_labels.cpu().detach().numpy())
-        features = torch.stack(features).cpu().detach()
-        labels = torch.tensor(labels)
-        return features, labels
-
-    def _run_unlabelled_extraction(self) -> torch.Tensor:
-        """
-        Run an unlabelled extraction over the competition dataset (i.e. no class labels).
-        :return: The tensor of extracted features.
-        """
-        features = []
-        for batch in tqdm(
-            self.competition_dataset.data_loader,
-            desc="Extracting features  - competition",
-        ):
-            features.extend(self.extractor_model(batch))
-        features = torch.stack(features)
-        features = features.cpu().detach()
-        return features
-
-    def save(
-        self,
-        features: torch.Tensor,
-        labels: Optional[torch.Tensor],
-        dataset_type: DatasetType,
-    ) -> None:
-        """
-        Save a set of features and labels.
-        :param features: Features to save.
-        :param labels: Labels to save (can be None if saving an unlabelled dataset).
-        :param dataset_type: Dataset type being saved (determines save path).
+        Extract the features from an image dataset if not found.
+        :param dataset_type: Dataset to use (training, test etc.)
         :return: None.
         """
-        create_dirs_if_not_found(self.save_dir)
-        features_filepath = self._get_features_filepath(dataset_type)
-        labels_filepath = self._get_labels_filepath(dataset_type)
-        with open(features_filepath, "wb") as file:
-            pickle.dump(features, file)
-        if labels is not None:
-            with open(labels_filepath, "wb") as file:
-                pickle.dump(labels, file)
+        features_dir = self.get_features_dir(dataset_type)
+        # Only extract if missing featres
+        if not os.path.exists(features_dir) or len(os.listdir(features_dir)) != len(
+            self.image_datasets.get_dataset(dataset_type)
+        ):
+            create_dirs_if_not_found(features_dir)
+            if dataset_type is DatasetType.Competition:
+                self._run_unlabelled_extraction()
+            else:
+                self._run_labelled_extraction(dataset_type)
 
-    def load(
-        self, dataset_type: DatasetType
-    ) -> (Optional[torch.Tensor], Optional[torch.Tensor]):
+    def _run_labelled_extraction(self, dataset_type: DatasetType) -> None:
         """
-        Attempt to load features and labels for a dataset.
-        :param dataset_type: Dataset to load for (determines file paths).
-        :return: Features and labels if found.
+        Run the extraction for labelled data.
+        :param dataset_type: Dataset to use (training, test etc.)
+        :return: None.
         """
-        features_filepath = self._get_features_filepath(dataset_type)
-        labels_filepath = self._get_labels_filepath(dataset_type)
-        features = None
-        labels = None
-        if os.path.exists(features_filepath):
-            with open(features_filepath, "rb") as file:
-                features = pickle.load(file)
-        if os.path.exists(labels_filepath):
-            with open(labels_filepath, "rb") as file:
-                labels = pickle.load(file)
-        return features, labels
+        i = 0
+        labels = []
+        dataset = self.image_datasets.get_dataset(dataset_type)
+        for image, image_label in tqdm(
+            dataset, desc="Extracting features  - " + dataset_type.name
+        ):
+            # Extract tensor and save
+            feature_tensor = self.extractor_model(image.unsqueeze(0))
+            self._save_tensor(dataset_type, feature_tensor, i)
+            labels.append(image_label)
+            i += 1
+        # Save labels file
+        labels = torch.tensor(labels)
+        labels_filepath = self.get_labels_filepath(dataset_type)
+        with open(labels_filepath, "wb") as file:
+            pickle.dump(labels, file)
 
-    def _get_features_filepath(self, dataset_type: DatasetType) -> str:
+    def _run_unlabelled_extraction(self) -> None:
         """
-        Get the features filepath based on the dataset type.
-        :param dataset_type: Which dataset to generate the path for.
-        :return: Filepath as string.
+        Run the extraction for unlabelled data (i.e. competition dataset).
+        :return: None.
         """
-        return os.path.join(
-            self.save_dir, self.name + "_" + dataset_type.name.lower() + "_features.pkl"
-        )
+        i = 0
+        for image in tqdm(
+            self.competition_dataset, desc="Extracting features  - competition",
+        ):
+            feature_tensor = self.extractor_model(image.unsqueeze(0))
+            self._save_tensor(DatasetType.Competition, feature_tensor, i)
+            i += 1
 
-    def _get_labels_filepath(self, dataset_type: DatasetType) -> str:
+    def _save_tensor(self, dataset_type, tensor, idx) -> None:
         """
-        Get the labels filepath based on the dataset type.
-        :param dataset_type: Which dataset to generate the path for.
-        :return: Filepath as string.
+        Save a tensor to a file.
+        :param dataset_type: Dataset in use (train, test etc.). Determines filepath.
+        :param tensor: The tensor to save.
+        :param idx: The index of the tensor in the dataset. Determines filename.
+        :return: None.
         """
-        return os.path.join(
-            self.save_dir, self.name + "_" + dataset_type.name.lower() + "_labels.pkl"
-        )
+        feature_dir = self.get_features_dir(dataset_type)
+        path = os.path.join(feature_dir, str(idx) + ".pkl")
+        with open(path, "wb") as file:
+            pickle.dump(tensor, file)
+
+    def get_features_dir(self, dataset_type: DatasetType) -> str:
+        """
+        Get the directory for a set of features.
+        :param dataset_type: Dataset in use (train, test etc.).
+        :return: None.
+        """
+        return os.path.join(self.save_dir, dataset_type.name.lower(), self.name)
+
+    def get_labels_filepath(self, dataset_type: DatasetType) -> str:
+        """
+        Get the filepath for the labels file.
+        :param dataset_type: Dataset in use (train, test etc.).
+        :return: None.
+        """
+        return os.path.join(self.save_dir, dataset_type.name.lower() + "_labels.pkl")
 
 
 class IdentityLayer(nn.Module):
