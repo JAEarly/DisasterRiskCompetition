@@ -1,19 +1,31 @@
+"""Baseline model that predicts based on training class distribution."""
+
 import pandas as pd
+import torch
 
 from .model import Model
 
 
 class BaselineModel(Model):
+    """Baseline model implementation."""
 
     def __init__(self):
         super().__init__("baseline")
-        self.class_dist = pd.read_csv('./data/raw/train_labels.csv').groupby(['verified']).mean()[-1:].values[0]
+        self.class_dist = (
+            pd.read_csv("./data/raw/train_labels.csv")
+            .groupby(["verified"])
+            .mean()[-1:]
+            .values[0]
+        )
 
-    def predict(self, image_tensor):
-        return self.class_dist
+    def predict(self, tensor: torch.Tensor) -> torch.Tensor:
+        return torch.tensor(self.class_dist)
 
-    def predict_batch(self, dataset_tensor):
-        return [self.class_dist] * len(dataset_tensor)
+    def predict_batch(self, batch: torch.Tensor) -> torch.Tensor:
+        return torch.tensor([self.class_dist] * len(batch))
 
-    def save(self, save_path):
+    def load(self, path: str) -> None:
+        pass
+
+    def save(self, path: str) -> None:
         pass
