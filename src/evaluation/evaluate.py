@@ -75,8 +75,17 @@ if __name__ == "__main__":
     # SVM Alexnet256 RBF Equal classes 2019-11-05_16:25:17    - 0.234, 1.671
     # SVM Alexnet256 Poly3 10% of dataset 2019-11-05_16:35:34 - 0.660, 1.245
     # SVM Alexnet256 Poly8 20% of dataset 2019-11-05_16:48:33 - 0.660, 1.245
-    _model = models.SVMModel(
-        "svm_alexnet256",
-        model_path="./models/svm_alexnet256_poly8_2019-11-05_16:48:33.pkl"
+    # _model = models.SVMModel(
+    #     "svm_alexnet256",
+    #     model_path="./models/svm_alexnet256_poly8_2019-11-05_16:48:33.pkl"
+    # )
+    # evaluate(_model, _features_datasets.get_loader(DatasetType.Test))
+
+    # Bigger NN AlexNet256 5 epochs 2019-11-05_17:53:16 - 0.660, 1.051
+    _model = models.NNModel(
+        models.BiggerNN,
+        _feature_extractor.feature_size,
+        state_dict_path="./models/bigger_nn_2019-11-05_17:53:16.pth",
+        eval_mode=True,
     )
     evaluate(_model, _features_datasets.get_loader(DatasetType.Test))

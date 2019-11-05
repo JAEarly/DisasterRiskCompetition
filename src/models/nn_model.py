@@ -31,13 +31,30 @@ class BasicNN(nn.Module):
         return x
 
 
+class BiggerNN(nn.Module):
+    """Bigger NN implementation."""
+
+    def __init__(self, input_size, output_size):
+        super().__init__()
+        self.fc1 = nn.Linear(input_size, 256)
+        self.fc2 = nn.Linear(256, 64)
+        self.fc3 = nn.Linear(64, output_size)
+        self.dropout = nn.Dropout(0.5)
+
+    def forward(self, x):
+        x = self.dropout(F.relu(self.fc1(x)))
+        x = self.dropout(F.relu(self.fc2(x)))
+        x = self.fc3(x)
+        return x
+
+
 class NNModel(Model):
     """Base model that uses a neural network."""
 
     def __init__(
         self, net_class, input_size: int, state_dict_path=None, eval_mode=False
     ):
-        super().__init__("basic_nn")
+        super().__init__(str(net_class.__name__).lower())
         # Create network
         self.net = net_class(input_size, self.num_classes)
         # Load network state if provided
@@ -62,7 +79,7 @@ class NNModel(Model):
 class NNTrainer(FeatureTrainer):
     """Neural network trainer."""
 
-    num_epochs = 10
+    num_epochs = 5
     loss = nn.CrossEntropyLoss
 
     def train(self, model: NNModel, class_weights=None):
@@ -105,7 +122,7 @@ class NNTrainer(FeatureTrainer):
 
 
 if __name__ == "__main__":
-    _network_class = BasicNN
+    _network_class = BiggerNN
     _feature_extractor = AlexNet256()
     _trainer = NNTrainer(_feature_extractor)
     _model = NNModel(_network_class, _feature_extractor.feature_size)
