@@ -6,8 +6,8 @@ import torch
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.preprocessing import StandardScaler
 
+import features
 import models
-from features import AlexNet256
 from models import FeatureTrainer
 from models import Model
 
@@ -58,8 +58,9 @@ class LDAModel(Model):
 
 
 if __name__ == "__main__":
-    print("Creating LDA model")
-    lda_model = models.LDAModel("lda_alexnet256")
     print("Creating feature extractor")
-    trainer = FeatureTrainer(AlexNet256())
+    feature_extractor = features.ResNet18t256()
+    print("Creating LDA model")
+    lda_model = models.LDAModel(feature_extractor.name + "_lda")
+    trainer = FeatureTrainer(feature_extractor)
     trainer.train(lda_model)

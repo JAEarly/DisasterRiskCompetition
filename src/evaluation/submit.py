@@ -6,8 +6,9 @@ import pandas as pd
 import torch
 from tqdm import tqdm
 
+import features
 import models
-from features import CompetitionFeatureDataset, AlexNet256, CompetitionDataset
+from features import CompetitionFeatureDataset, CompetitionDataset
 from utils import create_timestamp_str
 
 SUBMISSION_FOLDER = "./submissions"
@@ -46,11 +47,11 @@ def create_submission(
 
 
 if __name__ == "__main__":
-    _feature_extractor = AlexNet256()
+    _feature_extractor = features.ResNet18t256()
     _model = models.NNModel(
-        models.BiggerNN,
+        models.BasicNN,
         _feature_extractor.feature_size,
-        state_dict_path="./models/bigger_nn_2019-11-05_17:53:16.pth",
+        state_dict_path="./models/resnet18t256_basicnn_2019-11-06_16:03:00.pth",
         eval_mode=True,
     )
     create_submission(_model, CompetitionFeatureDataset(_feature_extractor))

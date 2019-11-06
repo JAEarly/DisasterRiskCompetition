@@ -11,7 +11,7 @@ from torch import nn
 from torch import optim
 from torchbearer import Trial
 
-from features import AlexNet256
+from features import ResNet18t256
 from models import FeatureTrainer
 from models import Model
 from utils import create_timestamp_str, class_distribution
@@ -79,7 +79,7 @@ class NNModel(Model):
 class NNTrainer(FeatureTrainer):
     """Neural network trainer."""
 
-    num_epochs = 5
+    num_epochs = 10
     loss = nn.CrossEntropyLoss
 
     def train(self, model: NNModel, class_weights=None):
@@ -116,14 +116,20 @@ class NNTrainer(FeatureTrainer):
 
         # Save model weights
         save_path = os.path.join(
-            self.save_dir, model.name + "_" + create_timestamp_str() + ".pth"
+            self.save_dir,
+            self.feature_dataset.feature_extractor.name
+            + "_"
+            + model.name
+            + "_"
+            + create_timestamp_str()
+            + ".pth",
         )
         model.save(save_path)
 
 
 if __name__ == "__main__":
     _network_class = BiggerNN
-    _feature_extractor = AlexNet256()
+    _feature_extractor = ResNet18t256()
     _trainer = NNTrainer(_feature_extractor)
     _model = NNModel(_network_class, _feature_extractor.feature_size)
     _class_distribution = class_distribution("data/processed/train")
