@@ -16,6 +16,7 @@ from torch.utils import data
 from torch.utils.data import Dataset
 from torchvision import datasets as torch_datasets
 from torchvision.transforms import transforms
+import numpy as np
 
 
 class DatasetType(Enum):
@@ -116,21 +117,80 @@ class ImageDatasets(Datasets):
 class FeatureDataset(Dataset):
     """Feature dataset implementation. Uses pickled tensors for each feature vector."""
 
-    def __init__(self, features_dir, labels_path):
+    def __init__(self, features_dir, labels_path, balance=True):
         super().__init__()
         self.data_dir = features_dir
         self.filenames = os.listdir(self.data_dir)
         with open(labels_path, "rb") as file:
             self.labels = pickle.load(file)
+        if balance:
+            self._augment_by_distribution()
+
+    def _balance_max(self):
+        data_dist = [0] * 5
+        for label in self.labels:
+            data_dist[label] += 1
+        max_class_size = max(data_dist)
+
+        data_dist = [0] * 5
+        reduced_filenames = []
+        reduced_labels = []
+        while len(reduced_filenames) < max_class_size * 5:
+            for filename, label in zip(self.filenames, self.labels):
+                if data_dist[label] < max_class_size:
+                    reduced_filenames.append(filename)
+                    reduced_labels.append(label)
+                    data_dist[label] += 1
+        self.filenames = reduced_filenames
+        self.labels = reduced_labels
+
+    def _balance_avg(self):
+        data_dist = [0] * 5
+        for label in self.labels:
+            data_dist[label] += 1
+        avg_class_size = int(sum(data_dist)/5)
+
+        data_dist = [0] * 5
+        reduced_filenames = []
+        reduced_labels = []
+        while len(reduced_filenames) < avg_class_size * 5:
+            for filename, label in zip(self.filenames, self.labels):
+                if data_dist[label] < avg_class_size:
+                    reduced_filenames.append(filename)
+                    reduced_labels.append(label)
+                    data_dist[label] += 1
+        self.filenames = reduced_filenames
+        self.labels = reduced_labels
+
+    def _balance_min(self):
+        data_dist = [0] * 5
+        for label in self.labels:
+            data_dist[label] += 1
+        min_class_size = min(data_dist)
+
+        data_dist = [0] * 5
+        reduced_filenames = []
+        reduced_labels = []
+        for filename, label in zip(self.filenames, self.labels):
+            if data_dist[label] < min_class_size:
+                reduced_filenames.append(filename)
+                reduced_labels.append(label)
+                data_dist[label] += 1
+        self.filenames = reduced_filenames
+        self.labels = reduced_labels
+
+
+    def _load_vector(self, filename):
+        filepath = os.path.join(self.data_dir, filename)
+        with open(filepath, "rb") as file:
+            feature = pickle.load(file)[0]
+        return feature
 
     def __len__(self):
         return len(self.filenames)
 
     def __getitem__(self, index):
-        filepath = os.path.join(self.data_dir, self.filenames[index])
-        with open(filepath, "rb") as file:
-            feature = pickle.load(file)[0]
-        return feature, self.labels[index]
+        return self._load_vector(self.filenames[index]), self.labels[index]
 
 
 class FeatureDatasets(Datasets):
@@ -153,10 +213,12 @@ class FeatureDatasets(Datasets):
         validation_dataset = FeatureDataset(
             self.feature_extractor.get_features_dir(DatasetType.Validation),
             self.feature_extractor.get_labels_filepath(DatasetType.Validation),
+            balance=False
         )
         test_dataset = FeatureDataset(
             self.feature_extractor.get_features_dir(DatasetType.Test),
             self.feature_extractor.get_labels_filepath(DatasetType.Test),
+            balance=False
         )
         return train_dataset, validation_dataset, test_dataset
 

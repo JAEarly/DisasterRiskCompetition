@@ -11,10 +11,22 @@ from torch import nn
 from torch import optim
 from torchbearer import Trial
 
-from features import ResNet18t256
+import features
 from models import FeatureTrainer
 from models import Model
 from utils import create_timestamp_str, class_distribution
+
+
+class LinearNN(nn.Module):
+    """Linear NN implementation."""
+
+    def __init__(self, input_size, output_size):
+        super().__init__()
+        self.fc1 = nn.Linear(input_size, output_size)
+
+    def forward(self, x):
+        x = self.fc1(x)
+        return x
 
 
 class BasicNN(nn.Module):
@@ -79,7 +91,7 @@ class NNModel(Model):
 class NNTrainer(FeatureTrainer):
     """Neural network trainer."""
 
-    num_epochs = 10
+    num_epochs = 5
     loss = nn.CrossEntropyLoss
 
     def train(self, model: NNModel, class_weights=None):
@@ -111,8 +123,7 @@ class NNTrainer(FeatureTrainer):
 
         # Evaluate and show results
         time.sleep(1)  # Ensure training has finished
-        results = trial.evaluate(data_key=torchbearer.TEST_DATA)
-        print(results)
+        trial.evaluate(data_key=torchbearer.TEST_DATA)
 
         # Save model weights
         save_path = os.path.join(
@@ -128,11 +139,11 @@ class NNTrainer(FeatureTrainer):
 
 
 if __name__ == "__main__":
-    _network_class = BiggerNN
-    _feature_extractor = ResNet18t256()
+    _network_class = LinearNN
+    _feature_extractor = features.AlexNet256()
     _trainer = NNTrainer(_feature_extractor)
     _model = NNModel(_network_class, _feature_extractor.feature_size)
-    _class_distribution = class_distribution("data/processed/train")
-    _class_weights = [1 - x / sum(_class_distribution) for x in _class_distribution]
-    _class_weights = torch.from_numpy(np.array(_class_weights)).float()
-    _trainer.train(_model, class_weights=_class_weights)
+    # _class_distribution = class_distribution("data/processed/train")
+    # _class_weights = [1 - x / sum(_class_distribution) for x in _class_distribution]
+    # _class_weights = torch.from_numpy(np.array(_class_weights)).float()
+    _trainer.train(_model)

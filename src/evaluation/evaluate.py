@@ -44,10 +44,12 @@ def evaluate(model: models.Model, data_loader: DataLoader, apply_softmax=True) -
 
 
 if __name__ == "__main__":
-    _feature_extractor = features.ResNet18t256()
+    _feature_extractor = features.AlexNet256()
     _features_datasets = FeatureDatasets(_feature_extractor)
-    _model = models.LDAModel(
-        "resnet18t256_lda",
-        model_path="./models/resnet18t256_lda_2019-11-06_16:09:08.pkl",
+    _model = models.NNModel(
+        models.BasicNN,
+        _feature_extractor.feature_size,
+        state_dict_path="./models/alexnet_basicnn_2019-11-06_17:27:12.pth",
+        eval_mode=True,
     )
     evaluate(_model, _features_datasets.get_loader(DatasetType.Test))
