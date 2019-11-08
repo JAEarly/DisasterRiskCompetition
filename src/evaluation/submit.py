@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 import features
 import models
-from features import CompetitionFeatureDataset, CompetitionDataset
+from features import CompetitionFeatureDataset
 from utils import create_timestamp_str
 
 SUBMISSION_FOLDER = "./submissions"
@@ -16,7 +16,7 @@ SUBMISSION_FORMAT_PATH = "./data/raw/submission_format.csv"
 
 
 def create_submission(
-    model: models.Model, competition_dataset: CompetitionDataset
+    model: models.Model, competition_dataset: CompetitionFeatureDataset
 ) -> None:
     """
     Create a submission.
@@ -42,16 +42,23 @@ def create_submission(
     # Actually write to csv file
     if not os.path.exists(SUBMISSION_FOLDER):
         os.makedirs(SUBMISSION_FOLDER)
-    filename = model.name + "_" + create_timestamp_str() + ".csv"
+    filename = (
+        competition_dataset.feature_extractor.name
+        + "_"
+        + model.name
+        + "_"
+        + create_timestamp_str()
+        + ".csv"
+    )
     submission.to_csv(os.path.join(SUBMISSION_FOLDER, filename))
 
 
 if __name__ == "__main__":
     _feature_extractor = features.ResNet18t256()
     _model = models.NNModel(
-        models.BasicNN,
+        models.LinearNN,
         _feature_extractor.feature_size,
-        state_dict_path="./models/resnet18t256_basicnn_2019-11-06_16:03:00.pth",
+        state_dict_path="./models/resnet18t256_linearnn_2019-11-08_13:33:38.pth",
         eval_mode=True,
     )
     create_submission(_model, CompetitionFeatureDataset(_feature_extractor))

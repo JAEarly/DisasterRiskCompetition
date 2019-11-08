@@ -8,6 +8,7 @@ from tqdm import tqdm
 import features
 import models
 from features import DatasetType, FeatureDatasets
+import time
 
 
 def evaluate(model: models.Model, data_loader: DataLoader, apply_softmax=True) -> None:
@@ -21,7 +22,7 @@ def evaluate(model: models.Model, data_loader: DataLoader, apply_softmax=True) -
     # Get truth and predictions
     y_true = []
     y_pred = []
-    for batch, labels in tqdm(data_loader):
+    for batch, labels in tqdm(data_loader, leave=False):
         y_pred.extend(model.predict_batch(batch))
         y_true.extend(labels)
 
@@ -44,12 +45,18 @@ def evaluate(model: models.Model, data_loader: DataLoader, apply_softmax=True) -
 
 
 if __name__ == "__main__":
-    _feature_extractor = features.AlexNet256()
+    _feature_extractor = features.ResNet18t256()
     _features_datasets = FeatureDatasets(_feature_extractor)
     _model = models.NNModel(
-        models.BasicNN,
+        models.LinearNN,
         _feature_extractor.feature_size,
-        state_dict_path="./models/alexnet_basicnn_2019-11-06_17:27:12.pth",
+        state_dict_path="./models/resnet18t256_linearnn_2019-11-08_13:33:38.pth",
         eval_mode=True,
     )
+    print("Training Set Results")
+    evaluate(_model, _features_datasets.get_loader(DatasetType.Train))
+
+    time.sleep(1)
+    print("")
+    print("Test Set Results")
     evaluate(_model, _features_datasets.get_loader(DatasetType.Test))

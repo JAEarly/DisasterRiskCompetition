@@ -14,6 +14,7 @@ from torchbearer import Trial
 import features
 from models import FeatureTrainer
 from models import Model
+from features import BalanceMethod
 from utils import create_timestamp_str, class_distribution
 
 
@@ -91,7 +92,7 @@ class NNModel(Model):
 class NNTrainer(FeatureTrainer):
     """Neural network trainer."""
 
-    num_epochs = 5
+    num_epochs = 15
     loss = nn.CrossEntropyLoss
 
     def train(self, model: NNModel, class_weights=None):
@@ -140,8 +141,8 @@ class NNTrainer(FeatureTrainer):
 
 if __name__ == "__main__":
     _network_class = LinearNN
-    _feature_extractor = features.AlexNet256()
-    _trainer = NNTrainer(_feature_extractor)
+    _feature_extractor = features.AlexNet()
+    _trainer = NNTrainer(_feature_extractor, balance_method=BalanceMethod.NoSample)
     _model = NNModel(_network_class, _feature_extractor.feature_size)
     # _class_distribution = class_distribution("data/processed/train")
     # _class_weights = [1 - x / sum(_class_distribution) for x in _class_distribution]
