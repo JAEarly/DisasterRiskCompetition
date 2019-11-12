@@ -152,6 +152,7 @@ class NNTrainer(FeatureTrainer):
 
         # Evaluate and show results
         time.sleep(0.1)  # Ensure training has finished
+        net.eval()
         results = trial.evaluate(data_key=torchbearer.TEST_DATA)
         acc = float(results["test_acc"])
         loss = float(results["test_loss"])
