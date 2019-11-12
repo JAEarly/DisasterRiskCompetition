@@ -32,12 +32,12 @@ class LinearNN(nn.Module):
 class BiggerNN(nn.Module):
     """Bigger NN implementation."""
 
-    def __init__(self, input_size, output_size):
+    def __init__(self, input_size, output_size, dropout=0):
         super().__init__()
         self.fc1 = nn.Linear(input_size, 256)
         self.fc2 = nn.Linear(256, 64)
         self.fc3 = nn.Linear(64, output_size)
-        self.dropout = nn.Dropout(0.5)
+        self.dropout = nn.Dropout(dropout)
 
     def forward(self, x):
         x = self.dropout(F.relu(self.fc1(x)))
@@ -49,7 +49,7 @@ class BiggerNN(nn.Module):
 class AlexNetClassifierNN(nn.Module):
     """AlexNet classifier layer NN implementation."""
 
-    def __init__(self, input_size, output_size):
+    def __init__(self, input_size, output_size, dropout=0):
         super().__init__()
         self.classifier = nn.Sequential(
             nn.Dropout(),
@@ -131,6 +131,8 @@ class NNTrainer(FeatureTrainer):
             elif self.class_weight_method == ClassWeightMethod.MaxBased:
                 inv_distribution = [np.max(distribution) / x for x in distribution]
                 inv_distribution = torch.from_numpy(np.array(inv_distribution)).float()
+            else:
+                raise IndexError('Unknown class weight method ' + str(self.class_weight_method))
             loss_function = self.loss(inv_distribution)
         else:
             loss_function = self.loss()
