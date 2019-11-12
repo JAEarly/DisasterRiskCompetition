@@ -2,6 +2,7 @@
 
 import datetime
 import os
+import sys
 from typing import List, Optional
 
 CLASSES = ["concrete_cement", "healthy_metal", "incomplete", "irregular_metal", "other"]
@@ -10,6 +11,29 @@ LOCATIONS = {
     "guatemala": ["mixco_1_and_ebenezer", "mixco_3"],
     "st_lucia": ["castries", "dennery", "gros_islet"],
 }
+
+
+class DualLogger:
+    """Logger to write to stdout as well as file."""
+
+    def __init__(self, log_filepath):
+        self.terminal = sys.stdout
+        self.log = open(log_filepath, "a")
+
+    def write(self, message):
+        """
+        Log a message to the terminal as well as the log file.
+        :param message: Message to write.
+        :return: None.
+        """
+        self.terminal.write(message)
+        self.log.write(message)
+
+    def flush(self):
+        """
+        Flush the logger.
+        :return: None.
+        """
 
 
 class UnknownClassException(Exception):

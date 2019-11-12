@@ -55,9 +55,9 @@ if __name__ == "__main__":
     _feature_extractor = features.AlexNet()
     _features_datasets = FeatureDatasets(_feature_extractor)
     _model = models.NNModel(
-        models.BiggerNN,
+        models.LinearNN,
         _feature_extractor.feature_size,
-        state_dict_path="./models/alexnet_biggernn_2019-11-11_20:32:35.pth",
+        state_dict_path="./models/grid_search_2019-11-12_09:56:37/alexnet_linearnn_best.pth",
         eval_mode=True,
     )
 
