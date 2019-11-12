@@ -55,7 +55,7 @@ if __name__ == "__main__":
     _feature_extractor = features.AlexNet()
     _features_datasets = FeatureDatasets(_feature_extractor)
     _model = models.NNModel(
-        models.LinearNNWithDropout,
+        models.LinearNN,
         _feature_extractor.feature_size,
         state_dict_path=(
             "./models/"

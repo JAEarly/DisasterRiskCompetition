@@ -22,18 +22,6 @@ class LinearNN(nn.Module):
     def __init__(self, input_size, output_size, dropout=0):
         super().__init__()
         self.fc1 = nn.Linear(input_size, output_size)
-
-    def forward(self, x):
-        x = self.fc1(x)
-        return x
-
-
-class LinearNNWithDropout(nn.Module):
-    """Linear NN implementation."""
-
-    def __init__(self, input_size, output_size, dropout=0):
-        super().__init__()
-        self.fc1 = nn.Linear(input_size, output_size)
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, x):
