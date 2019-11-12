@@ -1,0 +1,845 @@
+
+-- Configuration 1/60 --
+     Num Epochs - 1
+ Balance Method - BalanceMethod.NoSample
+  Class weights - None
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.0588897466659546
+ Best Acc: 0.6335265040397644
+ Avg Loss: 1.078148365020752
+  Avg Acc: 0.6263932188351949
+
+-- Configuration 2/60 --
+     Num Epochs - 1
+ Balance Method - BalanceMethod.NoSample
+  Class weights - tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.0720940828323364
+ Best Acc: 0.6531431078910828
+ Avg Loss: 1.148359219233195
+  Avg Acc: 0.5326200028260549
+
+-- Configuration 3/60 --
+     Num Epochs - 1
+ Balance Method - BalanceMethod.NoSample
+  Class weights - tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.1689585447311401
+ Best Acc: 0.5461435317993164
+ Avg Loss: 1.2707664966583252
+  Avg Acc: 0.4681230386098226
+
+-- Configuration 4/60 --
+     Num Epochs - 1
+ Balance Method - BalanceMethod.UnderSample
+  Class weights - None
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.5481516122817993
+ Best Acc: 0.3111903667449951
+ Avg Loss: 1.7677242755889893
+  Avg Acc: 0.2006241629521052
+
+-- Configuration 5/60 --
+     Num Epochs - 1
+ Balance Method - BalanceMethod.UnderSample
+  Class weights - tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.0660295486450195
+ Best Acc: 0.08158715814352036
+ Avg Loss: 2.1651057402292886
+  Avg Acc: 0.08530241996049881
+
+-- Configuration 6/60 --
+     Num Epochs - 1
+ Balance Method - BalanceMethod.UnderSample
+  Class weights - tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 3.5195417404174805
+ Best Acc: 0.015604102052748203
+ Avg Loss: 3.842281182607015
+  Avg Acc: 0.01887353230267763
+
+-- Configuration 7/60 --
+     Num Epochs - 1
+ Balance Method - BalanceMethod.AvgSample
+  Class weights - None
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.510386347770691
+ Best Acc: 0.2773071825504303
+ Avg Loss: 1.5629515647888184
+  Avg Acc: 0.2631891866525014
+
+-- Configuration 8/60 --
+     Num Epochs - 1
+ Balance Method - BalanceMethod.AvgSample
+  Class weights - tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.8358075618743896
+ Best Acc: 0.1426660716533661
+ Avg Loss: 2.1726532777150473
+  Avg Acc: 0.11086342732111613
+
+-- Configuration 9/60 --
+     Num Epochs - 1
+ Balance Method - BalanceMethod.AvgSample
+  Class weights - tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 3.1519248485565186
+ Best Acc: 0.049487292766571045
+ Avg Loss: 3.3308746019999185
+  Avg Acc: 0.04666369408369064
+
+-- Configuration 10/60 --
+     Num Epochs - 1
+ Balance Method - BalanceMethod.OverSample
+  Class weights - None
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.3226162195205688
+ Best Acc: 0.4351315200328827
+ Avg Loss: 1.3536688884099324
+  Avg Acc: 0.41804130872090656
+
+-- Configuration 11/60 --
+     Num Epochs - 1
+ Balance Method - BalanceMethod.OverSample
+  Class weights - tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.6857041120529175
+ Best Acc: 0.23227819800376892
+ Avg Loss: 1.779263973236084
+  Avg Acc: 0.2071630209684372
+
+-- Configuration 12/60 --
+     Num Epochs - 1
+ Balance Method - BalanceMethod.OverSample
+  Class weights - tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.2584946155548096
+ Best Acc: 0.11457868665456772
+ Avg Loss: 2.5174527963002524
+  Avg Acc: 0.1019467959801356
+
+-- Configuration 13/60 --
+     Num Epochs - 5
+ Balance Method - BalanceMethod.NoSample
+  Class weights - None
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.1433614492416382
+ Best Acc: 0.6259474158287048
+ Avg Loss: 1.158092737197876
+  Avg Acc: 0.5800267457962036
+
+-- Configuration 14/60 --
+     Num Epochs - 5
+ Balance Method - BalanceMethod.NoSample
+  Class weights - tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.1532313823699951
+ Best Acc: 0.5818100571632385
+ Avg Loss: 1.2122076352437336
+  Avg Acc: 0.5083964864412943
+
+-- Configuration 15/60 --
+     Num Epochs - 5
+ Balance Method - BalanceMethod.NoSample
+  Class weights - tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.4887803792953491
+ Best Acc: 0.3308069407939911
+ Avg Loss: 1.5344321727752686
+  Avg Acc: 0.2981126407782237
+
+-- Configuration 16/60 --
+     Num Epochs - 5
+ Balance Method - BalanceMethod.UnderSample
+  Class weights - None
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.7047474384307861
+ Best Acc: 0.2652697265148163
+ Avg Loss: 1.7600735823313396
+  Avg Acc: 0.24208648999532065
+
+-- Configuration 17/60 --
+     Num Epochs - 5
+ Balance Method - BalanceMethod.UnderSample
+  Class weights - tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.24147629737854
+ Best Acc: 0.09184128046035767
+ Avg Loss: 2.244971593221029
+  Avg Acc: 0.11205231149991353
+
+-- Configuration 18/60 --
+     Num Epochs - 5
+ Balance Method - BalanceMethod.UnderSample
+  Class weights - tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 3.2818005084991455
+ Best Acc: 0.035220686346292496
+ Avg Loss: 3.567061185836792
+  Avg Acc: 0.030762371917565662
+
+-- Configuration 19/60 --
+     Num Epochs - 5
+ Balance Method - BalanceMethod.AvgSample
+  Class weights - None
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.4703387022018433
+ Best Acc: 0.38074007630348206
+ Avg Loss: 1.5503380695978801
+  Avg Acc: 0.3346708317597707
+
+-- Configuration 20/60 --
+     Num Epochs - 5
+ Balance Method - BalanceMethod.AvgSample
+  Class weights - tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.7224100828170776
+ Best Acc: 0.26616138219833374
+ Avg Loss: 1.8387431701024373
+  Avg Acc: 0.2386684517065684
+
+-- Configuration 21/60 --
+     Num Epochs - 5
+ Balance Method - BalanceMethod.AvgSample
+  Class weights - tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.110964298248291
+ Best Acc: 0.17209094762802124
+ Avg Loss: 2.4704692363739014
+  Avg Acc: 0.13374944279591242
+
+-- Configuration 22/60 --
+     Num Epochs - 5
+ Balance Method - BalanceMethod.OverSample
+  Class weights - None
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.5556061267852783
+ Best Acc: 0.4859563112258911
+ Avg Loss: 1.5721309979756672
+  Avg Acc: 0.45861197511355084
+
+-- Configuration 23/60 --
+     Num Epochs - 5
+ Balance Method - BalanceMethod.OverSample
+  Class weights - tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.842214822769165
+ Best Acc: 0.3245653212070465
+ Avg Loss: 1.9341572125752766
+  Avg Acc: 0.3094070454438527
+
+-- Configuration 24/60 --
+     Num Epochs - 5
+ Balance Method - BalanceMethod.OverSample
+  Class weights - tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.135540246963501
+ Best Acc: 0.275523841381073
+ Avg Loss: 2.30647611618042
+  Avg Acc: 0.24446425338586172
+
+-- Configuration 25/60 --
+     Num Epochs - 10
+ Balance Method - BalanceMethod.NoSample
+  Class weights - None
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.2408382892608643
+ Best Acc: 0.5706642866134644
+ Avg Loss: 1.2579498688379924
+  Avg Acc: 0.5522365768750509
+
+-- Configuration 26/60 --
+     Num Epochs - 10
+ Balance Method - BalanceMethod.NoSample
+  Class weights - tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.249858021736145
+ Best Acc: 0.5720017552375793
+ Avg Loss: 1.3002236286799114
+  Avg Acc: 0.513152023156484
+
+-- Configuration 27/60 --
+     Num Epochs - 10
+ Balance Method - BalanceMethod.NoSample
+  Class weights - tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.3199042081832886
+ Best Acc: 0.5109228491783142
+ Avg Loss: 1.4383766651153564
+  Avg Acc: 0.4227968454360962
+
+-- Configuration 28/60 --
+     Num Epochs - 10
+ Balance Method - BalanceMethod.UnderSample
+  Class weights - None
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.9342429637908936
+ Best Acc: 0.23807400465011597
+ Avg Loss: 2.014825979868571
+  Avg Acc: 0.2108782877524694
+
+-- Configuration 29/60 --
+     Num Epochs - 10
+ Balance Method - BalanceMethod.UnderSample
+  Class weights - tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.2143120765686035
+ Best Acc: 0.152920201420784
+ Avg Loss: 2.3334158261617026
+  Avg Acc: 0.13107445339361826
+
+-- Configuration 30/60 --
+     Num Epochs - 10
+ Balance Method - BalanceMethod.UnderSample
+  Class weights - tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 3.033491611480713
+ Best Acc: 0.05171645060181618
+ Avg Loss: 3.2913649876912436
+  Avg Acc: 0.04488036905725797
+
+-- Configuration 31/60 --
+     Num Epochs - 10
+ Balance Method - BalanceMethod.AvgSample
+  Class weights - None
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.5552239418029785
+ Best Acc: 0.4404814839363098
+ Avg Loss: 1.675524075826009
+  Avg Acc: 0.3767275909582774
+
+-- Configuration 32/60 --
+     Num Epochs - 10
+ Balance Method - BalanceMethod.AvgSample
+  Class weights - tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.7541766166687012
+ Best Acc: 0.34685689210891724
+ Avg Loss: 1.9325734774271648
+  Avg Acc: 0.2911279598871867
+
+-- Configuration 33/60 --
+     Num Epochs - 10
+ Balance Method - BalanceMethod.AvgSample
+  Class weights - tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.5116608142852783
+ Best Acc: 0.17610342800617218
+ Avg Loss: 2.5906370480855307
+  Avg Acc: 0.1808589647213618
+
+-- Configuration 34/60 --
+     Num Epochs - 10
+ Balance Method - BalanceMethod.OverSample
+  Class weights - None
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.8738815784454346
+ Best Acc: 0.4770396649837494
+ Avg Loss: 1.9417567650477092
+  Avg Acc: 0.4348343014717102
+
+-- Configuration 35/60 --
+     Num Epochs - 10
+ Balance Method - BalanceMethod.OverSample
+  Class weights - tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.1006813049316406
+ Best Acc: 0.3918858766555786
+ Avg Loss: 2.175920009613037
+  Avg Acc: 0.3713776270548503
+
+-- Configuration 36/60 --
+     Num Epochs - 10
+ Balance Method - BalanceMethod.OverSample
+  Class weights - tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.215792417526245
+ Best Acc: 0.36558181047439575
+ Avg Loss: 2.4200255076090493
+  Avg Acc: 0.32010699311892193
+
+-- Configuration 37/60 --
+     Num Epochs - 15
+ Balance Method - BalanceMethod.NoSample
+  Class weights - None
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.344962239265442
+ Best Acc: 0.5791350603103638
+ Avg Loss: 1.3638757467269897
+  Avg Acc: 0.5742309292157491
+
+-- Configuration 38/60 --
+     Num Epochs - 15
+ Balance Method - BalanceMethod.NoSample
+  Class weights - tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.3518954515457153
+ Best Acc: 0.5581809878349304
+ Avg Loss: 1.3832850456237793
+  Avg Acc: 0.5269728004932404
+
+-- Configuration 39/60 --
+     Num Epochs - 15
+ Balance Method - BalanceMethod.NoSample
+  Class weights - tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.4515589475631714
+ Best Acc: 0.4355773627758026
+ Avg Loss: 1.4583557844161987
+  Avg Acc: 0.4366176227728526
+
+-- Configuration 40/60 --
+     Num Epochs - 15
+ Balance Method - BalanceMethod.UnderSample
+  Class weights - None
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.034824848175049
+ Best Acc: 0.24074900150299072
+ Avg Loss: 2.064063866933187
+  Avg Acc: 0.23391291499137878
+
+-- Configuration 41/60 --
+     Num Epochs - 15
+ Balance Method - BalanceMethod.UnderSample
+  Class weights - tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.217682123184204
+ Best Acc: 0.19750334322452545
+ Avg Loss: 2.3541316191355386
+  Avg Acc: 0.1713478962580363
+
+-- Configuration 42/60 --
+     Num Epochs - 15
+ Balance Method - BalanceMethod.UnderSample
+  Class weights - tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.976480007171631
+ Best Acc: 0.08114133030176163
+ Avg Loss: 3.155038595199585
+  Avg Acc: 0.0677663857738177
+
+-- Configuration 43/60 --
+     Num Epochs - 15
+ Balance Method - BalanceMethod.AvgSample
+  Class weights - None
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.9779771566390991
+ Best Acc: 0.3361569344997406
+ Avg Loss: 2.045561909675598
+  Avg Acc: 0.3276861409346263
+
+-- Configuration 44/60 --
+     Num Epochs - 15
+ Balance Method - BalanceMethod.AvgSample
+  Class weights - tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.1580700874328613
+ Best Acc: 0.31029871106147766
+ Avg Loss: 2.2996509869893393
+  Avg Acc: 0.2807252109050751
+
+-- Configuration 45/60 --
+     Num Epochs - 15
+ Balance Method - BalanceMethod.AvgSample
+  Class weights - tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.279205799102783
+ Best Acc: 0.2652697265148163
+ Avg Loss: 2.534790595372518
+  Avg Acc: 0.23153514166673025
+
+-- Configuration 46/60 --
+     Num Epochs - 15
+ Balance Method - BalanceMethod.OverSample
+  Class weights - None
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.191300392150879
+ Best Acc: 0.4788230061531067
+ Avg Loss: 2.251291513442993
+  Avg Acc: 0.44657452901204425
+
+-- Configuration 47/60 --
+     Num Epochs - 15
+ Balance Method - BalanceMethod.OverSample
+  Class weights - tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.40055513381958
+ Best Acc: 0.4083816409111023
+ Avg Loss: 2.5081538359324136
+  Avg Acc: 0.38044285774230957
+
+-- Configuration 48/60 --
+     Num Epochs - 15
+ Balance Method - BalanceMethod.OverSample
+  Class weights - tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.567237615585327
+ Best Acc: 0.36067765951156616
+ Avg Loss: 2.6583059628804526
+  Avg Acc: 0.3449249466260274
+
+-- Configuration 49/60 --
+     Num Epochs - 20
+ Balance Method - BalanceMethod.NoSample
+  Class weights - None
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.442689299583435
+ Best Acc: 0.5809184312820435
+ Avg Loss: 1.4476173321406047
+  Avg Acc: 0.5733392834663391
+
+-- Configuration 50/60 --
+     Num Epochs - 20
+ Balance Method - BalanceMethod.NoSample
+  Class weights - tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.4576470851898193
+ Best Acc: 0.524297833442688
+ Avg Loss: 1.5280449390411377
+  Avg Acc: 0.49710211157798767
+
+-- Configuration 51/60 --
+     Num Epochs - 20
+ Balance Method - BalanceMethod.NoSample
+  Class weights - tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 1.5786480903625488
+ Best Acc: 0.4253232181072235
+ Avg Loss: 1.602096438407898
+  Avg Acc: 0.4153663218021393
+
+-- Configuration 52/60 --
+     Num Epochs - 20
+ Balance Method - BalanceMethod.UnderSample
+  Class weights - None
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.2232325077056885
+ Best Acc: 0.24342398345470428
+ Avg Loss: 2.366451104482015
+  Avg Acc: 0.20641997456550598
+
+-- Configuration 53/60 --
+     Num Epochs - 20
+ Balance Method - BalanceMethod.UnderSample
+  Class weights - tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.415675401687622
+ Best Acc: 0.1863575577735901
+ Avg Loss: 2.58323605855306
+  Avg Acc: 0.16436320543289185
+
+-- Configuration 54/60 --
+     Num Epochs - 20
+ Balance Method - BalanceMethod.UnderSample
+  Class weights - tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 3.374691963195801
+ Best Acc: 0.06286223977804184
+ Avg Loss: 3.4179301261901855
+  Avg Acc: 0.06464556356271108
+
+-- Configuration 55/60 --
+     Num Epochs - 20
+ Balance Method - BalanceMethod.AvgSample
+  Class weights - None
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.112668752670288
+ Best Acc: 0.36023184657096863
+ Avg Loss: 2.1694567998250327
+  Avg Acc: 0.35161242882410687
+
+-- Configuration 56/60 --
+     Num Epochs - 20
+ Balance Method - BalanceMethod.AvgSample
+  Class weights - tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.174276351928711
+ Best Acc: 0.3464110493659973
+ Avg Loss: 2.3033640384674072
+  Avg Acc: 0.32545697689056396
+
+-- Configuration 57/60 --
+     Num Epochs - 20
+ Balance Method - BalanceMethod.AvgSample
+  Class weights - tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.400010585784912
+ Best Acc: 0.2773071825504303
+ Avg Loss: 2.568653424580892
+  Avg Acc: 0.26378361880779266
+
+-- Configuration 58/60 --
+     Num Epochs - 20
+ Balance Method - BalanceMethod.OverSample
+  Class weights - None
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.4543933868408203
+ Best Acc: 0.48149800300598145
+ Avg Loss: 2.479851325352987
+  Avg Acc: 0.46321890751520794
+
+-- Configuration 59/60 --
+     Num Epochs - 20
+ Balance Method - BalanceMethod.OverSample
+  Class weights - tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.723557472229004
+ Best Acc: 0.4030316472053528
+ Avg Loss: 2.7451674938201904
+  Avg Acc: 0.40422054131825763
+
+-- Configuration 60/60 --
+     Num Epochs - 20
+ Balance Method - BalanceMethod.OverSample
+  Class weights - tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])
+Repeat 1/3
+Repeat 2/3
+Repeat 3/3
+Best Loss: 2.686826705932617
+ Best Acc: 0.4181899130344391
+ Avg Loss: 2.756945530573527
+  Avg Acc: 0.3956011235713959
+
+--- Final Results ---
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| Pos | Loss  |  Acc  |                                                         Params                                                          |                 Filename                 |
++=====+=======+=======+=========================================================================================================================+==========================================+
+|  1  | 1.059 | 0.634 |                           {'epochs': 1, 'balance_method': 'NoSample', 'class_weights': None}                            | alexnet_linearnn_2019-11-12_11:24:08.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+|  2  | 1.072 | 0.653 |     {'epochs': 1, 'balance_method': 'NoSample', 'class_weights': tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])}      | alexnet_linearnn_2019-11-12_11:24:22.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+|  3  | 1.143 | 0.626 |                           {'epochs': 5, 'balance_method': 'NoSample', 'class_weights': None}                            | alexnet_linearnn_2019-11-12_11:28:48.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+|  4  | 1.153 | 0.582 |     {'epochs': 5, 'balance_method': 'NoSample', 'class_weights': tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])}      | alexnet_linearnn_2019-11-12_11:29:54.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+|  5  | 1.169 | 0.546 |   {'epochs': 1, 'balance_method': 'NoSample', 'class_weights': tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])}   | alexnet_linearnn_2019-11-12_11:24:36.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+|  6  | 1.241 | 0.571 |                           {'epochs': 10, 'balance_method': 'NoSample', 'class_weights': None}                           | alexnet_linearnn_2019-11-12_11:49:03.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+|  7  | 1.250 | 0.572 |     {'epochs': 10, 'balance_method': 'NoSample', 'class_weights': tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])}     | alexnet_linearnn_2019-11-12_11:51:23.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+|  8  | 1.320 | 0.511 |  {'epochs': 10, 'balance_method': 'NoSample', 'class_weights': tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])}   | alexnet_linearnn_2019-11-12_11:53:37.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+|  9  | 1.323 | 0.435 |                          {'epochs': 1, 'balance_method': 'OverSample', 'class_weights': None}                           | alexnet_linearnn_2019-11-12_11:26:15.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 10  | 1.345 | 0.579 |                           {'epochs': 15, 'balance_method': 'NoSample', 'class_weights': None}                           | alexnet_linearnn_2019-11-12_12:23:50.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 11  | 1.352 | 0.558 |     {'epochs': 15, 'balance_method': 'NoSample', 'class_weights': tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])}     | alexnet_linearnn_2019-11-12_12:26:50.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 12  | 1.443 | 0.581 |                           {'epochs': 20, 'balance_method': 'NoSample', 'class_weights': None}                           | alexnet_linearnn_2019-11-12_13:17:58.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 13  | 1.452 | 0.436 |  {'epochs': 15, 'balance_method': 'NoSample', 'class_weights': tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])}   | alexnet_linearnn_2019-11-12_12:29:51.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 14  | 1.458 | 0.524 |     {'epochs': 20, 'balance_method': 'NoSample', 'class_weights': tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])}     | alexnet_linearnn_2019-11-12_13:22:18.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 15  | 1.470 | 0.381 |                           {'epochs': 5, 'balance_method': 'AvgSample', 'class_weights': None}                           | alexnet_linearnn_2019-11-12_11:32:28.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 16  | 1.489 | 0.331 |   {'epochs': 5, 'balance_method': 'NoSample', 'class_weights': tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])}   | alexnet_linearnn_2019-11-12_11:31:00.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 17  | 1.510 | 0.277 |                           {'epochs': 1, 'balance_method': 'AvgSample', 'class_weights': None}                           | alexnet_linearnn_2019-11-12_11:25:00.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 18  | 1.548 | 0.311 |                          {'epochs': 1, 'balance_method': 'UnderSample', 'class_weights': None}                          | alexnet_linearnn_2019-11-12_11:24:39.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 19  | 1.555 | 0.440 |                          {'epochs': 10, 'balance_method': 'AvgSample', 'class_weights': None}                           | alexnet_linearnn_2019-11-12_11:56:46.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 20  | 1.556 | 0.486 |                          {'epochs': 5, 'balance_method': 'OverSample', 'class_weights': None}                           | alexnet_linearnn_2019-11-12_11:38:24.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 21  | 1.579 | 0.425 |  {'epochs': 20, 'balance_method': 'NoSample', 'class_weights': tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])}   | alexnet_linearnn_2019-11-12_13:26:43.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 22  | 1.686 | 0.232 |    {'epochs': 1, 'balance_method': 'OverSample', 'class_weights': tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])}     | alexnet_linearnn_2019-11-12_11:27:01.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 23  | 1.705 | 0.265 |                          {'epochs': 5, 'balance_method': 'UnderSample', 'class_weights': None}                          | alexnet_linearnn_2019-11-12_11:31:07.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 24  | 1.722 | 0.266 |     {'epochs': 5, 'balance_method': 'AvgSample', 'class_weights': tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])}     | alexnet_linearnn_2019-11-12_11:33:39.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 25  | 1.754 | 0.347 |    {'epochs': 10, 'balance_method': 'AvgSample', 'class_weights': tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])}     | alexnet_linearnn_2019-11-12_11:59:09.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 26  | 1.836 | 0.143 |     {'epochs': 1, 'balance_method': 'AvgSample', 'class_weights': tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])}     | alexnet_linearnn_2019-11-12_11:25:15.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 27  | 1.842 | 0.325 |    {'epochs': 5, 'balance_method': 'OverSample', 'class_weights': tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])}     | alexnet_linearnn_2019-11-12_11:42:02.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 28  | 1.874 | 0.477 |                          {'epochs': 10, 'balance_method': 'OverSample', 'class_weights': None}                          | alexnet_linearnn_2019-11-12_12:07:45.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 29  | 1.934 | 0.238 |                         {'epochs': 10, 'balance_method': 'UnderSample', 'class_weights': None}                          | alexnet_linearnn_2019-11-12_11:53:49.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 30  | 1.978 | 0.336 |                          {'epochs': 15, 'balance_method': 'AvgSample', 'class_weights': None}                           | alexnet_linearnn_2019-11-12_12:33:36.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 31  | 2.035 | 0.241 |                         {'epochs': 15, 'balance_method': 'UnderSample', 'class_weights': None}                          | alexnet_linearnn_2019-11-12_12:30:06.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 32  | 2.066 | 0.082 |    {'epochs': 1, 'balance_method': 'UnderSample', 'class_weights': tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])}    | alexnet_linearnn_2019-11-12_11:24:42.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 33  | 2.101 | 0.392 |    {'epochs': 10, 'balance_method': 'OverSample', 'class_weights': tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])}    | alexnet_linearnn_2019-11-12_12:14:17.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 34  | 2.111 | 0.172 |  {'epochs': 5, 'balance_method': 'AvgSample', 'class_weights': tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])}   | alexnet_linearnn_2019-11-12_11:34:50.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 35  | 2.113 | 0.360 |                          {'epochs': 20, 'balance_method': 'AvgSample', 'class_weights': None}                           | alexnet_linearnn_2019-11-12_13:32:03.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 36  | 2.136 | 0.276 |  {'epochs': 5, 'balance_method': 'OverSample', 'class_weights': tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])}  | alexnet_linearnn_2019-11-12_11:46:15.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 37  | 2.158 | 0.310 |    {'epochs': 15, 'balance_method': 'AvgSample', 'class_weights': tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])}     | alexnet_linearnn_2019-11-12_12:36:37.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 38  | 2.174 | 0.346 |    {'epochs': 20, 'balance_method': 'AvgSample', 'class_weights': tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])}     | alexnet_linearnn_2019-11-12_13:36:04.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 39  | 2.191 | 0.479 |                          {'epochs': 15, 'balance_method': 'OverSample', 'class_weights': None}                          | alexnet_linearnn_2019-11-12_12:50:07.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 40  | 2.214 | 0.153 |   {'epochs': 10, 'balance_method': 'UnderSample', 'class_weights': tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])}    | alexnet_linearnn_2019-11-12_11:54:03.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 41  | 2.216 | 0.366 | {'epochs': 10, 'balance_method': 'OverSample', 'class_weights': tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])}  | alexnet_linearnn_2019-11-12_12:20:51.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 42  | 2.218 | 0.198 |   {'epochs': 15, 'balance_method': 'UnderSample', 'class_weights': tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])}    | alexnet_linearnn_2019-11-12_12:30:20.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 43  | 2.223 | 0.243 |                         {'epochs': 20, 'balance_method': 'UnderSample', 'class_weights': None}                          | alexnet_linearnn_2019-11-12_13:27:04.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 44  | 2.241 | 0.092 |    {'epochs': 5, 'balance_method': 'UnderSample', 'class_weights': tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])}    | alexnet_linearnn_2019-11-12_11:31:13.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 45  | 2.258 | 0.115 |  {'epochs': 1, 'balance_method': 'OverSample', 'class_weights': tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])}  | alexnet_linearnn_2019-11-12_11:27:46.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 46  | 2.279 | 0.265 |  {'epochs': 15, 'balance_method': 'AvgSample', 'class_weights': tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])}  | alexnet_linearnn_2019-11-12_12:39:37.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 47  | 2.400 | 0.277 |  {'epochs': 20, 'balance_method': 'AvgSample', 'class_weights': tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])}  | alexnet_linearnn_2019-11-12_13:40:05.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 48  | 2.401 | 0.408 |    {'epochs': 15, 'balance_method': 'OverSample', 'class_weights': tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])}    | alexnet_linearnn_2019-11-12_13:01:26.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 49  | 2.416 | 0.186 |   {'epochs': 20, 'balance_method': 'UnderSample', 'class_weights': tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])}    | alexnet_linearnn_2019-11-12_13:27:25.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 50  | 2.454 | 0.481 |                          {'epochs': 20, 'balance_method': 'OverSample', 'class_weights': None}                          | alexnet_linearnn_2019-11-12_13:54:23.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 51  | 2.512 | 0.176 |  {'epochs': 10, 'balance_method': 'AvgSample', 'class_weights': tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])}  | alexnet_linearnn_2019-11-12_12:01:10.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 52  | 2.567 | 0.361 | {'epochs': 15, 'balance_method': 'OverSample', 'class_weights': tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])}  | alexnet_linearnn_2019-11-12_13:13:15.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 53  | 2.687 | 0.418 | {'epochs': 20, 'balance_method': 'OverSample', 'class_weights': tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])}  | alexnet_linearnn_2019-11-12_14:23:17.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 54  | 2.724 | 0.403 |    {'epochs': 20, 'balance_method': 'OverSample', 'class_weights': tensor([0.9326, 0.3433, 0.9703, 0.7676, 0.9862])}    | alexnet_linearnn_2019-11-12_14:10:12.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 55  | 2.976 | 0.081 | {'epochs': 15, 'balance_method': 'UnderSample', 'class_weights': tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])} | alexnet_linearnn_2019-11-12_12:30:34.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 56  | 3.033 | 0.052 | {'epochs': 10, 'balance_method': 'UnderSample', 'class_weights': tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])} | alexnet_linearnn_2019-11-12_11:54:17.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 57  | 3.152 | 0.049 |  {'epochs': 1, 'balance_method': 'AvgSample', 'class_weights': tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])}   | alexnet_linearnn_2019-11-12_11:25:30.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 58  | 3.282 | 0.035 | {'epochs': 5, 'balance_method': 'UnderSample', 'class_weights': tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])}  | alexnet_linearnn_2019-11-12_11:31:20.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 59  | 3.375 | 0.063 | {'epochs': 20, 'balance_method': 'UnderSample', 'class_weights': tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])} | alexnet_linearnn_2019-11-12_13:27:45.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+| 60  | 3.520 | 0.016 | {'epochs': 1, 'balance_method': 'UnderSample', 'class_weights': tensor([ 9.7420,  1.0000, 22.1194,  2.8262, 47.4240])}  | alexnet_linearnn_2019-11-12_11:24:44.pth |
++-----+-------+-------+-------------------------------------------------------------------------------------------------------------------------+------------------------------------------+

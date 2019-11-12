@@ -54,11 +54,11 @@ def create_submission(
 
 
 if __name__ == "__main__":
-    _feature_extractor = features.ResNet18t256()
+    _feature_extractor = features.AlexNet()
     _model = models.NNModel(
-        models.LinearNN,
+        models.BiggerNN,
         _feature_extractor.feature_size,
-        state_dict_path="./models/resnet18t256_linearnn_2019-11-08_13:33:38.pth",
+        state_dict_path="./models/alexnet_biggernn_2019-11-11_20:07:44.pth",
         eval_mode=True,
     )
     create_submission(_model, CompetitionFeatureDataset(_feature_extractor))

@@ -2,6 +2,7 @@
 
 import time
 
+import pandas as pd
 import torch
 from sklearn.metrics import log_loss, accuracy_score
 from torch.utils.data import DataLoader
@@ -42,11 +43,19 @@ def evaluate(
     else:
         y_probabilities = y_pred
 
+    y_true_pd = pd.Series(y_true, name="Actual")
+    y_pred_pd = pd.Series(y_pred_classes, name="Predicted")
+    conf_mat = pd.crosstab(
+        y_true_pd, y_pred_pd, rownames=["Actual"], colnames=["Predicted"], margins=True
+    )
+
     # Print accuracy and log loss
     acc = accuracy_score(y_true, y_pred_classes)
     ll = log_loss(y_true, y_probabilities, labels=[0, 1, 2, 3, 4])
     print("Accuracy: {:.3f}".format(acc))
     print("Log loss: {:.3f}".format(ll))
+    print("Confusion matrix")
+    print(conf_mat)
 
     return acc, ll
 
@@ -55,9 +64,13 @@ if __name__ == "__main__":
     _feature_extractor = features.AlexNet()
     _features_datasets = FeatureDatasets(_feature_extractor)
     _model = models.NNModel(
-        models.BiggerNN,
+        models.LinearNN,
         _feature_extractor.feature_size,
-        state_dict_path="./models/alexnet_biggernn_2019-11-11_20:32:35.pth",
+        state_dict_path=(
+            "./models/"
+            "grid_search_alexnet_linearnn_dropout/"
+            "alexnet_linearnnwithdropout_best.pth"
+        ),
         eval_mode=True,
     )
 
@@ -66,17 +79,25 @@ if __name__ == "__main__":
         _model, _features_datasets.get_loader(DatasetType.Train)
     )
 
-    time.sleep(1)
+    time.sleep(0.1)
+    print("")
+    print("Validation Set Results")
+    val_acc, val_loss = evaluate(
+        _model, _features_datasets.get_loader(DatasetType.Validation)
+    )
+
+    time.sleep(0.1)
     print("")
     print("Test Set Results")
     test_acc, test_loss = evaluate(
         _model, _features_datasets.get_loader(DatasetType.Test)
     )
 
+    time.sleep(0.1)
     print("")
     print("Output for results.md")
     print(
-        "{:.3f} | {:.3f} | {:.3f} | {:.3f} |".format(
-            train_acc, train_loss, test_acc, test_loss
+        ("{:.3f} | " * 6).format(
+            train_acc, train_loss, val_acc, val_loss, test_acc, test_loss
         )
     )
