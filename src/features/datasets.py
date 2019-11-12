@@ -27,10 +27,19 @@ class DatasetType(Enum):
     Competition = 4
 
 
+class BalanceMethod(Enum):
+    """Enum for dataset balancing methods."""
+
+    NoSample = 0
+    UnderSample = 1
+    AvgSample = 2
+    OverSample = 3
+
+
 class Datasets(ABC):
     """Abstract base class for datasets."""
 
-    def __init__(self, batch_size=8):
+    def __init__(self, batch_size=8, balance_method=BalanceMethod.NoSample):
         self.batch_size = batch_size
 
         # Create datasets
@@ -38,7 +47,7 @@ class Datasets(ABC):
             self.train_dataset,
             self.validation_dataset,
             self.test_dataset,
-        ) = self.create_datasets()
+        ) = self.create_datasets(balance_method)
 
         # Create dataloaders from datasets.
         self.train_loader = data.DataLoader(
@@ -52,9 +61,12 @@ class Datasets(ABC):
         )
 
     @abstractmethod
-    def create_datasets(self) -> Tuple[data.Dataset, data.Dataset, data.Dataset]:
+    def create_datasets(
+        self, balance_method: BalanceMethod
+    ) -> Tuple[data.Dataset, data.Dataset, data.Dataset]:
         """
         Create the train, validation and test datasets.
+        :param balance_method: Method for balancing the training dataset.
         :return: Train, validation and test datasets as a tuple.
         """
 
@@ -98,7 +110,7 @@ class ImageDatasets(Datasets):
         self.transform = transform
         super().__init__()
 
-    def create_datasets(self):
+    def create_datasets(self, balance_method: BalanceMethod):
         # Create image datasets using folder paths and given transform.
         train_dataset = torch_datasets.ImageFolder(
             self.train_dir, transform=self.transform
@@ -116,47 +128,95 @@ class ImageDatasets(Datasets):
 class FeatureDataset(Dataset):
     """Feature dataset implementation. Uses pickled tensors for each feature vector."""
 
-    def __init__(self, features_dir, labels_path):
+    def __init__(
+        self, features_dir, labels_path, balance_method=BalanceMethod.NoSample
+    ):
         super().__init__()
         self.data_dir = features_dir
         self.filenames = os.listdir(self.data_dir)
         with open(labels_path, "rb") as file:
             self.labels = pickle.load(file)
+        if balance_method == BalanceMethod.UnderSample:
+            self._undersample()
+        elif balance_method == BalanceMethod.AvgSample:
+            self._avgsample()
+        elif balance_method == BalanceMethod.OverSample:
+            self._oversample()
+
+    def _undersample(self):
+        data_dist = [0] * 5
+        for label in self.labels:
+            data_dist[label] += 1
+        min_class_size = min(data_dist)
+        self._sample_to_target(min_class_size)
+
+    def _avgsample(self):
+        data_dist = [0] * 5
+        for label in self.labels:
+            data_dist[label] += 1
+        avg_class_size = int(sum(data_dist) / 5)
+        self._sample_to_target(avg_class_size)
+
+    def _oversample(self):
+        data_dist = [0] * 5
+        for label in self.labels:
+            data_dist[label] += 1
+        max_class_size = max(data_dist)
+        self._sample_to_target(max_class_size)
+
+    def _sample_to_target(self, target):
+        data_dist = [0] * 5
+        reduced_filenames = []
+        reduced_labels = []
+        while len(reduced_filenames) < target * 5:
+            for filename, label in zip(self.filenames, self.labels):
+                if data_dist[label] < target:
+                    reduced_filenames.append(filename)
+                    reduced_labels.append(label)
+                    data_dist[label] += 1
+        self.filenames = reduced_filenames
+        self.labels = reduced_labels
+
+    def _load_vector(self, filename):
+        filepath = os.path.join(self.data_dir, filename)
+        with open(filepath, "rb") as file:
+            feature = pickle.load(file)[0]
+        return feature
 
     def __len__(self):
         return len(self.filenames)
 
     def __getitem__(self, index):
-        filepath = os.path.join(self.data_dir, self.filenames[index])
-        with open(filepath, "rb") as file:
-            feature = pickle.load(file)[0]
-        return feature, self.labels[index]
+        return self._load_vector(self.filenames[index]), self.labels[index]
 
 
 class FeatureDatasets(Datasets):
     """Implementation of Datasets back with a feature extractor."""
 
-    def __init__(self, feature_extractor):
+    def __init__(self, feature_extractor, balance_method=BalanceMethod.NoSample):
         # Ensure features are extracted
         self.feature_extractor = feature_extractor
         self.feature_extractor.extract(DatasetType.Train)
         self.feature_extractor.extract(DatasetType.Validation)
         self.feature_extractor.extract(DatasetType.Test)
-        super().__init__()
+        super().__init__(balance_method=balance_method)
 
-    def create_datasets(self):
+    def create_datasets(self, balance_method):
         # Create feature datasets
         train_dataset = FeatureDataset(
             self.feature_extractor.get_features_dir(DatasetType.Train),
             self.feature_extractor.get_labels_filepath(DatasetType.Train),
+            balance_method,
         )
         validation_dataset = FeatureDataset(
             self.feature_extractor.get_features_dir(DatasetType.Validation),
             self.feature_extractor.get_labels_filepath(DatasetType.Validation),
+            balance_method=BalanceMethod.NoSample,
         )
         test_dataset = FeatureDataset(
             self.feature_extractor.get_features_dir(DatasetType.Test),
             self.feature_extractor.get_labels_filepath(DatasetType.Test),
+            balance_method=BalanceMethod.NoSample,
         )
         return train_dataset, validation_dataset, test_dataset
 

@@ -4,3 +4,4 @@ data/raw/stac*
 data/interim/*
 data/processed/*
 models/features/*
+models/*svm*

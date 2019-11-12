@@ -1,6 +1,5 @@
 """Neural network solution."""
 
-import os
 import time
 
 import numpy as np
@@ -11,35 +10,75 @@ from torch import nn
 from torch import optim
 from torchbearer import Trial
 
-from features import AlexNet256
-from models import FeatureTrainer
-from models import Model
-from utils import create_timestamp_str, class_distribution
+import features
+from features import BalanceMethod, FeatureExtractor
+from models import FeatureTrainer, Model, ClassWeightMethod
+from utils import class_distribution
 
 
-class BasicNN(nn.Module):
-    """Basic NN implementation."""
+class LinearNN(nn.Module):
+    """Linear NN implementation."""
 
-    def __init__(self, input_size, output_size):
+    def __init__(self, input_size, output_size, dropout=0):
         super().__init__()
-        self.fc1 = nn.Linear(input_size, 256)
-        self.fc2 = nn.Linear(256, output_size)
+        self.fc1 = nn.Linear(input_size, output_size)
+        self.dropout = nn.Dropout(dropout)
 
     def forward(self, x):
-        x = F.relu(self.fc1(x))
-        x = self.fc2(x)
+        x = self.dropout(self.fc1(x))
         return x
+
+
+class BiggerNN(nn.Module):
+    """Bigger NN implementation."""
+
+    def __init__(self, input_size, output_size, dropout=0):
+        super().__init__()
+        self.fc1 = nn.Linear(input_size, 256)
+        self.fc2 = nn.Linear(256, 64)
+        self.fc3 = nn.Linear(64, output_size)
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, x):
+        x = self.dropout(F.relu(self.fc1(x)))
+        x = self.dropout(F.relu(self.fc2(x)))
+        x = self.fc3(x)
+        return x
+
+
+class AlexNetClassifierNN(nn.Module):
+    """AlexNet classifier layer NN implementation."""
+
+    def __init__(self, input_size, output_size, dropout=0):
+        super().__init__()
+        self.classifier = nn.Sequential(
+            nn.Dropout(),
+            nn.Linear(input_size, 4096),
+            nn.ReLU(inplace=True),
+            nn.Dropout(),
+            nn.Linear(4096, 4096),
+            nn.ReLU(inplace=True),
+            nn.Linear(4096, output_size),
+        )
+
+    def forward(self, x):
+        return self.classifier(x)
 
 
 class NNModel(Model):
     """Base model that uses a neural network."""
 
     def __init__(
-        self, net_class, input_size: int, state_dict_path=None, eval_mode=False
+        self,
+        net_class,
+        input_size: int,
+        state_dict_path=None,
+        eval_mode=False,
+        dropout=0,
     ):
-        super().__init__("basic_nn")
+        super().__init__(str(net_class.__name__).lower())
         # Create network
-        self.net = net_class(input_size, self.num_classes)
+        self.net = net_class(input_size, self.num_classes, dropout=dropout)
         # Load network state if provided
         if state_dict_path is not None:
             self.load(state_dict_path)
@@ -62,10 +101,20 @@ class NNModel(Model):
 class NNTrainer(FeatureTrainer):
     """Neural network trainer."""
 
-    num_epochs = 10
     loss = nn.CrossEntropyLoss
 
-    def train(self, model: NNModel, class_weights=None):
+    def __init__(
+        self,
+        feature_extractor: FeatureExtractor,
+        balance_method=BalanceMethod.NoSample,
+        num_epochs=10,
+        class_weight_method=ClassWeightMethod.Unweighted,
+    ):
+        super().__init__(feature_extractor, balance_method)
+        self.num_epochs = num_epochs
+        self.class_weight_method = class_weight_method
+
+    def train(self, model: NNModel) -> (float, float):
         # Get transfer model and put it in training mode
         net = model.net
         net.train()
@@ -74,8 +123,17 @@ class NNTrainer(FeatureTrainer):
         optimiser = optim.Adam(net.parameters(), lr=1e-4)
 
         # Setup loss function
-        if class_weights is not None:
-            loss_function = self.loss(weight=class_weights)
+        if self.class_weight_method != ClassWeightMethod.Unweighted:
+            distribution = class_distribution("data/processed/train")
+            if self.class_weight_method == ClassWeightMethod.SumBased:
+                inv_distribution = [1 - x / np.sum(distribution) for x in distribution]
+                inv_distribution = torch.from_numpy(np.array(inv_distribution)).float()
+            elif self.class_weight_method == ClassWeightMethod.MaxBased:
+                inv_distribution = [np.max(distribution) / x for x in distribution]
+                inv_distribution = torch.from_numpy(np.array(inv_distribution)).float()
+            else:
+                raise IndexError('Unknown class weight method ' + str(self.class_weight_method))
+            loss_function = self.loss(inv_distribution)
         else:
             loss_function = self.loss()
 
@@ -93,23 +151,18 @@ class NNTrainer(FeatureTrainer):
         trial.run(epochs=self.num_epochs)
 
         # Evaluate and show results
-        time.sleep(1)  # Ensure training has finished
+        time.sleep(0.1)  # Ensure training has finished
+        net.eval()
         results = trial.evaluate(data_key=torchbearer.TEST_DATA)
-        print(results)
+        acc = float(results["test_acc"])
+        loss = float(results["test_loss"])
 
-        # Save model weights
-        save_path = os.path.join(
-            self.save_dir, model.name + "_" + create_timestamp_str() + ".pth"
-        )
-        model.save(save_path)
+        return acc, loss
 
 
 if __name__ == "__main__":
-    _network_class = BasicNN
-    _feature_extractor = AlexNet256()
-    _trainer = NNTrainer(_feature_extractor)
+    _network_class = BiggerNN
+    _feature_extractor = features.AlexNet()
+    _trainer = NNTrainer(_feature_extractor, balance_method=BalanceMethod.OverSample)
     _model = NNModel(_network_class, _feature_extractor.feature_size)
-    _class_distribution = class_distribution("data/processed/train")
-    _class_weights = [1 - x / sum(_class_distribution) for x in _class_distribution]
-    _class_weights = torch.from_numpy(np.array(_class_weights)).float()
-    _trainer.train(_model, class_weights=_class_weights)
+    _trainer.train(_model)

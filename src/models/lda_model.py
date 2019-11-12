@@ -1,17 +1,15 @@
 """LDA solution."""
 
-import os
 import pickle
 
 import torch
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.preprocessing import StandardScaler
 
+import features
 import models
-from features import FeatureExtractor, AlexNet256, DatasetType
 from models import FeatureTrainer
 from models import Model
-from utils import create_timestamp_str
 
 
 class LDAModel(Model):
@@ -53,33 +51,18 @@ class LDAModel(Model):
         with open(path, "wb") as file:
             pickle.dump((self.lda, self.scaler), file)
 
-    def fit(self, features: torch.Tensor, labels):
-        features = self.scaler.fit_transform(features.cpu().detach())
+    def fit(self, training_features: torch.Tensor, labels):
+        training_features = self.scaler.fit_transform(training_features.cpu().detach())
         self.lda = LinearDiscriminantAnalysis(n_components=3)
-        self.lda.fit(features, labels)
-
-
-class LDATrainer(FeatureTrainer):
-    """LDA Trainer implementation."""
-
-    def __init__(self, feature_extractor: FeatureExtractor):
-        super().__init__(feature_extractor)
-
-    def train(self, model, class_weights=None):
-        print("Loading features")
-        features, labels = self.feature_dataset.get_features_and_labels(DatasetType.Train)
-        print("Fitting model")
-        model.fit(features, labels)
-        print("Saving model")
-        save_path = os.path.join(
-            self.save_dir, model.name + "_" + create_timestamp_str() + ".pkl"
-        )
-        model.save(save_path)
+        self.lda.fit(training_features, labels)
 
 
 if __name__ == "__main__":
-    print("Creating LDA model")
-    lda_model = models.LDAModel("lda_alexnet256")
     print("Creating feature extractor")
-    trainer = LDATrainer(AlexNet256())
+    feature_extractor = features.AlexNet()
+    print("Creating LDA model")
+    lda_model = models.LDAModel(feature_extractor.name + "_lda")
+    trainer = FeatureTrainer(
+        feature_extractor, balance_method=features.BalanceMethod.UnderSample
+    )
     trainer.train(lda_model)

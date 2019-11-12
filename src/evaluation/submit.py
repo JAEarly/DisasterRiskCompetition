@@ -6,8 +6,9 @@ import pandas as pd
 import torch
 from tqdm import tqdm
 
+import features
 import models
-from features import CompetitionFeatureDataset, AlexNet256, CompetitionDataset
+from features import CompetitionFeatureDataset
 from utils import create_timestamp_str
 
 SUBMISSION_FOLDER = "./submissions"
@@ -15,7 +16,7 @@ SUBMISSION_FORMAT_PATH = "./data/raw/submission_format.csv"
 
 
 def create_submission(
-    model: models.Model, competition_dataset: CompetitionDataset
+    model: models.Model, competition_dataset: CompetitionFeatureDataset
 ) -> None:
     """
     Create a submission.
@@ -41,11 +42,23 @@ def create_submission(
     # Actually write to csv file
     if not os.path.exists(SUBMISSION_FOLDER):
         os.makedirs(SUBMISSION_FOLDER)
-    filename = model.name + "_" + create_timestamp_str() + ".csv"
+    filename = (
+        competition_dataset.feature_extractor.name
+        + "_"
+        + model.name
+        + "_"
+        + create_timestamp_str()
+        + ".csv"
+    )
     submission.to_csv(os.path.join(SUBMISSION_FOLDER, filename))
 
 
 if __name__ == "__main__":
-    _feature_extractor = AlexNet256()
-    _model = models.BaselineModel()
+    _feature_extractor = features.AlexNet()
+    _model = models.NNModel(
+        models.BiggerNN,
+        _feature_extractor.feature_size,
+        state_dict_path="./models/alexnet_biggernn_2019-11-11_20:07:44.pth",
+        eval_mode=True,
+    )
     create_submission(_model, CompetitionFeatureDataset(_feature_extractor))

@@ -1,6 +1,7 @@
 """Preprocess extracted roof images."""
 
 import os
+import random
 import shutil
 import time
 
@@ -58,6 +59,7 @@ def _aggregate_images() -> None:
                     INPUT_PATH, country, region, "train", class_name
                 )
                 files = os.listdir(training_path)
+                random.shuffle(files)
                 for idx, image_name in enumerate(
                     tqdm(
                         files,
