@@ -2,6 +2,7 @@
 
 import time
 
+import pandas as pd
 import torch
 from sklearn.metrics import log_loss, accuracy_score
 from torch.utils.data import DataLoader
@@ -42,11 +43,19 @@ def evaluate(
     else:
         y_probabilities = y_pred
 
+    y_true_pd = pd.Series(y_true, name="Actual")
+    y_pred_pd = pd.Series(y_pred_classes, name="Predicted")
+    conf_mat = pd.crosstab(
+        y_true_pd, y_pred_pd, rownames=["Actual"], colnames=["Predicted"], margins=True
+    )
+
     # Print accuracy and log loss
     acc = accuracy_score(y_true, y_pred_classes)
     ll = log_loss(y_true, y_probabilities, labels=[0, 1, 2, 3, 4])
     print("Accuracy: {:.3f}".format(acc))
     print("Log loss: {:.3f}".format(ll))
+    print("Confusion matrix")
+    print(conf_mat)
 
     return acc, ll
 

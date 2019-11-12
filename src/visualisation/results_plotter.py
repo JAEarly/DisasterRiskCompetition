@@ -79,19 +79,19 @@ def plot_against_fixed(
 
 if __name__ == "__main__":
     _losses, _configs = parse_results(
-        "./models/grid_search_alexnet_linearnn_dropout/results.txt"
+        "./models/grid_search_alexnet_linearnn_dropout_extended/results.txt"
     )
 
-    epochs_range = [1, 5, 10]
+    epochs_range = [10, 15]
     class_weight_methods = ["Unweighted", "SumBased"]
-    balance_methods = ["NoSample", "AvgSample"]
-    dropout_values = [0.0, 0.25, 0.5, 0.75]
+    balance_methods = ["NoSample"]
+    dropout_values = [0.1, 0.25, 0.4]
 
-    _legend_param_name = "dropout"
-    _legend_param_values = dropout_values
-    _x_axis_param_name = "epochs"
+    _legend_param_name = "epochs"
+    _legend_param_values = epochs_range
+    _x_axis_param_name = "dropout"
 
-    _fixed_params = {"class_weight_method": "Unweighted", "balance_method": "NoSample"}
+    _fixed_params = {"class_weight_method": "Unweighted"}
     plot_against_fixed(
         _losses,
         _configs,
@@ -101,7 +101,7 @@ if __name__ == "__main__":
         _x_axis_param_name,
     )
 
-    _fixed_params = {"class_weight_method": "SumBased", "balance_method": "NoSample"}
+    _fixed_params = {"class_weight_method": "SumBased"}
     plot_against_fixed(
         _losses,
         _configs,
