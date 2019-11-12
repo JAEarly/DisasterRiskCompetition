@@ -1,5 +1,7 @@
 """Model evaluation script."""
 
+import time
+
 import torch
 from sklearn.metrics import log_loss, accuracy_score
 from torch.utils.data import DataLoader
@@ -8,10 +10,11 @@ from tqdm import tqdm
 import features
 import models
 from features import DatasetType, FeatureDatasets
-import time
 
 
-def evaluate(model: models.Model, data_loader: DataLoader, apply_softmax=True) -> None:
+def evaluate(
+    model: models.Model, data_loader: DataLoader, apply_softmax=True
+) -> (float, float):
     """
     Evaluate a model on a given dataset.
     :param model: Model to evaluate.
@@ -40,23 +43,40 @@ def evaluate(model: models.Model, data_loader: DataLoader, apply_softmax=True) -
         y_probabilities = y_pred
 
     # Print accuracy and log loss
-    print("Accuracy:", accuracy_score(y_true, y_pred_classes))
-    print("Log loss:", log_loss(y_true, y_probabilities, labels=[0, 1, 2, 3, 4]))
+    acc = accuracy_score(y_true, y_pred_classes)
+    ll = log_loss(y_true, y_probabilities, labels=[0, 1, 2, 3, 4])
+    print("Accuracy: {:.3f}".format(acc))
+    print("Log loss: {:.3f}".format(ll))
+
+    return acc, ll
 
 
 if __name__ == "__main__":
-    _feature_extractor = features.ResNet18t256()
+    _feature_extractor = features.AlexNet()
     _features_datasets = FeatureDatasets(_feature_extractor)
     _model = models.NNModel(
-        models.LinearNN,
+        models.BiggerNN,
         _feature_extractor.feature_size,
-        state_dict_path="./models/resnet18t256_linearnn_2019-11-08_13:33:38.pth",
+        state_dict_path="./models/alexnet_biggernn_2019-11-11_20:32:35.pth",
         eval_mode=True,
     )
+
     print("Training Set Results")
-    evaluate(_model, _features_datasets.get_loader(DatasetType.Train))
+    train_acc, train_loss = evaluate(
+        _model, _features_datasets.get_loader(DatasetType.Train)
+    )
 
     time.sleep(1)
     print("")
     print("Test Set Results")
-    evaluate(_model, _features_datasets.get_loader(DatasetType.Test))
+    test_acc, test_loss = evaluate(
+        _model, _features_datasets.get_loader(DatasetType.Test)
+    )
+
+    print("")
+    print("Output for results.md")
+    print(
+        "{:.3f} | {:.3f} | {:.3f} | {:.3f} |".format(
+            train_acc, train_loss, test_acc, test_loss
+        )
+    )

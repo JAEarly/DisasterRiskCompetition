@@ -51,16 +51,18 @@ class LDAModel(Model):
         with open(path, "wb") as file:
             pickle.dump((self.lda, self.scaler), file)
 
-    def fit(self, features: torch.Tensor, labels):
-        features = self.scaler.fit_transform(features.cpu().detach())
+    def fit(self, training_features: torch.Tensor, labels):
+        training_features = self.scaler.fit_transform(training_features.cpu().detach())
         self.lda = LinearDiscriminantAnalysis(n_components=3)
-        self.lda.fit(features, labels)
+        self.lda.fit(training_features, labels)
 
 
 if __name__ == "__main__":
     print("Creating feature extractor")
-    feature_extractor = features.ResNet18t256()
+    feature_extractor = features.AlexNet()
     print("Creating LDA model")
     lda_model = models.LDAModel(feature_extractor.name + "_lda")
-    trainer = FeatureTrainer(feature_extractor)
+    trainer = FeatureTrainer(
+        feature_extractor, balance_method=features.BalanceMethod.UnderSample
+    )
     trainer.train(lda_model)

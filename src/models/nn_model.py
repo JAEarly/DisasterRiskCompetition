@@ -3,7 +3,6 @@
 import os
 import time
 
-import numpy as np
 import torch
 import torch.nn.functional as F
 import torchbearer
@@ -12,10 +11,10 @@ from torch import optim
 from torchbearer import Trial
 
 import features
+from features import BalanceMethod
 from models import FeatureTrainer
 from models import Model
-from features import BalanceMethod
-from utils import create_timestamp_str, class_distribution
+from utils import create_timestamp_str
 
 
 class LinearNN(nn.Module):
@@ -27,20 +26,6 @@ class LinearNN(nn.Module):
 
     def forward(self, x):
         x = self.fc1(x)
-        return x
-
-
-class BasicNN(nn.Module):
-    """Basic NN implementation."""
-
-    def __init__(self, input_size, output_size):
-        super().__init__()
-        self.fc1 = nn.Linear(input_size, 256)
-        self.fc2 = nn.Linear(256, output_size)
-
-    def forward(self, x):
-        x = F.relu(self.fc1(x))
-        x = self.fc2(x)
         return x
 
 
@@ -59,6 +44,25 @@ class BiggerNN(nn.Module):
         x = self.dropout(F.relu(self.fc2(x)))
         x = self.fc3(x)
         return x
+
+
+class AlexNetClassifierNN(nn.Module):
+    """AlexNet classifier layer NN implementation."""
+
+    def __init__(self, input_size, output_size):
+        super().__init__()
+        self.classifier = nn.Sequential(
+            nn.Dropout(),
+            nn.Linear(input_size, 4096),
+            nn.ReLU(inplace=True),
+            nn.Dropout(),
+            nn.Linear(4096, 4096),
+            nn.ReLU(inplace=True),
+            nn.Linear(4096, output_size),
+        )
+
+    def forward(self, x):
+        return self.classifier(x)
 
 
 class NNModel(Model):
@@ -92,7 +96,7 @@ class NNModel(Model):
 class NNTrainer(FeatureTrainer):
     """Neural network trainer."""
 
-    num_epochs = 15
+    num_epochs = 3
     loss = nn.CrossEntropyLoss
 
     def train(self, model: NNModel, class_weights=None):
@@ -140,9 +144,9 @@ class NNTrainer(FeatureTrainer):
 
 
 if __name__ == "__main__":
-    _network_class = LinearNN
+    _network_class = BiggerNN
     _feature_extractor = features.AlexNet()
-    _trainer = NNTrainer(_feature_extractor, balance_method=BalanceMethod.NoSample)
+    _trainer = NNTrainer(_feature_extractor, balance_method=BalanceMethod.OverSample)
     _model = NNModel(_network_class, _feature_extractor.feature_size)
     # _class_distribution = class_distribution("data/processed/train")
     # _class_weights = [1 - x / sum(_class_distribution) for x in _class_distribution]

@@ -136,11 +136,11 @@ class FeatureDataset(Dataset):
         self.filenames = os.listdir(self.data_dir)
         with open(labels_path, "rb") as file:
             self.labels = pickle.load(file)
-        if balance_method is BalanceMethod.UnderSample:
+        if balance_method == BalanceMethod.UnderSample:
             self._undersample()
-        elif balance_method is BalanceMethod.AvgSample:
+        elif balance_method == BalanceMethod.AvgSample:
             self._avgsample()
-        elif balance_method is BalanceMethod.OverSample:
+        elif balance_method == BalanceMethod.OverSample:
             self._oversample()
 
     def _undersample(self):
