@@ -1,0 +1,6 @@
+- Class weight almost always makes things worse. With no sampling the difference of using the
+  sum based weighting makes very little difference so consider this going forward. Ditch the max
+  based weighting as it makes things much worse.
+- More epochs seems to make things worse in general, but some interesting results where an
+  improvement is seen when using max based weighting.
+- Generally, no sampling and avg sampling perform best - keep using these.

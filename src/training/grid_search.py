@@ -6,19 +6,18 @@ import time
 from typing import Type
 
 import numpy as np
-import torch
 from texttable import Texttable
 from torch import nn
 
 import features
 import models
 from features import BalanceMethod, FeatureExtractor
+from models import ClassWeightMethod
 from models.nn_model import NNTrainer, NNModel
 from utils import (
     create_timestamp_str,
     create_dirs_if_not_found,
     DualLogger,
-    class_distribution,
 )
 
 ROOT_DIR = "./models"
@@ -43,7 +42,13 @@ def run_nn_grid_search(
     # Extract hyper parameter ranges
     epoch_range = _extract_range(kwargs, "epoch_range", [5])
     balance_methods = _extract_range(kwargs, "balance_methods", BalanceMethod.NoSample)
-    class_weights_range = _extract_range(kwargs, "class_weights_range", [None])
+    class_weight_methods = _extract_range(kwargs, "class_weight_methods", [None])
+    dropout_range = _extract_range(kwargs, "dropout_range", [0])
+
+    print("         Epoch Range:", epoch_range)
+    print("     Balance Methods:", balance_methods)
+    print("Class Weight Methods:", class_weight_methods)
+    print("       Dropout Range:", dropout_range)
 
     # Overall results of grid search
     overall_accs = []
@@ -53,8 +58,9 @@ def run_nn_grid_search(
     overall_filenames = []
 
     # Setup save dirs
-    if grid_search_tag is None:
-        grid_search_tag = "grid_search_" + create_timestamp_str()
+    grid_search_tag = "grid_search_" + (
+        create_timestamp_str() if grid_search_tag is None else grid_search_tag
+    )
     save_dir = os.path.join(ROOT_DIR, grid_search_tag)
     create_dirs_if_not_found(save_dir)
 
@@ -64,21 +70,28 @@ def run_nn_grid_search(
 
     # Create parameter configurations
     all_configs = (
-        (num_epochs, balance_method, class_weights)
+        (num_epochs, balance_method, class_weight_method, dropout)
         for num_epochs in epoch_range
         for balance_method in balance_methods
-        for class_weights in class_weights_range
+        for class_weight_method in class_weight_methods
+        for dropout in dropout_range
     )
-    num_configs = len(epoch_range) * len(balance_methods) * len(class_weights_range)
+    num_configs = (
+        len(epoch_range)
+        * len(balance_methods)
+        * len(class_weight_methods)
+        * len(dropout_range)
+    )
     config_num = 1
 
     # Run grid search
-    for (num_epochs, balance_method, class_weights) in all_configs:
+    for (num_epochs, balance_method, class_weight_method, dropout) in all_configs:
         print("")
         print("-- Configuration " + str(config_num) + "/" + str(num_configs) + " --")
-        print("     Num Epochs -", num_epochs)
-        print(" Balance Method -", balance_method)
-        print("  Class weights -", class_weights)
+        print("         Num Epochs -", num_epochs)
+        print("     Balance Method -", balance_method)
+        print("Class weight method -", class_weight_method)
+        print("            Dropout -", dropout)
         accs = []
         losses = []
         trained_models = []
@@ -88,9 +101,9 @@ def run_nn_grid_search(
                 feature_extractor,
                 num_epochs=num_epochs,
                 balance_method=balance_method,
-                class_weights=class_weights,
+                class_weight_method=class_weight_method,
             )
-            model = NNModel(nn_class, feature_extractor.feature_size)
+            model = NNModel(nn_class, feature_extractor.feature_size, dropout=dropout)
             acc, loss = trainer.train(model)
             accs.append(acc)
             losses.append(loss)
@@ -109,6 +122,7 @@ def run_nn_grid_search(
                 "epochs": num_epochs,
                 "balance_method": balance_method.name,
                 "class_weights": class_weights,
+                "dropout": dropout,
             }
         )
         overall_models.append(best_model)
@@ -183,19 +197,13 @@ def _extract_range(ranges_dict, range_name, default_value):
 
 
 if __name__ == "__main__":
-    distribution = class_distribution("data/processed/train")
-
-    distribution = [x / np.sum(distribution) for x in distribution]
-    inv_distribution = [1 - x for x in distribution]
-
-    distribution = torch.from_numpy(np.array(distribution)).float()
-    inv_distribution = torch.from_numpy(np.array(inv_distribution)).float()
-
     run_nn_grid_search(
-        models.LinearNN,
+        models.LinearNNWithDropout,
         features.AlexNet(),
         repeats=3,
-        epoch_range=[1, 3, 5],
-        balance_methods=[BalanceMethod.NoSample],
-        class_weights_range=[None, distribution, inv_distribution],
+        grid_search_tag="alexnet_linearnn_dropout",
+        epoch_range=[1, 5, 10],
+        balance_methods=[BalanceMethod.NoSample, BalanceMethod.AvgSample,],
+        class_weight_methods=[ClassWeightMethod.Unweighted, ClassWeightMethod.SumBased],
+        dropout_range=[0.0, 0.25, 0.5, 0.75],
     )

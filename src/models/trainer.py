@@ -3,9 +3,18 @@
 import os
 from abc import ABC
 from abc import abstractmethod
+from enum import Enum
 
 from features import FeatureDatasets, FeatureExtractor, DatasetType, BalanceMethod
 from utils import create_timestamp_str
+
+
+class ClassWeightMethod(Enum):
+    """Enum for class weight methods."""
+
+    Unweighted = 1
+    SumBased = 2
+    MaxBased = 3
 
 
 class Trainer(ABC):

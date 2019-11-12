@@ -2,6 +2,7 @@
 
 import time
 
+import numpy as np
 import torch
 import torch.nn.functional as F
 import torchbearer
@@ -11,8 +12,8 @@ from torchbearer import Trial
 
 import features
 from features import BalanceMethod, FeatureExtractor
-from models import FeatureTrainer
-from models import Model
+from models import FeatureTrainer, Model, ClassWeightMethod
+from utils import class_distribution
 
 
 class LinearNN(nn.Module):
@@ -24,6 +25,19 @@ class LinearNN(nn.Module):
 
     def forward(self, x):
         x = self.fc1(x)
+        return x
+
+
+class LinearNNWithDropout(nn.Module):
+    """Linear NN implementation."""
+
+    def __init__(self, input_size, output_size, dropout=0):
+        super().__init__()
+        self.fc1 = nn.Linear(input_size, output_size)
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, x):
+        x = self.dropout(self.fc1(x))
         return x
 
 
@@ -67,11 +81,16 @@ class NNModel(Model):
     """Base model that uses a neural network."""
 
     def __init__(
-        self, net_class, input_size: int, state_dict_path=None, eval_mode=False
+        self,
+        net_class,
+        input_size: int,
+        state_dict_path=None,
+        eval_mode=False,
+        dropout=0,
     ):
         super().__init__(str(net_class.__name__).lower())
         # Create network
-        self.net = net_class(input_size, self.num_classes)
+        self.net = net_class(input_size, self.num_classes, dropout=dropout)
         # Load network state if provided
         if state_dict_path is not None:
             self.load(state_dict_path)
@@ -101,11 +120,11 @@ class NNTrainer(FeatureTrainer):
         feature_extractor: FeatureExtractor,
         balance_method=BalanceMethod.NoSample,
         num_epochs=10,
-        class_weights=None,
+        class_weight_method=ClassWeightMethod.Unweighted,
     ):
         super().__init__(feature_extractor, balance_method)
         self.num_epochs = num_epochs
-        self.class_weights = class_weights
+        self.class_weight_method = class_weight_method
 
     def train(self, model: NNModel) -> (float, float):
         # Get transfer model and put it in training mode
@@ -116,8 +135,15 @@ class NNTrainer(FeatureTrainer):
         optimiser = optim.Adam(net.parameters(), lr=1e-4)
 
         # Setup loss function
-        if self.class_weights is not None:
-            loss_function = self.loss(weight=self.class_weights)
+        if self.class_weight_method != ClassWeightMethod.Unweighted:
+            distribution = class_distribution("data/processed/train")
+            if self.class_weight_method == ClassWeightMethod.SumBased:
+                inv_distribution = [1 - x / np.sum(distribution) for x in distribution]
+                inv_distribution = torch.from_numpy(np.array(inv_distribution)).float()
+            elif self.class_weight_method == ClassWeightMethod.MaxBased:
+                inv_distribution = [np.max(distribution) / x for x in distribution]
+                inv_distribution = torch.from_numpy(np.array(inv_distribution)).float()
+            loss_function = self.loss(inv_distribution)
         else:
             loss_function = self.loss()
 

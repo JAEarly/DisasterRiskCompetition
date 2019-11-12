@@ -1,6 +1,0 @@
-
--- Configuration 1/9 --
-     Num Epochs - 1
- Balance Method - BalanceMethod.NoSample
-  Class weights - None
-Repeat 1/3
