@@ -11,7 +11,7 @@ from torch import optim
 from torchbearer import Trial
 
 import features
-from features import BalanceMethod
+from features import BalanceMethod, FeatureExtractor
 from models import FeatureTrainer
 from models import Model
 from utils import create_timestamp_str
@@ -96,10 +96,18 @@ class NNModel(Model):
 class NNTrainer(FeatureTrainer):
     """Neural network trainer."""
 
-    num_epochs = 3
     loss = nn.CrossEntropyLoss
 
-    def train(self, model: NNModel, class_weights=None):
+    def __init__(
+        self,
+        feature_extractor: FeatureExtractor,
+        balance_method=BalanceMethod.NoSample,
+        num_epochs=10,
+    ):
+        super().__init__(feature_extractor, balance_method)
+        self.num_epochs = num_epochs
+
+    def train(self, model: NNModel, class_weights=None) -> (float, float):
         # Get transfer model and put it in training mode
         net = model.net
         net.train()
@@ -127,8 +135,10 @@ class NNTrainer(FeatureTrainer):
         trial.run(epochs=self.num_epochs)
 
         # Evaluate and show results
-        time.sleep(1)  # Ensure training has finished
-        trial.evaluate(data_key=torchbearer.TEST_DATA)
+        time.sleep(0.1)  # Ensure training has finished
+        results = trial.evaluate(data_key=torchbearer.TEST_DATA)
+        acc = float(results['test_acc'])
+        loss = float(results['test_loss'])
 
         # Save model weights
         save_path = os.path.join(
@@ -141,6 +151,8 @@ class NNTrainer(FeatureTrainer):
             + ".pth",
         )
         model.save(save_path)
+
+        return acc, loss
 
 
 if __name__ == "__main__":

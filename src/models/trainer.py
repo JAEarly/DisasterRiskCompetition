@@ -14,7 +14,7 @@ class Trainer(ABC):
     save_dir = "./models"
 
     @abstractmethod
-    def train(self, model, class_weight=None) -> None:
+    def train(self, model, class_weight=None) ->  (float, float):
         """
         Train a model.
         :param model: Model to train.
@@ -33,7 +33,7 @@ class FeatureTrainer(Trainer):
             feature_extractor, balance_method=balance_method
         )
 
-    def train(self, model, class_weights=None) -> None:
+    def train(self, model, class_weights=None) -> (float, float):
         print("Loading features")
         features, labels = self.feature_dataset.get_features_and_labels(
             DatasetType.Train
