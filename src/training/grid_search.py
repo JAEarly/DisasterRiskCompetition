@@ -202,8 +202,8 @@ if __name__ == "__main__":
         features.AlexNet(),
         repeats=3,
         grid_search_tag="alexnet_linearnn_dropout_extended",
-        epoch_range=[5, 10, 15, 20],
+        epoch_range=[10, 15],
         balance_methods=[BalanceMethod.NoSample],
         class_weight_methods=[ClassWeightMethod.Unweighted, ClassWeightMethod.SumBased],
-        dropout_range=[0.7, 0.8, 0.9],
+        dropout_range=[0.1, 0.25, 0.4],
     )
