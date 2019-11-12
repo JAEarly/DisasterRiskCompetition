@@ -57,7 +57,7 @@ if __name__ == "__main__":
     _model = models.NNModel(
         models.LinearNN,
         _feature_extractor.feature_size,
-        state_dict_path="./models/grid_search_2019-11-12_09:56:37/alexnet_linearnn_best.pth",
+        state_dict_path="./models/grid_search_alexnet_linearnn/alexnet_linearnn_best.pth",
         eval_mode=True,
     )
 
@@ -66,17 +66,25 @@ if __name__ == "__main__":
         _model, _features_datasets.get_loader(DatasetType.Train)
     )
 
-    time.sleep(1)
+    time.sleep(0.1)
+    print("")
+    print("Validation Set Results")
+    val_acc, val_loss = evaluate(
+        _model, _features_datasets.get_loader(DatasetType.Validation)
+    )
+
+    time.sleep(0.1)
     print("")
     print("Test Set Results")
     test_acc, test_loss = evaluate(
         _model, _features_datasets.get_loader(DatasetType.Test)
     )
 
+    time.sleep(0.1)
     print("")
     print("Output for results.md")
     print(
-        "{:.3f} | {:.3f} | {:.3f} | {:.3f} |".format(
-            train_acc, train_loss, test_acc, test_loss
+        ("{:.3f} | " * 6).format(
+            train_acc, train_loss, val_acc, val_loss, test_acc, test_loss
         )
     )

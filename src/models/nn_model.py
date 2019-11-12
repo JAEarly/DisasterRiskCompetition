@@ -19,7 +19,7 @@ from utils import class_distribution
 class LinearNN(nn.Module):
     """Linear NN implementation."""
 
-    def __init__(self, input_size, output_size):
+    def __init__(self, input_size, output_size, dropout=0):
         super().__init__()
         self.fc1 = nn.Linear(input_size, output_size)
 
