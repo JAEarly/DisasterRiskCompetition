@@ -46,8 +46,8 @@ def run_nn_grid_search(
     dropout_range = _extract_range(kwargs, "dropout_range", [0])
 
     print("         Epoch Range:", epoch_range)
-    print("     Balance Methods:", balance_methods)
-    print("Class Weight Methods:", class_weight_methods)
+    print("     Balance Methods:", [b.name for b in balance_methods])
+    print("Class Weight Methods:", [c.name for c in class_weight_methods])
     print("       Dropout Range:", dropout_range)
 
     # Overall results of grid search
@@ -89,8 +89,8 @@ def run_nn_grid_search(
         print("")
         print("-- Configuration " + str(config_num) + "/" + str(num_configs) + " --")
         print("         Num Epochs -", num_epochs)
-        print("     Balance Method -", balance_method)
-        print("Class weight method -", class_weight_method)
+        print("     Balance Method -", balance_method.name)
+        print("Class weight method -", class_weight_method.name)
         print("            Dropout -", dropout)
         accs = []
         losses = []
@@ -121,7 +121,7 @@ def run_nn_grid_search(
             {
                 "epochs": num_epochs,
                 "balance_method": balance_method.name,
-                "class_weights": class_weights,
+                "class_weight_method": class_weight_method.name,
                 "dropout": dropout,
             }
         )
@@ -201,9 +201,9 @@ if __name__ == "__main__":
         models.LinearNNWithDropout,
         features.AlexNet(),
         repeats=3,
-        grid_search_tag="alexnet_linearnn_dropout",
-        epoch_range=[1, 5, 10],
-        balance_methods=[BalanceMethod.NoSample, BalanceMethod.AvgSample,],
+        grid_search_tag="alexnet_linearnn_dropout_extended",
+        epoch_range=[5, 10, 15, 20],
+        balance_methods=[BalanceMethod.NoSample],
         class_weight_methods=[ClassWeightMethod.Unweighted, ClassWeightMethod.SumBased],
-        dropout_range=[0.0, 0.25, 0.5, 0.75],
+        dropout_range=[0.7, 0.8, 0.9],
     )

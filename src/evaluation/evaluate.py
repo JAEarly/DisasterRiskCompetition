@@ -55,9 +55,13 @@ if __name__ == "__main__":
     _feature_extractor = features.AlexNet()
     _features_datasets = FeatureDatasets(_feature_extractor)
     _model = models.NNModel(
-        models.LinearNN,
+        models.LinearNNWithDropout,
         _feature_extractor.feature_size,
-        state_dict_path="./models/grid_search_alexnet_linearnn/alexnet_linearnn_best.pth",
+        state_dict_path=(
+            "./models/"
+            "grid_search_alexnet_linearnn_dropout/"
+            "alexnet_linearnnwithdropout_best.pth"
+        ),
         eval_mode=True,
     )
 

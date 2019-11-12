@@ -36,89 +36,80 @@ def collect_configs(losses, configs, fixed_parameters):
     return collected_losses, collected_configs
 
 
-def collect_and_plot(
+def group_configs(losses, configs, match_on, match_values):
+    grouped_losses = []
+    grouped_configs = []
+    for match_value in match_values:
+        matching_losses = []
+        matching_configs = []
+        for loss, config in zip(losses, configs):
+            if config[match_on] == match_value:
+                matching_losses.append(loss)
+                matching_configs.append(config)
+        grouped_losses.append(matching_losses)
+        grouped_configs.append(matching_configs)
+    return grouped_losses, grouped_configs
+
+
+def plot_against_fixed(
     losses,
     configs,
-    fixed_parameters,
-    x_param_name,
-    x_param_order,
-    axis,
-    label=None,
-    style="-o",
-    title=None,
+    fixed_params,
+    legend_param_name,
+    legend_param_values,
+    x_axis_param_name,
 ):
-    y, x_configs = collect_configs(losses, configs, fixed_parameters)
-    x = [c[x_param_name] for c in x_configs]
+    _, axis = plt.subplots(nrows=1, ncols=1)
 
-    for i, x_elem in enumerate(x):
-        if x_elem is None or type(x_elem) is list:
-            x[i] = str(x_elem)
+    losses, configs = collect_configs(losses, configs, fixed_params)
+    grouped_losses, grouped_configs = group_configs(
+        losses, configs, legend_param_name, legend_param_values
+    )
 
-    data_dict = dict(zip(x, y))
-    new_x = []
-    new_y = []
-    for x_param in x_param_order:
-        new_x.append(x_param)
-        new_y.append(data_dict[x_param])
-
-    x, y = new_x, new_y
-
-    if label is None:
-        label = str(fixed_parameters)
-    axis.plot(x, y, style, label=label)
-
-    if title is not None:
-        axis.set_title(title)
-    else:
-        axis.set_title("None")
-
-
-def plot_by(
-    intra_param_name,
-    intra_params,
-    inter_param_name,
-    inter_params,
-    x_param_name,
-    x_param_order,
-    losses,
-    configs,
-):
-    for inter_param in inter_params:
-        _, axis = plt.subplots(nrows=1, ncols=1)
-        for intra_param in intra_params:
-            collect_and_plot(
-                losses,
-                configs,
-                {intra_param_name: intra_param, inter_param_name: inter_param},
-                x_param_name,
-                x_param_order,
-                axis,
-                label=intra_param,
-                title=inter_param,
-            )
-        axis.legend(loc="best")
-    plt.tight_layout()
-    plt.show()
+    for y, x_configs in zip(grouped_losses, grouped_configs):
+        x = [c[x_axis_param_name] for c in x_configs]
+        x, y = zip(*sorted(zip(x, y)))
+        label = str(x_configs[0][legend_param_name]) + " " + legend_param_name
+        axis.plot(x, y, "-o", label=label)
+    axis.set_title(fixed_params)
+    axis.set_xlabel(x_axis_param_name)
+    axis.set_ylabel("Loss")
+    axis.legend(loc="best")
 
 
 if __name__ == "__main__":
     _losses, _configs = parse_results(
-        "./models/grid_search_alexnet_linearnn/results.txt"
+        "./models/grid_search_alexnet_linearnn_dropout/results.txt"
     )
 
-    epochs_range = [1, 5, 10, 15, 20]
-    class_weight_methods = ["Unweighted", "SumBased", "MaxBased"]
-    balance_methods = ["NoSample", "UnderSample", "AvgSample", "OverSample"]
+    epochs_range = [1, 5, 10]
+    class_weight_methods = ["Unweighted", "SumBased"]
+    balance_methods = ["NoSample", "AvgSample"]
+    dropout_values = [0.0, 0.25, 0.5, 0.75]
 
-    plot_by(
-        "balance_method",
-        balance_methods,
-        "class_weight_method",
-        class_weight_methods,
-        "epochs",
-        epochs_range,
+    _legend_param_name = "dropout"
+    _legend_param_values = dropout_values
+    _x_axis_param_name = "epochs"
+
+    _fixed_params = {"class_weight_method": "Unweighted", "balance_method": "NoSample"}
+    plot_against_fixed(
         _losses,
         _configs,
+        _fixed_params,
+        _legend_param_name,
+        _legend_param_values,
+        _x_axis_param_name,
     )
-    # plot_by('epochs', epochs_range, 'balance_method', balance_methods, 'class_weight_method', class_weight_methods, _losses, _configs)
-    # plot_by('class_weight_method', class_weight_methods, 'epochs', epochs_range, 'balance_method', balance_methods, _losses, _configs)
+
+    _fixed_params = {"class_weight_method": "SumBased", "balance_method": "NoSample"}
+    plot_against_fixed(
+        _losses,
+        _configs,
+        _fixed_params,
+        _legend_param_name,
+        _legend_param_values,
+        _x_axis_param_name,
+    )
+
+    plt.tight_layout()
+    plt.show()
