@@ -7,7 +7,7 @@ import torch
 from sklearn.svm import SVC
 
 import models
-from features import AlexNet256
+from features import AlexNet
 from models import FeatureTrainer
 from models import Model
 

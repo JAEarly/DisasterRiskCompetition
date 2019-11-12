@@ -4,7 +4,7 @@ import os
 from abc import ABC
 from abc import abstractmethod
 
-from features import FeatureDatasets, FeatureExtractor, DatasetType
+from features import FeatureDatasets, FeatureExtractor, DatasetType, BalanceMethod
 from utils import create_timestamp_str
 
 
@@ -26,8 +26,12 @@ class Trainer(ABC):
 class FeatureTrainer(Trainer):
     """Base implementation for feature based trainers."""
 
-    def __init__(self, feature_extractor: FeatureExtractor):
-        self.feature_dataset = FeatureDatasets(feature_extractor)
+    def __init__(
+        self, feature_extractor: FeatureExtractor, balance_method=BalanceMethod.NoSample
+    ):
+        self.feature_dataset = FeatureDatasets(
+            feature_extractor, balance_method=balance_method
+        )
 
     def train(self, model, class_weights=None) -> None:
         print("Loading features")

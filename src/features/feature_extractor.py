@@ -35,12 +35,22 @@ class FeatureExtractor(ABC):
         :return: The pre-trained model with the correct output size.
         """
 
-    @abstractmethod
     def get_transform(self) -> transforms.Compose:
         """
-        Get the image transform used by the feature extractor.
-        :return: The torchvision image transform.
+        Create a transform that reduces to images to 256 x 256.
+        :return: Composed transform.
         """
+        transform = transforms.Compose(
+            [
+                transforms.Resize(256),
+                transforms.CenterCrop(224),
+                transforms.ToTensor(),
+                transforms.Normalize(
+                    mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                ),
+            ]
+        )
+        return transform
 
     def extract(self, dataset_type: DatasetType) -> None:
         """
@@ -119,7 +129,7 @@ class FeatureExtractor(ABC):
         :param dataset_type: Dataset in use (train, test etc.).
         :return: None.
         """
-        return os.path.join(self.save_dir, dataset_type.name.lower(), self.name)
+        return os.path.join(self.save_dir, self.name, dataset_type.name.lower())
 
     def get_labels_filepath(self, dataset_type: DatasetType) -> str:
         """
