@@ -77,21 +77,21 @@ if __name__ == "__main__":
 
     print("Training Set Results")
     train_acc, train_loss = evaluate(
-        _model, _features_datasets.get_loader(DatasetType.Train)
+        _model, _features_datasets.get_loader(DatasetType.Train), apply_softmax=False
     )
 
     time.sleep(0.1)
     print("")
     print("Validation Set Results")
     val_acc, val_loss = evaluate(
-        _model, _features_datasets.get_loader(DatasetType.Validation)
+        _model, _features_datasets.get_loader(DatasetType.Validation), apply_softmax=False
     )
 
     time.sleep(0.1)
     print("")
     print("Test Set Results")
     test_acc, test_loss = evaluate(
-        _model, _features_datasets.get_loader(DatasetType.Test)
+        _model, _features_datasets.get_loader(DatasetType.Test), apply_softmax=False
     )
 
     time.sleep(0.1)
