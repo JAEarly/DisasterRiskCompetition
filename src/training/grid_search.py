@@ -209,6 +209,10 @@ if __name__ == "__main__":
             BalanceMethod.AvgSample,
             BalanceMethod.OverSample,
         ],
-        class_weight_methods=[ClassWeightMethod.Unweighted, ClassWeightMethod.SumBased],
+        class_weight_methods=[
+            ClassWeightMethod.Unweighted,
+            ClassWeightMethod.SumBased,
+            ClassWeightMethod.MaxBased,
+        ],
         dropout_range=[0.0, 0.1, 0.25, 0.5],
     )
