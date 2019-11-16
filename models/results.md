@@ -1,7 +1,8 @@
 **Results**
 
-| Method | Train Acc | Train Loss | Validation Acc | Validation Loss | Test Acc | Test Loss |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| Baseline | 0.657 | 1.014 | **0.656** | **1.015** | **0.660** | **1.005** |
-| Linear NN AlexNet | **0.663** | 0.912 | 0.631 | 1.067 | 0.634 | 1.051 |
-| Linear NN w/ Dropout AlexNet | **0.663** | **0.905** | 0.640 | 1.068 | 0.648 | 1.026 |
+| Method            | Train Acc | Train LL  |  Val Acc  |   Val LL  |  Test Acc | Test Loss |
+| :---------------: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Baseline          |   0.657   |   1.014   | **0.656** |   1.015   | **0.660** |   1.005   |
+| Linear NN AlexNet | **0.663** | **0.905** |   0.640   |   1.068   |   0.648   |   1.026   |
+| Linear NN ResNet  |   0.657   |   0.963   | **0.656** |   0.963   | **0.660** |   0.953   |
+| Bigger NN ResNet  |   0.657   |   0.961   | **0.656** | **0.961** | **0.660** | **0.950** |  

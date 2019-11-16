@@ -54,11 +54,16 @@ def create_submission(
 
 
 if __name__ == "__main__":
-    _feature_extractor = features.AlexNet()
+    _feature_extractor = features.ResNet()
     _model = models.NNModel(
         models.BiggerNN,
         _feature_extractor.feature_size,
-        state_dict_path="./models/alexnet_biggernn_2019-11-11_20:07:44.pth",
+        state_dict_path=(
+            "./models/"
+            "grid_search_resnet_biggernn/"
+            "resnet_biggernn_best.pth"
+        ),
         eval_mode=True,
     )
+    print('Running submission for',  _feature_extractor.name, _model.name)
     create_submission(_model, CompetitionFeatureDataset(_feature_extractor))

@@ -77,8 +77,11 @@ class NNModel(Model):
         dropout=0,
     ):
         super().__init__(str(net_class.__name__).lower())
+        self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
         # Create network
-        self.net = net_class(input_size, self.num_classes, dropout=dropout)
+        self.net = net_class(input_size, self.num_classes, dropout=dropout).to(
+            self.device
+        )
         # Load network state if provided
         if state_dict_path is not None:
             self.load(state_dict_path)
@@ -86,10 +89,10 @@ class NNModel(Model):
             self.net.eval()
 
     def predict(self, feature_tensor):
-        return self.net(feature_tensor)
+        return self.net(feature_tensor.to(self.device))
 
     def predict_batch(self, feature_batch):
-        return self.net(feature_batch)
+        return self.net(feature_batch.to(self.device))
 
     def load(self, path):
         self.net.load_state_dict(torch.load(path))

@@ -199,10 +199,10 @@ def _extract_range(ranges_dict, range_name, default_value):
 
 if __name__ == "__main__":
     run_nn_grid_search(
-        models.LinearNN,
+        models.BiggerNN,
         features.ResNet(),
         repeats=3,
-        grid_search_tag="resnet_linearnn",
+        grid_search_tag="resnet_biggernn",
         epoch_range=[1, 3, 5, 10, 15],
         balance_methods=[
             BalanceMethod.NoSample,
