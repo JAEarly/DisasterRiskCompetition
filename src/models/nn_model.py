@@ -77,8 +77,11 @@ class NNModel(Model):
         dropout=0,
     ):
         super().__init__(str(net_class.__name__).lower())
+        self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
         # Create network
-        self.net = net_class(input_size, self.num_classes, dropout=dropout)
+        self.net = net_class(input_size, self.num_classes, dropout=dropout).to(
+            self.device
+        )
         # Load network state if provided
         if state_dict_path is not None:
             self.load(state_dict_path)
@@ -86,10 +89,10 @@ class NNModel(Model):
             self.net.eval()
 
     def predict(self, feature_tensor):
-        return self.net(feature_tensor)
+        return self.net(feature_tensor.to(self.device))
 
     def predict_batch(self, feature_batch):
-        return self.net(feature_batch)
+        return self.net(feature_batch.to(self.device))
 
     def load(self, path):
         self.net.load_state_dict(torch.load(path))
@@ -122,6 +125,10 @@ class NNTrainer(FeatureTrainer):
         # Create optimiser
         optimiser = optim.Adam(net.parameters(), lr=1e-4)
 
+        # Check for cuda
+        device = "cuda:0" if torch.cuda.is_available() else "cpu"
+        print("Training using", device)
+
         # Setup loss function
         if self.class_weight_method != ClassWeightMethod.Unweighted:
             distribution = class_distribution("data/processed/train")
@@ -132,13 +139,14 @@ class NNTrainer(FeatureTrainer):
                 inv_distribution = [np.max(distribution) / x for x in distribution]
                 inv_distribution = torch.from_numpy(np.array(inv_distribution)).float()
             else:
-                raise IndexError('Unknown class weight method ' + str(self.class_weight_method))
-            loss_function = self.loss(inv_distribution)
+                raise IndexError(
+                    "Unknown class weight method " + str(self.class_weight_method)
+                )
+            loss_function = self.loss(inv_distribution.to(device))
         else:
             loss_function = self.loss()
 
         # Setup trial
-        device = "cuda:0" if torch.cuda.is_available() else "cpu"
         trial = Trial(net, optimiser, loss_function, metrics=["loss", "accuracy"]).to(
             device
         )

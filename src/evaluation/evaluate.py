@@ -61,18 +61,19 @@ def evaluate(
 
 
 if __name__ == "__main__":
-    _feature_extractor = features.AlexNet()
+    _feature_extractor = features.ResNet()
     _features_datasets = FeatureDatasets(_feature_extractor)
     _model = models.NNModel(
-        models.LinearNN,
+        models.BiggerNN,
         _feature_extractor.feature_size,
         state_dict_path=(
             "./models/"
-            "grid_search_alexnet_linearnn_dropout/"
-            "alexnet_linearnnwithdropout_best.pth"
+            "grid_search_resnet_biggernn/"
+            "resnet_biggernn_best.pth"
         ),
         eval_mode=True,
     )
+    print('Running evaluation for',  _feature_extractor.name, _model.name)
 
     print("Training Set Results")
     train_acc, train_loss = evaluate(

@@ -1,11 +1,11 @@
 """Grid search for hyper parameter tuning."""
 
-import os
 import sys
 import time
 from typing import Type
 
 import numpy as np
+import os
 from texttable import Texttable
 from torch import nn
 
@@ -200,11 +200,19 @@ def _extract_range(ranges_dict, range_name, default_value):
 if __name__ == "__main__":
     run_nn_grid_search(
         models.BiggerNN,
-        features.AlexNet(),
+        features.ResNet(),
         repeats=3,
-        grid_search_tag="alexnet_biggernn",
-        epoch_range=[1, 3, 5],
-        balance_methods=[BalanceMethod.NoSample, BalanceMethod.AvgSample],
-        class_weight_methods=[ClassWeightMethod.Unweighted, ClassWeightMethod.SumBased],
-        dropout_range=[0.0, 0.25, 0.5],
+        grid_search_tag="resnet_biggernn",
+        epoch_range=[1, 3, 5, 10, 15],
+        balance_methods=[
+            BalanceMethod.NoSample,
+            BalanceMethod.AvgSample,
+            BalanceMethod.OverSample,
+        ],
+        class_weight_methods=[
+            ClassWeightMethod.Unweighted,
+            ClassWeightMethod.SumBased,
+            ClassWeightMethod.MaxBased,
+        ],
+        dropout_range=[0.0, 0.1, 0.25, 0.5],
     )

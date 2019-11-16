@@ -4,11 +4,11 @@ Base feature extractor implementation.
 Using pre-trained models to take feature vectors from images.
 """
 
-import os
 import pickle
-from abc import ABC, abstractmethod
 
+import os
 import torch
+from abc import ABC, abstractmethod
 from torch import nn
 from torchvision import transforms
 from tqdm import tqdm
@@ -68,26 +68,32 @@ class FeatureExtractor(ABC):
         if not os.path.exists(features_dir) or len(os.listdir(features_dir)) != len(
             image_dataset
         ):
+            # CUDA setup
+            device = "cuda:0" if torch.cuda.is_available() else "cpu"
+            print("Running feature extraction using", device)
+
             create_dirs_if_not_found(features_dir)
             if dataset_type is DatasetType.Competition:
-                self._run_unlabelled_extraction()
+                self._run_unlabelled_extraction(device)
             else:
-                self._run_labelled_extraction(dataset_type)
+                self._run_labelled_extraction(dataset_type, device)
 
-    def _run_labelled_extraction(self, dataset_type: DatasetType) -> None:
+    def _run_labelled_extraction(self, dataset_type: DatasetType, device: str) -> None:
         """
         Run the extraction for labelled data.
         :param dataset_type: Dataset to use (training, test etc.)
         :return: None.
         """
+        dataset = self.image_datasets.get_dataset(dataset_type)
+        self.extractor_model = self.extractor_model.to(device)
+
         i = 0
         labels = []
-        dataset = self.image_datasets.get_dataset(dataset_type)
         for image, image_label in tqdm(
             dataset, desc="Extracting features  - " + dataset_type.name
         ):
             # Extract tensor and save
-            feature_tensor = self.extractor_model(image.unsqueeze(0))
+            feature_tensor = self.extractor_model(image.unsqueeze(0).to(device))
             self._save_tensor(dataset_type, feature_tensor, i)
             labels.append(image_label)
             i += 1
@@ -97,16 +103,17 @@ class FeatureExtractor(ABC):
         with open(labels_filepath, "wb") as file:
             pickle.dump(labels, file)
 
-    def _run_unlabelled_extraction(self) -> None:
+    def _run_unlabelled_extraction(self, device: str) -> None:
         """
         Run the extraction for unlabelled data (i.e. competition dataset).
         :return: None.
         """
+        dataset = self.competition_dataset
+        self.extractor_model = self.extractor_model.to(device)
+
         i = 0
-        for image in tqdm(
-            self.competition_dataset, desc="Extracting features  - competition",
-        ):
-            feature_tensor = self.extractor_model(image.unsqueeze(0))
+        for image in tqdm(dataset, desc="Extracting features  - competition",):
+            feature_tensor = self.extractor_model(image.unsqueeze(0).to(device))
             self._save_tensor(DatasetType.Competition, feature_tensor, i)
             i += 1
 
