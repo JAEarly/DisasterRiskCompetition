@@ -47,7 +47,7 @@ class XGBModel(Model):
         d_train = xgb.DMatrix(training_features, label=labels)
         print("Training")
 
-        num_round = 15
+        num_round = 5
         self.xbg_bst = xgb.train(param, d_train, num_round)
 
     def load(self, path):
@@ -60,7 +60,7 @@ class XGBModel(Model):
 
 
 if __name__ == "__main__":
-    feature_extractor = features.AlexNet()
+    feature_extractor = features.ResNetSMOTE()
     trainer = FeatureTrainer(
         feature_extractor, balance_method=features.BalanceMethod.NoSample
     )

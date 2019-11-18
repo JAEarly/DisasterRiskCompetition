@@ -61,37 +61,45 @@ def evaluate(
 
 
 if __name__ == "__main__":
-    _feature_extractor = features.ResNetSMOTE()
+    _feature_extractor = features.ResNet()
     _features_datasets = FeatureDatasets(_feature_extractor)
     _model = models.NNModel(
         models.LinearNN,
         _feature_extractor.feature_size,
         state_dict_path=(
             "./models/"
-            "grid_search_resnet_linearnn_smote/"
-            "resnet_linearnn_best.pth"
+            "grid_search_resnet_linearnn_smote_extended/"
+            "all/"
+            "resnet_linearnn_2019-11-18_17:31:22.pth"
         ),
         eval_mode=True,
     )
-    print('Running evaluation for',  _feature_extractor.name, _model.name)
+    print("Running evaluation for", _feature_extractor.name, _model.name)
 
+    use_softmax = True
     print("Training Set Results")
     train_acc, train_loss = evaluate(
-        _model, _features_datasets.get_loader(DatasetType.Train), apply_softmax=False
+        _model,
+        _features_datasets.get_loader(DatasetType.Train),
+        apply_softmax=use_softmax,
     )
 
     time.sleep(0.1)
     print("")
     print("Validation Set Results")
     val_acc, val_loss = evaluate(
-        _model, _features_datasets.get_loader(DatasetType.Validation), apply_softmax=False
+        _model,
+        _features_datasets.get_loader(DatasetType.Validation),
+        apply_softmax=use_softmax,
     )
 
     time.sleep(0.1)
     print("")
     print("Test Set Results")
     test_acc, test_loss = evaluate(
-        _model, _features_datasets.get_loader(DatasetType.Test), apply_softmax=False
+        _model,
+        _features_datasets.get_loader(DatasetType.Test),
+        apply_softmax=use_softmax,
     )
 
     time.sleep(0.1)
