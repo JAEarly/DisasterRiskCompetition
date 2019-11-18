@@ -8,11 +8,11 @@ import os
 from abc import ABC, abstractmethod
 from texttable import Texttable
 
-import features
 import models
+import features
 from features import BalanceMethod, FeatureExtractor
-from models import ClassWeightMethod
-from models.nn_model import NNTrainer, Model, NNModel
+from models import FeatureTrainer, NNModel, Model, XGBModel, ClassWeightMethod
+from models.nn_model import NNTrainer
 from utils import (
     create_timestamp_str,
     create_dirs_if_not_found,
@@ -126,6 +126,15 @@ class GridSearch(ABC):
             sorted_results[0][4], self.save_dir, self.feature_extractor.name, tag="best"
         )
 
+    def _print_config(self, config):
+        """
+        Print a config for this grid search.
+        :param config: Config to print.
+        :return: None.
+        """
+        for key, value in config.items():
+            print(key, '-', value)
+
     @staticmethod
     def _save_model(
         model: Model, save_dir: str, feature_extractor_name: str, tag=None
@@ -168,14 +177,6 @@ class GridSearch(ABC):
         """
 
     @abstractmethod
-    def _print_config(self, config):
-        """
-        Print a config for this grid search.
-        :param config: Config to print.
-        :return: None.
-        """
-
-    @abstractmethod
     def _train_model(self, config) -> (float, float, Model):
         """
         Train and evaluate a model.
@@ -200,7 +201,7 @@ class NNGridSearch(GridSearch):
             hyper_parameter_ranges, "balance_methods", BalanceMethod.NoSample
         )
         class_weight_methods = self._extract_range(
-            hyper_parameter_ranges, "class_weight_methods", [None]
+            hyper_parameter_ranges, "class_weight_methods", ClassWeightMethod.Unweighted
         )
         dropout_range = self._extract_range(
             hyper_parameter_ranges, "dropout_range", [0]
@@ -225,7 +226,7 @@ class NNGridSearch(GridSearch):
         for config in all_configs:
             dict_configs.append(
                 {
-                    "epochs": config[0],
+                    "epoch": config[0],
                     "balance_method": config[1],
                     "class_weight_method": config[2],
                     "dropout": config[3],
@@ -233,12 +234,6 @@ class NNGridSearch(GridSearch):
             )
 
         return dict_configs
-
-    def _print_config(self, config):
-        print("         Num Epochs -", config["epochs"])
-        print("     Balance Method -", config["balance_method"].name)
-        print("Class weight method -", config["class_weight_method"].name)
-        print("            Dropout -", config["dropout"])
 
     def _train_model(self, config):
         trainer = NNTrainer(
@@ -252,20 +247,80 @@ class NNGridSearch(GridSearch):
             self.feature_extractor.feature_size,
             dropout=config["dropout"],
         )
-        acc, loss = trainer.train(model)
-        return acc, loss, model
+        val_acc, val_loss = trainer.train(model)
+        return val_acc, val_loss, model
+
+
+class XGBGridSearch(GridSearch):
+
+    def _create_all_configs(self, hyper_parameter_ranges):
+        # Extract hyper parameter ranges
+        etas = self._extract_range(hyper_parameter_ranges, "etas", [0.3])
+        gammas = self._extract_range(hyper_parameter_ranges, "gammas", [0])
+        depths = self._extract_range(hyper_parameter_ranges, "depths", [6])
+        c_weights = self._extract_range(hyper_parameter_ranges, "c_weights", [1])
+        lambdas = self._extract_range(hyper_parameter_ranges, "lambdas", [1])
+
+        # Output parameter values
+        print("             Etas:", etas)
+        print("           Gammas:", gammas)
+        print("           Depths:", depths)
+        print("Min Child Weights:", c_weights)
+        print("          Lambdas:", lambdas)
+
+        # Create configs
+        all_configs = (
+            (eta, gamma, depth, c_weight, reg_lambda)
+            for eta in etas
+            for gamma in gammas
+            for depth in depths
+            for c_weight in c_weights
+            for reg_lambda in lambdas
+        )
+
+        dict_configs = []
+        for config in all_configs:
+            dict_configs.append(
+                {
+                    "eta": config[0],
+                    "gamma": config[1],
+                    "depth": config[2],
+                    "c_weight": config[3],
+                    "reg_lambda": config[4],
+                }
+            )
+
+        return dict_configs
+
+    def _train_model(self, config) -> (float, float, Model):
+        trainer = FeatureTrainer(
+            self.feature_extractor
+        )
+        model = XGBModel()
+        val_acc, val_loss = trainer.train(model, **config)
+        return val_acc, val_loss, model
 
 
 if __name__ == "__main__":
     grid_search = NNGridSearch(
         models.LinearNN,
-        features.ResNetSMOTE(),
+        features.AlexNetSMOTE(),
         repeats=3,
-        tag="resnet_linearnn_smote_extended",
+        tag="alexnet_linearnn_smote",
     )
     grid_search.run(
-        epoch_range=[5, 10, 15],
-        balance_methods=[BalanceMethod.NoSample,],
-        class_weight_methods=[ClassWeightMethod.Unweighted,],
-        dropout_range=[0.0],
+        epoch_range=[1, 3, 5, 10],
+        dropout_range=[0.0, 0.1, 0.2, 0.5],
     )
+    # grid_search = XGBGridSearch(
+    #     features.AlexNetSMOTE(),
+    #     tag="alexnet_xgb_smote",
+    #     repeats=3
+    # )
+    # grid_search.run(
+    #     etas=[0.3],
+    #     gammas=[0],
+    #     depths=[1],
+    #     c_weights=[1],
+    #     lambdas=[1],
+    # )

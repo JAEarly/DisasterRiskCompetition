@@ -31,15 +31,28 @@ class XGBModel(Model):
         pred = self.xbg_bst.predict(d_batch)
         return torch.tensor(pred).float()
 
-    def fit(self, training_features: torch.Tensor, labels):
+    def fit(
+        self,
+        training_features: torch.Tensor,
+        labels,
+        eta=0.3,
+        gamma=0,
+        depth=6,
+        c_weight=1,
+        reg_lambda=1,
+    ):
         param = {
-            "max_depth": 8,
-            "eta": 1,
+            # Fixed parameters
             "objective": "multi:softprob",
             "nthread": 4,
             "eval_metric": "auc",
-            "verbosity": 2,
             "num_class": self.num_classes,
+            # Hyper parameters
+            "eta": eta,
+            "gamma": gamma,
+            "max_depth": depth,
+            "min_child_weight": c_weight,
+            "lambda": reg_lambda,
         }
 
         training_features = training_features.cpu().detach().numpy()
