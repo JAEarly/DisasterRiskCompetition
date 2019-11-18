@@ -14,3 +14,4 @@ texttable
 black
 pylint
 pydocstyle
+imblearn

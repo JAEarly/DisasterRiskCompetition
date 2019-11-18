@@ -180,7 +180,9 @@ class FeatureDataset(Dataset):
     def _load_vector(self, filename):
         filepath = os.path.join(self.data_dir, filename)
         with open(filepath, "rb") as file:
-            feature = pickle.load(file)[0]
+            feature = pickle.load(file)
+            if len(feature.shape) == 2:
+                feature = feature[0]
         return feature
 
     def __len__(self):
