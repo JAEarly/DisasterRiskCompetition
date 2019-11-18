@@ -7,6 +7,7 @@ import numpy as np
 import os
 from abc import ABC, abstractmethod
 from texttable import Texttable
+from shutil import copyfile
 
 import models
 import features
@@ -46,7 +47,6 @@ class GridSearch(ABC):
         overall_accs = []
         overall_losses = []
         overall_params = []
-        overall_models = []
         overall_filenames = []
 
         # Configure logging so output is saved to log file.
@@ -82,7 +82,6 @@ class GridSearch(ABC):
             overall_accs.append(best_acc)
             overall_losses.append(best_loss)
             overall_params.append(config)
-            overall_models.append(best_model)
 
             print("Best Loss:", best_loss)
             print(" Best Acc:", best_acc)
@@ -97,13 +96,7 @@ class GridSearch(ABC):
         # Sort best models
         print("")
         print("--- Final Results ---")
-        results = zip(
-            overall_losses,
-            overall_accs,
-            overall_params,
-            overall_filenames,
-            overall_models,
-        )
+        results = zip(overall_losses, overall_accs, overall_params, overall_filenames,)
         sorted_results = sorted(results, key=lambda x: x[0])
 
         # Create results table
@@ -121,10 +114,10 @@ class GridSearch(ABC):
         with open(results_file, "w") as file:
             file.write(table_output)
 
-        # Save model
-        self._save_model(
-            sorted_results[0][4], self.save_dir, self.feature_extractor.name, tag="best"
-        )
+        # Save
+        src_path = os.path.join(self.save_dir, "all", sorted_results[0][3])
+        dst_path = os.path.join(self.save_dir, "best.pth")
+        copyfile(src_path, dst_path)
 
     def _print_config(self, config):
         """
@@ -133,7 +126,7 @@ class GridSearch(ABC):
         :return: None.
         """
         for key, value in config.items():
-            print(key, '-', value)
+            print(key, "-", value)
 
     @staticmethod
     def _save_model(
@@ -198,10 +191,12 @@ class NNGridSearch(GridSearch):
         # Extract hyper parameter ranges
         epoch_range = self._extract_range(hyper_parameter_ranges, "epoch_range", [5])
         balance_methods = self._extract_range(
-            hyper_parameter_ranges, "balance_methods", BalanceMethod.NoSample
+            hyper_parameter_ranges, "balance_methods", [BalanceMethod.NoSample]
         )
         class_weight_methods = self._extract_range(
-            hyper_parameter_ranges, "class_weight_methods", ClassWeightMethod.Unweighted
+            hyper_parameter_ranges,
+            "class_weight_methods",
+            [ClassWeightMethod.Unweighted],
         )
         dropout_range = self._extract_range(
             hyper_parameter_ranges, "dropout_range", [0]
@@ -226,7 +221,7 @@ class NNGridSearch(GridSearch):
         for config in all_configs:
             dict_configs.append(
                 {
-                    "epoch": config[0],
+                    "epochs": config[0],
                     "balance_method": config[1],
                     "class_weight_method": config[2],
                     "dropout": config[3],
@@ -252,7 +247,6 @@ class NNGridSearch(GridSearch):
 
 
 class XGBGridSearch(GridSearch):
-
     def _create_all_configs(self, hyper_parameter_ranges):
         # Extract hyper parameter ranges
         etas = self._extract_range(hyper_parameter_ranges, "etas", [0.3])
@@ -293,34 +287,22 @@ class XGBGridSearch(GridSearch):
         return dict_configs
 
     def _train_model(self, config) -> (float, float, Model):
-        trainer = FeatureTrainer(
-            self.feature_extractor
-        )
+        trainer = FeatureTrainer(self.feature_extractor)
         model = XGBModel()
         val_acc, val_loss = trainer.train(model, **config)
         return val_acc, val_loss, model
 
 
 if __name__ == "__main__":
-    grid_search = NNGridSearch(
-        models.LinearNN,
+    grid_search = XGBGridSearch(
         features.AlexNetSMOTE(),
-        repeats=3,
-        tag="alexnet_linearnn_smote",
+        tag="alexnet_xgb_smote",
+        repeats=1
     )
     grid_search.run(
-        epoch_range=[1, 3, 5, 10],
-        dropout_range=[0.0, 0.1, 0.2, 0.5],
+        etas=[0.25, 0.35],
+        gammas=[0, 1],
+        depths=[1, 5, 8],
+        c_weights=[1, 2],
+        lambdas=[0.5, 1.5],
     )
-    # grid_search = XGBGridSearch(
-    #     features.AlexNetSMOTE(),
-    #     tag="alexnet_xgb_smote",
-    #     repeats=3
-    # )
-    # grid_search.run(
-    #     etas=[0.3],
-    #     gammas=[0],
-    #     depths=[1],
-    #     c_weights=[1],
-    #     lambdas=[1],
-    # )
