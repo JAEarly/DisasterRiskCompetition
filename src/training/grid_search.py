@@ -345,5 +345,12 @@ class CNNGridSearch(GridSearch):
 
 
 if __name__ == "__main__":
-    grid_search = CNNGridSearch("images", tag="alexnet_cnn", repeats=1)
-    grid_search.run(epoch_range=[1])
+    grid_search = CNNGridSearch("images", tag="alexnet_cnn", repeats=3)
+    grid_search.run(
+        epoch_range=[1, 3, 5, 10],
+        class_weight_methods=[
+            ClassWeightMethod.Unweighted,
+            ClassWeightMethod.SumBased,
+            ClassWeightMethod.MaxBased,
+        ],
+    )
