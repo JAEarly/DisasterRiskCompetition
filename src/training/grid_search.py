@@ -295,8 +295,8 @@ class XGBGridSearch(GridSearch):
 
 if __name__ == "__main__":
     grid_search = XGBGridSearch(
-        features.AlexNetSMOTE(),
-        tag="alexnet_xgb_smote",
+        features.AlexNet(),
+        tag="alexnet_xgb",
         repeats=1
     )
     grid_search.run(

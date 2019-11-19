@@ -11,15 +11,12 @@ if __name__ == "__main__":
     _feature_extractor = features.AlexNet()
     _features_datasets = FeatureDatasets(_feature_extractor)
     _trainer = FeatureTrainer(_feature_extractor)
-    _model = models.NNModel(
-        models.LinearNN,
-        _feature_extractor.feature_size,
-        state_dict_path=(
+    _model = models.XGBModel(
+        model_path=(
             "./models/"
-            "grid_search_alexnet_linearnn_smote/"
-            "alexnet_linearnn_best.pth"
+            "grid_search_alexnet_xgb_smote/"
+            "best.pth"
         ),
-        eval_mode=True,
     )
     print("Running evaluation for", _feature_extractor.name, _model.name)
 
