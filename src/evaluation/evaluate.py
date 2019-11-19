@@ -61,15 +61,15 @@ def evaluate(
 
 
 if __name__ == "__main__":
-    _feature_extractor = features.ResNet()
+    _feature_extractor = features.ResNetSMOTE()
     _features_datasets = FeatureDatasets(_feature_extractor)
     _model = models.NNModel(
-        models.BiggerNN,
+        models.LinearNN,
         _feature_extractor.feature_size,
         state_dict_path=(
             "./models/"
-            "grid_search_resnet_biggernn/"
-            "resnet_biggernn_best.pth"
+            "grid_search_resnet_linearnn_smote/"
+            "resnet_linearnn_best.pth"
         ),
         eval_mode=True,
     )
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     print("")
     print("Output for results.md")
     print(
-        ("{:.3f} | " * 6).format(
+        ("   {:.3f}   |" * 6).format(
             train_acc, train_loss, val_acc, val_loss, test_acc, test_loss
         )
     )
