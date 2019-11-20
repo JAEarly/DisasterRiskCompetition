@@ -19,6 +19,11 @@ def final_layer_alteration_alexnet(net, num_classes):
     return net
 
 
+def final_layer_alteration_resnet(net, num_classes):
+    net.fc = nn.Linear(2048, num_classes)
+    return net
+
+
 class PretrainedNNModel(Model):
     """Base model that uses a pretrained cnn."""
 

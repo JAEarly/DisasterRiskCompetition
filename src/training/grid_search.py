@@ -301,8 +301,10 @@ class XGBGridSearch(GridSearch):
 
 
 class CNNGridSearch(GridSearch):
-    def __init__(self, feature_name, **kwargs):
+    def __init__(self, model_class, model_alteration_function, feature_name, **kwargs):
         super().__init__(feature_name, **kwargs)
+        self.model_class = model_class
+        self.model_alteration_function = model_alteration_function
 
     def _create_all_configs(self, hyper_parameter_ranges):
         # Extract hyper parameter ranges
@@ -337,20 +339,23 @@ class CNNGridSearch(GridSearch):
             num_epochs=config["epochs"],
             class_weight_method=config["class_weight_method"],
         )
-        model = PretrainedNNModel(
-            torch_models.alexnet, cnn_models.final_layer_alteration_alexnet
-        )
+        model = PretrainedNNModel(self.model_class, self.model_alteration_function)
         val_acc, val_loss = trainer.train(model)
         return val_acc, val_loss, model
 
 
 if __name__ == "__main__":
-    grid_search = CNNGridSearch("images", tag="alexnet_cnn", repeats=3)
+    grid_search = CNNGridSearch(
+        torch_models.resnet152,
+        cnn_models.final_layer_alteration_resnet,
+        "images",
+        tag="resnet_cnn",
+        repeats=3,
+    )
     grid_search.run(
         epoch_range=[1, 3, 5, 10],
         class_weight_methods=[
             ClassWeightMethod.Unweighted,
             ClassWeightMethod.SumBased,
-            ClassWeightMethod.MaxBased,
         ],
     )
