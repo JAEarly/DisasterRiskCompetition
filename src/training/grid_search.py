@@ -9,6 +9,7 @@ from abc import ABC, abstractmethod
 from shutil import copyfile
 from texttable import Texttable
 from torchvision import models as torch_models
+from model_manager import ModelManager
 
 import models.cnn_model as cnn_models
 from features import BalanceMethod, FeatureExtractor
@@ -125,6 +126,9 @@ class GridSearch(ABC):
         src_path = os.path.join(self.save_dir, "all", sorted_results[0][3])
         dst_path = os.path.join(self.save_dir, "best.pth")
         copyfile(src_path, dst_path)
+
+        # Upload
+        ModelManager().upload_model(dst_path)
 
     @staticmethod
     def _print_config(config):
