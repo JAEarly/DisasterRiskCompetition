@@ -4,12 +4,13 @@ Contains the abstract and implementation classes for the competition data.
 Different to Datasets as it works with unlabelled data (i.e. class labels not given).
 """
 
-import os
 import pickle
 
+import os
 from PIL import Image
 from torch.utils import data
 from torch.utils.data import Dataset
+from torchvision.transforms import transforms
 
 from features import DatasetType
 
@@ -33,16 +34,29 @@ class CompetitionImageDataset(CompetitionDataset):
         super().__init__()
         self.filenames = os.listdir(self.data_dir)
         self.transform = transform
+        if self.transform is None:
+            self.transform = transforms.Compose(
+                [
+                    transforms.Resize(256),
+                    transforms.CenterCrop(224),
+                    transforms.ToTensor(),
+                    transforms.Normalize(
+                        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                    ),
+                ]
+            )
 
     def __len__(self):
         return len(self.filenames)
 
     def __getitem__(self, index):
-        image = Image.open(os.path.join(self.data_dir, self.filenames[index]))
+        filename = self.filenames[index]
+        file_id = filename[:filename.index(".png")]
+        image = Image.open(os.path.join(self.data_dir, filename))
         image = image.convert("RGB")
         if self.transform is not None:
             image = self.transform(image)
-        return image
+        return file_id, image
 
 
 class CompetitionFeatureDataset(CompetitionDataset):

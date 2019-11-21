@@ -11,7 +11,13 @@ from sklearn.metrics import log_loss, accuracy_score
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from features import FeatureDatasets, FeatureExtractor, DatasetType, BalanceMethod
+from features import (
+    FeatureDatasets,
+    FeatureExtractor,
+    DatasetType,
+    BalanceMethod,
+    ImageDatasets,
+)
 from utils import create_timestamp_str
 
 
@@ -29,7 +35,7 @@ class Trainer(ABC):
     save_dir = "./models"
 
     @abstractmethod
-    def train(self, model) -> (float, float):
+    def train(self, model, **kwargs) -> (float, float):
         """
         Train a model.
         :param model: Model to train.
@@ -38,7 +44,7 @@ class Trainer(ABC):
 
     @staticmethod
     def evaluate(
-            model, data_loader: DataLoader, apply_softmax=True, verbose=False
+        model, data_loader: DataLoader, apply_softmax=True, verbose=False
     ) -> (float, float):
         """
         Evaluate a model on a given dataset.
@@ -52,12 +58,12 @@ class Trainer(ABC):
         y_true = []
         y_pred = []
         for batch, labels in tqdm(data_loader, leave=False):
-            y_pred.extend(model.predict_batch(batch))
+            y_pred.extend(model.predict_batch(batch).cpu().detach())
             y_true.extend(labels)
 
         # Format as tensors
         y_true = torch.stack(y_true)
-        y_pred = torch.stack(y_pred).cpu().detach()
+        y_pred = torch.stack(y_pred)
 
         # Convert from one hot to class ids
         _, y_pred_classes = y_pred.max(1)
@@ -71,7 +77,11 @@ class Trainer(ABC):
         y_true_pd = pd.Series(y_true, name="Actual")
         y_pred_pd = pd.Series(y_pred_classes, name="Predicted")
         conf_mat = pd.crosstab(
-            y_true_pd, y_pred_pd, rownames=["Actual"], colnames=["Predicted"], margins=True
+            y_true_pd,
+            y_pred_pd,
+            rownames=["Actual"],
+            colnames=["Predicted"],
+            margins=True,
         )
 
         # Print accuracy and log loss
@@ -84,6 +94,13 @@ class Trainer(ABC):
             print(conf_mat)
 
         return acc, ll
+
+
+class ImageTrainer(Trainer, ABC):
+    """Base implementation for image based trainers."""
+
+    def __init__(self):
+        self.image_datasets = ImageDatasets()
 
 
 class FeatureTrainer(Trainer):

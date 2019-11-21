@@ -6,13 +6,21 @@ import time
 import numpy as np
 import os
 from abc import ABC, abstractmethod
-from texttable import Texttable
 from shutil import copyfile
+from texttable import Texttable
+from torchvision import models as torch_models
 
-import models
-import features
+import models.cnn_model as cnn_models
 from features import BalanceMethod, FeatureExtractor
-from models import FeatureTrainer, NNModel, Model, XGBModel, ClassWeightMethod
+from models import (
+    FeatureTrainer,
+    NNModel,
+    Model,
+    XGBModel,
+    ClassWeightMethod,
+    PretrainedNNModel,
+)
+from models.cnn_model import PretrainedNNTrainer
 from models.nn_model import NNTrainer
 from utils import (
     create_timestamp_str,
@@ -26,8 +34,8 @@ ROOT_DIR = "./models"
 class GridSearch(ABC):
     """Base class for grid search."""
 
-    def __init__(self, feature_extractor: FeatureExtractor, tag=None, repeats=3):
-        self.feature_extractor = feature_extractor
+    def __init__(self, feature_name, tag=None, repeats=3):
+        self.feature_name = feature_name
         self.grid_search_tag = "grid_search_" + (
             create_timestamp_str() if tag is None else tag
         )
@@ -36,6 +44,7 @@ class GridSearch(ABC):
         self.repeats = repeats
 
         create_dirs_if_not_found(self.save_dir)
+        print("Running", self.grid_search_tag + self.feature_name)
 
     def run(self, **kwargs) -> None:
         """
@@ -88,9 +97,7 @@ class GridSearch(ABC):
             print(" Avg Loss:", np.mean(losses))
             print("  Avg Acc:", np.mean(accs))
 
-            file_name = self._save_model(
-                best_model, self.save_dir + "/all", self.feature_extractor.name
-            )
+            file_name = self._save_model(best_model, self.save_dir + "/all")
             overall_filenames.append(file_name)
 
         # Sort best models
@@ -119,7 +126,8 @@ class GridSearch(ABC):
         dst_path = os.path.join(self.save_dir, "best.pth")
         copyfile(src_path, dst_path)
 
-    def _print_config(self, config):
+    @staticmethod
+    def _print_config(config):
         """
         Print a config for this grid search.
         :param config: Config to print.
@@ -128,22 +136,18 @@ class GridSearch(ABC):
         for key, value in config.items():
             print(key, "-", value)
 
-    @staticmethod
-    def _save_model(
-        model: Model, save_dir: str, feature_extractor_name: str, tag=None
-    ) -> str:
+    def _save_model(self, model: Model, save_dir: str, tag=None) -> str:
         """
         Save a model.
         :param model: Model to save.
         :param save_dir: Path of save directory.
-        :param feature_extractor_name: Name of feature extractor used.
         :param tag: Optional file tag.
         :return: Generated filename.
         """
         if tag is None:
             tag = create_timestamp_str()
         create_dirs_if_not_found(save_dir)
-        file_name = feature_extractor_name + "_" + model.name + "_" + tag + ".pth"
+        file_name = self.feature_name + "_" + model.name + "_" + tag + ".pth"
         save_path = os.path.join(save_dir, file_name)
         model.save(save_path)
         return file_name
@@ -181,10 +185,9 @@ class GridSearch(ABC):
 class NNGridSearch(GridSearch):
     """Grid search for NN models."""
 
-    def __init__(
-        self, nn_class, feature_extractor: FeatureExtractor, tag=None, repeats=3
-    ):
-        super().__init__(feature_extractor, tag, repeats)
+    def __init__(self, nn_class, feature_extractor: FeatureExtractor, **kwargs):
+        super().__init__(feature_extractor.name, **kwargs)
+        self.feature_extractor = feature_extractor
         self.nn_class = nn_class
 
     def _create_all_configs(self, hyper_parameter_ranges):
@@ -247,6 +250,10 @@ class NNGridSearch(GridSearch):
 
 
 class XGBGridSearch(GridSearch):
+    def __init__(self, feature_extractor, **kwargs):
+        super().__init__(feature_extractor.name, **kwargs)
+        self.feature_extractor = feature_extractor
+
     def _create_all_configs(self, hyper_parameter_ranges):
         # Extract hyper parameter ranges
         etas = self._extract_range(hyper_parameter_ranges, "etas", [0.3])
@@ -293,16 +300,62 @@ class XGBGridSearch(GridSearch):
         return val_acc, val_loss, model
 
 
+class CNNGridSearch(GridSearch):
+    def __init__(self, model_class, model_alteration_function, feature_name, **kwargs):
+        super().__init__(feature_name, **kwargs)
+        self.model_class = model_class
+        self.model_alteration_function = model_alteration_function
+
+    def _create_all_configs(self, hyper_parameter_ranges):
+        # Extract hyper parameter ranges
+        epoch_range = self._extract_range(hyper_parameter_ranges, "epoch_range", [5])
+        class_weight_methods = self._extract_range(
+            hyper_parameter_ranges,
+            "class_weight_methods",
+            [ClassWeightMethod.Unweighted],
+        )
+
+        # Output parameter values
+        print("         Epoch Range:", epoch_range)
+        print("Class Weight Methods:", [c.name for c in class_weight_methods])
+
+        # Create configs
+        all_configs = (
+            (num_epochs, class_weight_method)
+            for num_epochs in epoch_range
+            for class_weight_method in class_weight_methods
+        )
+
+        dict_configs = []
+        for config in all_configs:
+            dict_configs.append(
+                {"epochs": config[0], "class_weight_method": config[1],}
+            )
+
+        return dict_configs
+
+    def _train_model(self, config) -> (float, float, Model):
+        trainer = PretrainedNNTrainer(
+            num_epochs=config["epochs"],
+            class_weight_method=config["class_weight_method"],
+        )
+        model = PretrainedNNModel(self.model_class, self.model_alteration_function)
+        val_acc, val_loss = trainer.train(model)
+        return val_acc, val_loss, model
+
+
 if __name__ == "__main__":
-    grid_search = XGBGridSearch(
-        features.AlexNet(),
-        tag="alexnet_xgb",
-        repeats=1
+    grid_search = CNNGridSearch(
+        torch_models.resnet152,
+        cnn_models.final_layer_alteration_resnet,
+        "images",
+        tag="resnet_cnn",
+        repeats=1,
     )
     grid_search.run(
-        etas=[0.25, 0.35],
-        gammas=[0, 1],
-        depths=[1, 5, 8],
-        c_weights=[1, 2],
-        lambdas=[0.5, 1.5],
+        epoch_range=[1, 3, 5, 10],
+        class_weight_methods=[
+            ClassWeightMethod.Unweighted,
+            ClassWeightMethod.SumBased,
+        ],
     )

@@ -16,3 +16,4 @@ pylint
 pydocstyle
 imblearn
 xgboost
+azure-storage-blob
