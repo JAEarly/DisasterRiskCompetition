@@ -25,9 +25,9 @@ def setup_image_evaluation():
     image_datasets = ImageDatasets()
     trainer = PretrainedNNTrainer()
     model = models.PretrainedNNModel(
-        tv_models.alexnet,
-        cnn_models.final_layer_alteration_alexnet,
-        state_dict_path="./models/grid_search_alexnet_cnn/best.pth",
+        tv_models.resnet152,
+        cnn_models.final_layer_alteration_resnet,
+        state_dict_path="./models/grid_search_resnet_cnn/best.pth",
         eval_mode=True,
     )
     print("Running evaluation for", model.name)

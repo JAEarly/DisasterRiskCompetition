@@ -350,7 +350,7 @@ if __name__ == "__main__":
         cnn_models.final_layer_alteration_resnet,
         "images",
         tag="resnet_cnn",
-        repeats=3,
+        repeats=1,
     )
     grid_search.run(
         epoch_range=[1, 3, 5, 10],
