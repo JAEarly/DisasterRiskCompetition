@@ -1,4 +1,0 @@
-- No sampling much better than avg sampling in this case.
-- Sum based weighting comparable to no weighting when using no sampling; ditch avg sampling.
-- Dropout most effective when not using class weighting (trying to solve the same problem).
-- Relationship between epochs and drop out unclear, try increasing both values.

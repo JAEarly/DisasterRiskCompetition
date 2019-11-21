@@ -14,3 +14,6 @@ texttable
 black
 pylint
 pydocstyle
+imblearn
+xgboost
+azure-storage-blob

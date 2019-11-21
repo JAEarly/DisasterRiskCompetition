@@ -2,42 +2,52 @@
 
 from torch import nn
 from torchvision import models
-from torchvision import transforms
 
-from features import FeatureExtractor, IdentityLayer, DatasetType
+from features import FeatureExtractor, IdentityLayer, DatasetType, SmoteExtractor
 
 
-class ResNet18t256(FeatureExtractor):
-    """ResNet feature extractor using a 256 image transform."""
+class ResNet(FeatureExtractor):
+    """ResNet feature extractor."""
 
     def __init__(self):
-        super().__init__("resnet18t256")
+        super().__init__("resnet")
 
     def setup_model(self) -> (nn.Module, int):
         """
         Create a pre-trained ResNet model with the final layer replaced.
         :return: ResNet model.
         """
-        resnet = models.resnet18(pretrained=True)  # type: nn.Module
+        resnet = models.resnet152(pretrained=True)  # type: nn.Module
         resnet.fc = IdentityLayer()
-        return resnet, 512
+        return resnet, 2048
 
-    def get_transform(self) -> transforms.Compose:
+
+class ResNetSMOTE(SmoteExtractor):
+    """ResNet SMOTE feature extractor."""
+
+    def __init__(self):
+        super().__init__(ResNet())
+
+    def setup_model(self) -> (nn.Module, int):
         """
-        Create a transform that reduces to images to 256 x 256.
-        :return: Composed transform.
+        Create a pre-trained ResNet model with the final layer replaced.
+        :return: ResNet model.
         """
-        transform = transforms.Compose(
-            [transforms.Resize((256, 256)), transforms.ToTensor()]
-        )
-        return transform
+        resnet = models.resnet152(pretrained=True)  # type: nn.Module
+        resnet.fc = IdentityLayer()
+        return resnet, 2048
 
 
 if __name__ == "__main__":
-    print("Creating ResNet18t256 extractor")
-    feature_extractor = ResNet18t256()
+    print("Creating ResNet extractor")
+    feature_extractor = ResNet()
     print("Extracting features")
     feature_extractor.extract(DatasetType.Train)
     feature_extractor.extract(DatasetType.Validation)
     feature_extractor.extract(DatasetType.Test)
     feature_extractor.extract(DatasetType.Competition)
+
+    print("Creating ResNet SMOTE extractor")
+    feature_extractor = ResNetSMOTE()
+    print("Extracting features")
+    feature_extractor.extract(DatasetType.Train)

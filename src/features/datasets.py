@@ -5,13 +5,13 @@ A datasets class contains train, validation and test datasets (all labelled data
 These datasets are either backed by images (raw data) or features (extracted from images).
 """
 
-import os
 import pickle
-from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Tuple
 
+import os
 import torch
+from abc import ABC, abstractmethod
 from torch.utils import data
 from torch.utils.data import Dataset
 from torchvision import datasets as torch_datasets
@@ -106,8 +106,19 @@ class ImageDatasets(Datasets):
     validation_dir = "./data/processed/validation"
     test_dir = "./data/processed/test"
 
-    def __init__(self, transform: transforms.Compose):
+    def __init__(self, transform: transforms.Compose = None):
         self.transform = transform
+        if self.transform is None:
+            self.transform = transforms.Compose(
+                [
+                    transforms.Resize(256),
+                    transforms.CenterCrop(224),
+                    transforms.ToTensor(),
+                    transforms.Normalize(
+                        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                    ),
+                ]
+            )
         super().__init__()
 
     def create_datasets(self, balance_method: BalanceMethod):
@@ -180,7 +191,9 @@ class FeatureDataset(Dataset):
     def _load_vector(self, filename):
         filepath = os.path.join(self.data_dir, filename)
         with open(filepath, "rb") as file:
-            feature = pickle.load(file)[0]
+            feature = pickle.load(file)
+            if len(feature.shape) == 2:
+                feature = feature[0]
         return feature
 
     def __len__(self):

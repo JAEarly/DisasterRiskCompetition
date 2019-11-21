@@ -1,0 +1,26 @@
+         Epoch Range: [1]
+Class Weight Methods: ['Unweighted']
+
+-- Configuration 1/1 --
+epochs - 1
+class_weight_method - ClassWeightMethod.Unweighted
+Repeat 1/1
+         Epoch Range: [1]
+Class Weight Methods: ['Unweighted']
+
+-- Configuration 1/1 --
+epochs - 1
+class_weight_method - ClassWeightMethod.Unweighted
+Repeat 1/1
+Training using cuda:0
+Best Loss: 0.503720223903656
+ Best Acc: 0.8195921778678894
+ Avg Loss: 0.503720223903656
+  Avg Acc: 0.8195921778678894
+
+--- Final Results ---
++-----+-------+-------+-------------------------------------------------------------------------+----------------------------------------+
+| Pos | Loss  |  Acc  |                                 Params                                  |                Filename                |
++=====+=======+=======+=========================================================================+========================================+
+|  1  | 0.504 | 0.820 | {'epochs': 1, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>} | images_alexnet_2019-11-19_13:36:54.pth |
++-----+-------+-------+-------------------------------------------------------------------------+----------------------------------------+

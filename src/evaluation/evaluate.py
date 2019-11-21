@@ -2,102 +2,76 @@
 
 import time
 
-import pandas as pd
-import torch
-from sklearn.metrics import log_loss, accuracy_score
-from torch.utils.data import DataLoader
-from tqdm import tqdm
+from torchvision import models as tv_models
 
 import features
 import models
-from features import DatasetType, FeatureDatasets
+import models.cnn_model as cnn_models
+from features import DatasetType, FeatureDatasets, ImageDatasets
+from models import FeatureTrainer
+from models.cnn_model import PretrainedNNTrainer
 
 
-def evaluate(
-    model: models.Model, data_loader: DataLoader, apply_softmax=True
-) -> (float, float):
-    """
-    Evaluate a model on a given dataset.
-    :param model: Model to evaluate.
-    :param data_loader: Data loader wrapper around test set.
-    :param apply_softmax: Should softmax be applied to the predictions.
-    :return: None.
-    """
-    # Get truth and predictions
-    y_true = []
-    y_pred = []
-    for batch, labels in tqdm(data_loader, leave=False):
-        y_pred.extend(model.predict_batch(batch))
-        y_true.extend(labels)
+def setup_feature_evaluation():
+    feature_extractor = features.AlexNet()
+    features_datasets = FeatureDatasets(feature_extractor)
+    trainer = FeatureTrainer(feature_extractor)
+    model = models.XGBModel(model_path="./models/grid_search_alexnet_cnn/best.pth",)
+    print("Running evaluation for", feature_extractor.name, model.name)
+    return features_datasets, trainer, model
 
-    # Format as tensors
-    y_true = torch.stack(y_true)
-    y_pred = torch.stack(y_pred).cpu().detach()
 
-    # Convert from one hot to class ids
-    _, y_pred_classes = y_pred.max(1)
-
-    # Calculate prediction probabilities if required
-    if apply_softmax:
-        y_probabilities = torch.softmax(y_pred, 1)
-    else:
-        y_probabilities = y_pred
-
-    y_true_pd = pd.Series(y_true, name="Actual")
-    y_pred_pd = pd.Series(y_pred_classes, name="Predicted")
-    conf_mat = pd.crosstab(
-        y_true_pd, y_pred_pd, rownames=["Actual"], colnames=["Predicted"], margins=True
+def setup_image_evaluation():
+    image_datasets = ImageDatasets()
+    trainer = PretrainedNNTrainer()
+    model = models.PretrainedNNModel(
+        tv_models.resnet152,
+        cnn_models.final_layer_alteration_resnet,
+        state_dict_path="./models/grid_search_resnet_cnn/best.pth",
+        eval_mode=True,
     )
-
-    # Print accuracy and log loss
-    acc = accuracy_score(y_true, y_pred_classes)
-    ll = log_loss(y_true, y_probabilities, labels=[0, 1, 2, 3, 4])
-    print("Accuracy: {:.3f}".format(acc))
-    print("Log loss: {:.3f}".format(ll))
-    print("Confusion matrix")
-    print(conf_mat)
-
-    return acc, ll
+    print("Running evaluation for", model.name)
+    return image_datasets, trainer, model
 
 
 if __name__ == "__main__":
-    _feature_extractor = features.AlexNet()
-    _features_datasets = FeatureDatasets(_feature_extractor)
-    _model = models.NNModel(
-        models.LinearNN,
-        _feature_extractor.feature_size,
-        state_dict_path=(
-            "./models/"
-            "grid_search_alexnet_linearnn_dropout/"
-            "alexnet_linearnnwithdropout_best.pth"
-        ),
-        eval_mode=True,
-    )
+    # _datasets, _trainer, _model = setup_feature_evaluation()
+    _datasets, _trainer, _model = setup_image_evaluation()
 
+    use_softmax = True
     print("Training Set Results")
-    train_acc, train_loss = evaluate(
-        _model, _features_datasets.get_loader(DatasetType.Train)
+    train_acc, train_loss = _trainer.evaluate(
+        _model,
+        _datasets.get_loader(DatasetType.Train),
+        apply_softmax=use_softmax,
+        verbose=True,
     )
 
     time.sleep(0.1)
     print("")
     print("Validation Set Results")
-    val_acc, val_loss = evaluate(
-        _model, _features_datasets.get_loader(DatasetType.Validation)
+    val_acc, val_loss = _trainer.evaluate(
+        _model,
+        _datasets.get_loader(DatasetType.Validation),
+        apply_softmax=use_softmax,
+        verbose=True,
     )
 
     time.sleep(0.1)
     print("")
     print("Test Set Results")
-    test_acc, test_loss = evaluate(
-        _model, _features_datasets.get_loader(DatasetType.Test)
+    test_acc, test_loss = _trainer.evaluate(
+        _model,
+        _datasets.get_loader(DatasetType.Test),
+        apply_softmax=use_softmax,
+        verbose=True,
     )
 
     time.sleep(0.1)
     print("")
     print("Output for results.md")
     print(
-        ("{:.3f} | " * 6).format(
+        ("   {:.3f}   |" * 6).format(
             train_acc, train_loss, val_acc, val_loss, test_acc, test_loss
         )
     )

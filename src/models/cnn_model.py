@@ -1,87 +1,45 @@
-"""Neural network solution."""
+"""Conv neural network solution."""
 
 import time
 
 import numpy as np
 import torch
-import torch.nn.functional as F
 import torchbearer
 from torch import nn
 from torch import optim
 from torchbearer import Trial
+from torchvision import models as torch_models
 
-import features
-from features import BalanceMethod, FeatureExtractor
-from models import FeatureTrainer, Model, ClassWeightMethod
+from models import Model, ClassWeightMethod, ImageTrainer
 from utils import class_distribution
 
 
-class LinearNN(nn.Module):
-    """Linear NN implementation."""
-
-    def __init__(self, input_size, output_size, dropout=0):
-        super().__init__()
-        self.fc1 = nn.Linear(input_size, output_size)
-        self.dropout = nn.Dropout(dropout)
-
-    def forward(self, x):
-        x = self.dropout(self.fc1(x))
-        return x
+def final_layer_alteration_alexnet(net, num_classes):
+    net.classifier[6] = nn.Linear(4096, num_classes)
+    return net
 
 
-class BiggerNN(nn.Module):
-    """Bigger NN implementation."""
-
-    def __init__(self, input_size, output_size, dropout=0):
-        super().__init__()
-        self.fc1 = nn.Linear(input_size, 256)
-        self.fc2 = nn.Linear(256, 64)
-        self.fc3 = nn.Linear(64, output_size)
-        self.dropout = nn.Dropout(dropout)
-
-    def forward(self, x):
-        x = self.dropout(F.relu(self.fc1(x)))
-        x = self.dropout(F.relu(self.fc2(x)))
-        x = self.fc3(x)
-        return x
+def final_layer_alteration_resnet(net, num_classes):
+    net.fc = nn.Linear(2048, num_classes)
+    return net
 
 
-class AlexNetClassifierNN(nn.Module):
-    """AlexNet classifier layer NN implementation."""
-
-    def __init__(self, input_size, output_size, dropout=0):
-        super().__init__()
-        self.classifier = nn.Sequential(
-            nn.Dropout(),
-            nn.Linear(input_size, 4096),
-            nn.ReLU(inplace=True),
-            nn.Dropout(),
-            nn.Linear(4096, 4096),
-            nn.ReLU(inplace=True),
-            nn.Linear(4096, output_size),
-        )
-
-    def forward(self, x):
-        return self.classifier(x)
-
-
-class NNModel(Model):
-    """Base model that uses a neural network."""
+class PretrainedNNModel(Model):
+    """Base model that uses a pretrained cnn."""
 
     def __init__(
         self,
-        net_class,
-        input_size: int,
+        pretrained_net_class,
+        final_layer_alteration,
         state_dict_path=None,
         eval_mode=False,
-        dropout=0,
     ):
-        super().__init__(str(net_class.__name__).lower())
+        super().__init__(str(pretrained_net_class.__name__).lower())
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
-        # Create network
-        self.net = net_class(input_size, self.num_classes, dropout=dropout).to(
-            self.device
-        )
+        # Create network and apply final layer alteration to match correct number of classes
+        self.net = pretrained_net_class(pretrained=True)
+        self.net = final_layer_alteration(self.net, self.num_classes)
+        self.net = self.net.to(self.device)
         # Load network state if provided
         if state_dict_path is not None:
             self.load(state_dict_path)
@@ -101,23 +59,19 @@ class NNModel(Model):
         torch.save(self.net.state_dict(), path)
 
 
-class NNTrainer(FeatureTrainer):
-    """Neural network trainer."""
+class PretrainedNNTrainer(ImageTrainer):
+    """Pretrained neural network trainer."""
 
     loss = nn.CrossEntropyLoss
 
     def __init__(
-        self,
-        feature_extractor: FeatureExtractor,
-        balance_method=BalanceMethod.NoSample,
-        num_epochs=10,
-        class_weight_method=ClassWeightMethod.Unweighted,
+        self, num_epochs=10, class_weight_method=ClassWeightMethod.Unweighted,
     ):
-        super().__init__(feature_extractor, balance_method)
+        super().__init__()
         self.num_epochs = num_epochs
         self.class_weight_method = class_weight_method
 
-    def train(self, model: NNModel) -> (float, float):
+    def train(self, model: PretrainedNNModel, **kwargs) -> (float, float):
         # Get transfer model and put it in training mode
         net = model.net
         net.train()
@@ -151,8 +105,8 @@ class NNTrainer(FeatureTrainer):
             device
         )
         trial.with_generators(
-            self.feature_dataset.train_loader,
-            test_generator=self.feature_dataset.test_loader,
+            self.image_datasets.train_loader,
+            test_generator=self.image_datasets.validation_loader,
         )
 
         # Actually run the training
@@ -169,8 +123,7 @@ class NNTrainer(FeatureTrainer):
 
 
 if __name__ == "__main__":
-    _network_class = BiggerNN
-    _feature_extractor = features.AlexNet()
-    _trainer = NNTrainer(_feature_extractor, balance_method=BalanceMethod.OverSample)
-    _model = NNModel(_network_class, _feature_extractor.feature_size)
+    _network_class = torch_models.alexnet
+    _model = PretrainedNNModel(_network_class, final_layer_alteration_alexnet)
+    _trainer = PretrainedNNTrainer(num_epochs=1)
     _trainer.train(_model)

@@ -1,8 +1,19 @@
 ### Open AI Caribean Challenge: Mapping Disaster Risk from Aerial Imagery ###
 
+Competition website: https://www.drivendata.org/competitions/58/disaster-response-roof-type/page/142/
+
+What's been tried:
+- Pretrained networks (ImageNet) as feature extractors with various classifiers. Didn't work: extracted feature vectors all clumped together.
+- Retraining pretrained networks (ImageNet). Using entire network. AlexNet good, ResNet152 better.
+
 #### Running scripts ####
 
-Execute from root directory.
+Execute from root directory (i.e. add root directory to PYTHONPATH).
+
+General process:
+- Use src/training/grid_search.py to train models and find hyper-parameters.
+- Evaluate using src/evaluation/evaluate.py. Update models/results.md.
+- If keen to submit, run src/evaluation/submit.py. 
 
 #### Intended Project Structure ###
 
