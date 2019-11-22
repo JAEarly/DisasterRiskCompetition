@@ -112,7 +112,7 @@ class FeatureExtractor(ABC):
         self.extractor_model = self.extractor_model.to(device)
 
         i = 0
-        for image in tqdm(dataset, desc="Extracting features  - competition",):
+        for _, image in tqdm(dataset, desc="Extracting features  - competition",):
             feature_tensor = self.extractor_model(image.unsqueeze(0).to(device))
             self._save_tensor(DatasetType.Competition, feature_tensor, i)
             i += 1

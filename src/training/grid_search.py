@@ -8,11 +8,11 @@ import os
 from abc import ABC, abstractmethod
 from shutil import copyfile
 from texttable import Texttable
-from torchvision import models as torch_models
-from model_manager import ModelManager
 
-import models.cnn_model as cnn_models
+import models
 from features import BalanceMethod, FeatureExtractor
+from features.resnet_feature_extractor import ResNetCustom
+from model_manager import ModelManager
 from models import (
     FeatureTrainer,
     NNModel,
@@ -189,8 +189,8 @@ class GridSearch(ABC):
 class NNGridSearch(GridSearch):
     """Grid search for NN models."""
 
-    def __init__(self, nn_class, feature_extractor: FeatureExtractor, **kwargs):
-        super().__init__(feature_extractor.name, **kwargs)
+    def __init__(self, nn_class, feature_extractor: FeatureExtractor, tag=None, repeats=3):
+        super().__init__(feature_extractor.name, tag=tag, repeats=repeats)
         self.feature_extractor = feature_extractor
         self.nn_class = nn_class
 
@@ -349,17 +349,29 @@ class CNNGridSearch(GridSearch):
 
 
 if __name__ == "__main__":
-    grid_search = CNNGridSearch(
-        torch_models.resnet152,
-        cnn_models.final_layer_alteration_resnet,
-        "images",
-        tag="resnet_cnn",
-        repeats=1,
+    # grid_search = CNNGridSearch(
+    #     torch_models.resnet152,
+    #     cnn_models.final_layer_alteration_resnet,
+    #     "images",
+    #     tag="resnet_cnn",
+    #     repeats=1,
+    # )
+    # grid_search.run(
+    #     epoch_range=[1, 3, 5, 10],
+    #     class_weight_methods=[
+    #         ClassWeightMethod.Unweighted,
+    #         ClassWeightMethod.SumBased,
+    #     ],
+    # )
+
+    grid_search = NNGridSearch(
+        nn_class=models.LinearNN,
+        feature_extractor=ResNetCustom("./models/grid_search_resnet_cnn/best.pth"),
+        tag="custom_linearnn",
+        repeats=3
     )
     grid_search.run(
-        epoch_range=[1, 3, 5, 10],
-        class_weight_methods=[
-            ClassWeightMethod.Unweighted,
-            ClassWeightMethod.SumBased,
-        ],
+        epoch_range=[1,3],
+        class_weight_methods=[ClassWeightMethod.Unweighted],
+        balance_methods=[BalanceMethod.NoSample]
     )

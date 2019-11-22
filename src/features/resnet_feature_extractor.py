@@ -55,6 +55,7 @@ class ResNetCustom(FeatureExtractor):
         resnet = models.resnet152()
         resnet = cnn_model.final_layer_alteration_resnet(resnet, 5)
         resnet.load_state_dict(torch.load(self.model_path))
+        resnet.fc = IdentityLayer()
         resnet.eval()
         return resnet, 2048
 
