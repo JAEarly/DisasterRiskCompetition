@@ -175,21 +175,21 @@ class FeatureDataset(Dataset):
 
     def _undersample(self):
         data_dist = [0] * 5
-        for label in self.labels:
+        for label in self.path2label.values():
             data_dist[label] += 1
         min_class_size = min(data_dist)
         self._sample_to_target(min_class_size)
 
     def _avgsample(self):
         data_dist = [0] * 5
-        for label in self.labels:
+        for label in self.path2label.values():
             data_dist[label] += 1
         avg_class_size = int(sum(data_dist) / 5)
         self._sample_to_target(avg_class_size)
 
     def _oversample(self):
         data_dist = [0] * 5
-        for label in self.labels:
+        for label in self.path2label.values():
             data_dist[label] += 1
         max_class_size = max(data_dist)
         self._sample_to_target(max_class_size)
@@ -199,7 +199,8 @@ class FeatureDataset(Dataset):
         reduced_filenames = []
         reduced_labels = []
         while len(reduced_filenames) < target * 5:
-            for filename, label in zip(self.filenames, self.labels):
+            for filename in self.filenames:
+                label = self.path2label[filename]
                 if data_dist[label] < target:
                     reduced_filenames.append(filename)
                     reduced_labels.append(label)
