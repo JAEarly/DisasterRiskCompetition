@@ -79,7 +79,7 @@ if __name__ == "__main__":
     feature_extractor.extract(DatasetType.Train)
 
     print("Creating custom AlexNet extractor")
-    feature_extractor = AlexNetCustom("./models/grid_search_alexnet_cnn/best.pth")
+    feature_extractor = AlexNetCustom("./models/grid_search_alexnet_custom/best.pth")
     print("Extracting")
     feature_extractor.extract(DatasetType.Train)
     feature_extractor.extract(DatasetType.Validation)
