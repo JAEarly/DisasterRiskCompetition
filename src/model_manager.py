@@ -24,6 +24,8 @@ class ModelManager:
         return self.blob_service_client.create_container(self.container_name)
 
     def upload_model(self, model_path):
+        if model_path.startswith("./"):
+            model_path = model_path[2:]
         print("Uploading", model_path)
         blob_client = self.blob_service_client.get_blob_client(
             container=self.container_name, blob=model_path
