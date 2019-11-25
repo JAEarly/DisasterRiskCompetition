@@ -152,7 +152,7 @@ class NNTrainer(FeatureTrainer):
         )
         trial.with_generators(
             self.feature_dataset.train_loader,
-            test_generator=self.feature_dataset.test_loader,
+            test_generator=self.feature_dataset.validation_loader,
         )
 
         # Actually run the training
