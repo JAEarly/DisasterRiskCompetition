@@ -28,6 +28,7 @@ class ModelManager:
         blob_client = self.blob_service_client.get_blob_client(
             container=self.container_name, blob=model_path
         )
+        blob_client.delete_blob()
         with open(model_path, "rb") as data:
             blob_client.upload_blob(data)
 
