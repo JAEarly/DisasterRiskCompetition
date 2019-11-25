@@ -5,8 +5,8 @@ import torch
 from torch import nn
 from torchvision import models
 
+import models.transfers as transfers
 from features import FeatureExtractor, SmoteExtractor, IdentityLayer, DatasetType
-from models import cnn_model
 
 
 class ResNet(FeatureExtractor):
@@ -52,9 +52,12 @@ class ResNetCustom(FeatureExtractor):
         super().__init__("resnet_custom")
 
     def setup_model(self) -> (nn.Module, int):
+        # Create ResNet model from custom pretrained state.
+        #  Must initially alter the final layer to match architectures.
         resnet = models.resnet152()
-        resnet = cnn_model.final_layer_alteration_resnet(resnet, 5)
+        resnet = transfers.final_layer_alteration_resnet(resnet, 5)
         resnet.load_state_dict(torch.load(self.model_path))
+        # Now replace final layer with an identity layer
         resnet.fc = IdentityLayer()
         resnet.eval()
         return resnet, 2048

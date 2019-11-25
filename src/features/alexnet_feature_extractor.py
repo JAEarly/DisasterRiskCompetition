@@ -5,8 +5,8 @@ import torch
 from torch import nn
 from torchvision import models
 
+import models.transfers as transfers
 from features import FeatureExtractor, SmoteExtractor, IdentityLayer, DatasetType
-from models import cnn_model
 
 
 class AlexNet(FeatureExtractor):
@@ -52,9 +52,14 @@ class AlexNetCustom(FeatureExtractor):
         super().__init__("alexnet_custom")
 
     def setup_model(self) -> (nn.Module, int):
+        # Create AlexNet model from custom pretrained state.
+        #  Must initially alter the final layer to match architectures.
         alexnet = models.alexnet()
-        alexnet = cnn_model.final_layer_alteration_alexnet(alexnet, 9216)
+        alexnet = transfers.final_layer_alteration_alexnet(alexnet, 5)
         alexnet.load_state_dict(torch.load(self.model_path))
+
+        # Now replace final layer with an identity layer
+        alexnet.classifier[6] = IdentityLayer()
         alexnet.eval()
         return alexnet, 9216
 

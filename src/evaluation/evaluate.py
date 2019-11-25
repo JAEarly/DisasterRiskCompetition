@@ -6,7 +6,7 @@ from torchvision import models as tv_models
 
 import features
 import models
-import models.cnn_model as cnn_models
+import models.transfers as transfers
 from features import DatasetType, FeatureDatasets, ImageDatasets
 from models import FeatureTrainer
 from models.cnn_model import PretrainedNNTrainer
@@ -26,7 +26,7 @@ def setup_image_evaluation():
     trainer = PretrainedNNTrainer()
     model = models.PretrainedNNModel(
         tv_models.resnet152,
-        cnn_models.final_layer_alteration_resnet,
+        transfers.final_layer_alteration_resnet,
         state_dict_path="./models/grid_search_resnet_cnn/best.pth",
         eval_mode=True,
     )
