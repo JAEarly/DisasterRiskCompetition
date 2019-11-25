@@ -189,7 +189,9 @@ class GridSearch(ABC):
 class NNGridSearch(GridSearch):
     """Grid search for NN models."""
 
-    def __init__(self, nn_class, feature_extractor: FeatureExtractor, tag=None, repeats=3):
+    def __init__(
+        self, nn_class, feature_extractor: FeatureExtractor, tag=None, repeats=3
+    ):
         super().__init__(feature_extractor.name, tag=tag, repeats=repeats)
         self.feature_extractor = feature_extractor
         self.nn_class = nn_class
@@ -367,11 +369,19 @@ if __name__ == "__main__":
     grid_search = NNGridSearch(
         nn_class=models.LinearNN,
         feature_extractor=ResNetCustom("./models/grid_search_resnet_cnn/best.pth"),
-        tag="custom_linearnn",
-        repeats=3
+        tag="resnet_custom_linearnn",
+        repeats=3,
     )
     grid_search.run(
-        epoch_range=[1,3],
-        class_weight_methods=[ClassWeightMethod.Unweighted],
-        balance_methods=[BalanceMethod.NoSample]
+        epoch_range=[1, 3, 5],
+        class_weight_methods=[
+            ClassWeightMethod.Unweighted,
+            ClassWeightMethod.SumBased,
+            ClassWeightMethod.MaxBased,
+        ],
+        balance_methods=[
+            BalanceMethod.NoSample,
+            BalanceMethod.AvgSample,
+            BalanceMethod.OverSample,
+        ],
     )

@@ -51,7 +51,7 @@ class CompetitionImageDataset(CompetitionDataset):
 
     def __getitem__(self, index):
         filename = self.filenames[index]
-        file_id = filename[:filename.index(".png")]
+        file_id = filename[: filename.index(".png")]
         image = Image.open(os.path.join(self.data_dir, filename))
         image = image.convert("RGB")
         if self.transform is not None:
@@ -76,4 +76,4 @@ class CompetitionFeatureDataset(CompetitionDataset):
         filepath = os.path.join(self.data_dir, self.filenames[index])
         with open(filepath, "rb") as file:
             feature = pickle.load(file)[0]
-        return feature
+        return self.filenames[index].split(".")[0], feature
