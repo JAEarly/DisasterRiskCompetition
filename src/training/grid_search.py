@@ -368,7 +368,7 @@ if __name__ == "__main__":
 
     grid_search = NNGridSearch(
         nn_class=models.LinearNN,
-        feature_extractor=ResNetCustom("./models/grid_search_resnet_cnn/best.pth"),
+        feature_extractor=ResNetCustom("./models/grid_search_resnet_custom/best.pth"),
         tag="resnet_custom_linearnn",
         repeats=3,
     )

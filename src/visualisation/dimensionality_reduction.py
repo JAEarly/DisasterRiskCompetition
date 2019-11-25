@@ -75,7 +75,7 @@ def visualise_reduction(dataframe) -> None:
 
 
 if __name__ == "__main__":
-    _feature_extractor = features.ResNetCustom("./models/grid_search_resnet_cnn/best.pth")
+    _feature_extractor = features.ResNetCustom("./models/grid_search_resnet_custom/best.pth")
     _feature_dataset = FeatureDatasets(_feature_extractor)
 
     # PCA 2D

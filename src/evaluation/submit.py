@@ -57,7 +57,7 @@ def create_submission(
 
 def setup_feature_submission():
     feature_extractor = features.ResNetCustom(
-        "./models/grid_search_resnet_cnn/best.pth"
+        "./models/grid_search_resnet_custom/best.pth"
     )
     model = models.NNModel(
         models.LinearNN,
@@ -73,7 +73,7 @@ def setup_image_submission():
     model = models.PretrainedNNModel(
         tv_models.resnet152,
         transfers.final_layer_alteration_resnet,
-        state_dict_path="./models/grid_search_resnet_cnn/best.pth",
+        state_dict_path="./models/grid_search_resnet_custom/best.pth",
         eval_mode=True,
     )
     print("Running submission for", model.name)

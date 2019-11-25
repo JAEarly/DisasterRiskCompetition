@@ -14,7 +14,7 @@ from models.cnn_model import PretrainedNNTrainer
 
 def setup_feature_evaluation():
     feature_extractor = features.ResNetCustom(
-        "./models/grid_search_resnet_cnn/best.pth"
+        "./models/grid_search_resnet_custom/best.pth"
     )
     features_datasets = FeatureDatasets(feature_extractor)
     trainer = FeatureTrainer(feature_extractor)
@@ -34,7 +34,7 @@ def setup_image_evaluation():
     model = models.PretrainedNNModel(
         tv_models.resnet152,
         transfers.final_layer_alteration_resnet,
-        state_dict_path="./models/grid_search_resnet_cnn/best.pth",
+        state_dict_path="./models/grid_search_resnet_custom/best.pth",
         eval_mode=True,
     )
     print("Running evaluation for", model.name)
