@@ -5,6 +5,7 @@ A datasets class contains train, validation and test datasets (all labelled data
 These datasets are either backed by images (raw data) or features (extracted from images).
 """
 
+import csv
 import pickle
 from enum import Enum
 from typing import Tuple
@@ -99,6 +100,27 @@ class Datasets(ABC):
         raise IndexError("Could not find data loader for type " + dataset_type.name)
 
 
+class ImageFolderWithFilenames(torch_datasets.ImageFolder):
+    def __init__(self, image_dir, transform):
+        super().__init__(image_dir, transform=transform)
+
+    def __getitem__(self, index):
+        path, target = self.samples[index]
+        sample = self.loader(path)
+        if self.transform is not None:
+            sample = self.transform(sample)
+        if self.target_transform is not None:
+            target = self.target_transform(target)
+
+        return sample, target
+
+    def getitem_filename(self, index):
+        path, _ = self.samples[index]
+        sample, target = self[index]
+        filename = os.path.basename(path).split(".")[0]
+        return sample, target, filename
+
+
 class ImageDatasets(Datasets):
     """Implementation of Datasets backed with images."""
 
@@ -123,15 +145,13 @@ class ImageDatasets(Datasets):
 
     def create_datasets(self, balance_method: BalanceMethod):
         # Create image datasets using folder paths and given transform.
-        train_dataset = torch_datasets.ImageFolder(
+        train_dataset = ImageFolderWithFilenames(
             self.train_dir, transform=self.transform
         )
-        validation_dataset = torch_datasets.ImageFolder(
+        validation_dataset = ImageFolderWithFilenames(
             self.validation_dir, transform=self.transform
         )
-        test_dataset = torch_datasets.ImageFolder(
-            self.test_dir, transform=self.transform
-        )
+        test_dataset = ImageFolderWithFilenames(self.test_dir, transform=self.transform)
 
         return train_dataset, validation_dataset, test_dataset
 
@@ -145,8 +165,7 @@ class FeatureDataset(Dataset):
         super().__init__()
         self.data_dir = features_dir
         self.filenames = os.listdir(self.data_dir)
-        with open(labels_path, "rb") as file:
-            self.labels = pickle.load(file)
+        self.path2label = self._load_labels(labels_path)
         if balance_method == BalanceMethod.UnderSample:
             self._undersample()
         elif balance_method == BalanceMethod.AvgSample:
@@ -156,21 +175,21 @@ class FeatureDataset(Dataset):
 
     def _undersample(self):
         data_dist = [0] * 5
-        for label in self.labels:
+        for label in self.path2label.values():
             data_dist[label] += 1
         min_class_size = min(data_dist)
         self._sample_to_target(min_class_size)
 
     def _avgsample(self):
         data_dist = [0] * 5
-        for label in self.labels:
+        for label in self.path2label.values():
             data_dist[label] += 1
         avg_class_size = int(sum(data_dist) / 5)
         self._sample_to_target(avg_class_size)
 
     def _oversample(self):
         data_dist = [0] * 5
-        for label in self.labels:
+        for label in self.path2label.values():
             data_dist[label] += 1
         max_class_size = max(data_dist)
         self._sample_to_target(max_class_size)
@@ -180,13 +199,22 @@ class FeatureDataset(Dataset):
         reduced_filenames = []
         reduced_labels = []
         while len(reduced_filenames) < target * 5:
-            for filename, label in zip(self.filenames, self.labels):
+            for filename in self.filenames:
+                label = self.path2label[filename]
                 if data_dist[label] < target:
                     reduced_filenames.append(filename)
                     reduced_labels.append(label)
                     data_dist[label] += 1
         self.filenames = reduced_filenames
         self.labels = reduced_labels
+
+    def _load_labels(self, filepath):
+        path2label = {}
+        with open(filepath, mode="r") as csv_file:
+            csv_reader = csv.reader(csv_file)
+            for row in csv_reader:
+                path2label[row[0] + ".pkl"] = int(row[1])
+        return path2label
 
     def _load_vector(self, filename):
         filepath = os.path.join(self.data_dir, filename)
@@ -200,7 +228,8 @@ class FeatureDataset(Dataset):
         return len(self.filenames)
 
     def __getitem__(self, index):
-        return self._load_vector(self.filenames[index]), self.labels[index]
+        filename = self.filenames[index]
+        return self._load_vector(filename), self.path2label[filename]
 
 
 class FeatureDatasets(Datasets):

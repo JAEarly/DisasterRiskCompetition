@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 import features
 import models
-import models.cnn_model as cnn_models
+import models.transfers as transfers
 from features import (
     CompetitionDataset,
     CompetitionFeatureDataset,
@@ -56,13 +56,13 @@ def create_submission(
 
 
 def setup_feature_submission():
-    feature_extractor = features.ResNet()
+    feature_extractor = features.ResNetCustom(
+        "./models/grid_search_resnet_cnn/best.pth"
+    )
     model = models.NNModel(
-        models.BiggerNN,
+        models.LinearNN,
         feature_extractor.feature_size,
-        state_dict_path=(
-            "./models/grid_search_resnet_biggernn/resnet_biggernn_best.pth"
-        ),
+        state_dict_path="./models/grid_search_resnet_custom_linearnn/best.pth",
         eval_mode=True,
     )
     print("Running submission for", feature_extractor.name, model.name)
@@ -72,7 +72,7 @@ def setup_feature_submission():
 def setup_image_submission():
     model = models.PretrainedNNModel(
         tv_models.resnet152,
-        cnn_models.final_layer_alteration_resnet,
+        transfers.final_layer_alteration_resnet,
         state_dict_path="./models/grid_search_resnet_cnn/best.pth",
         eval_mode=True,
     )
@@ -82,6 +82,6 @@ def setup_image_submission():
 
 if __name__ == "__main__":
     # TODO feature submission is broken
-    # _model, _competition_dataset, _feature_name = setup_feature_submission()
-    _model, _competition_dataset, _feature_name = setup_image_submission()
+    _model, _competition_dataset, _feature_name = setup_feature_submission()
+    # _model, _competition_dataset, _feature_name = setup_image_submission()
     create_submission(_model, _competition_dataset, _feature_name)
