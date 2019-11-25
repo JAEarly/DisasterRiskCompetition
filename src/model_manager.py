@@ -28,7 +28,10 @@ class ModelManager:
         blob_client = self.blob_service_client.get_blob_client(
             container=self.container_name, blob=model_path
         )
-        blob_client.delete_blob()
+        blob_list = self.container_client.list_blobs()
+        blob_names = [b.name for b in blob_list]
+        if model_path in blob_names:
+            blob_client.delete_blob()
         with open(model_path, "rb") as data:
             blob_client.upload_blob(data)
 
@@ -55,3 +58,5 @@ class ModelManager:
         for blob in blob_list:
             self.download_model(blob.name)
         print("Done")
+
+ModelManager().upload_all("models")
