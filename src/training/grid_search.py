@@ -9,9 +9,9 @@ from abc import ABC, abstractmethod
 from shutil import copyfile
 from texttable import Texttable
 
+import features
 import models
 from features import BalanceMethod, FeatureExtractor
-from features.resnet_feature_extractor import ResNetCustom
 from model_manager import ModelManager
 from models import (
     FeatureTrainer,
@@ -45,7 +45,7 @@ class GridSearch(ABC):
         self.repeats = repeats
 
         create_dirs_if_not_found(self.save_dir)
-        print("Running", self.grid_search_tag + self.feature_name)
+        print("Running", self.grid_search_tag)
 
     def run(self, **kwargs) -> None:
         """
@@ -256,8 +256,8 @@ class NNGridSearch(GridSearch):
 
 
 class XGBGridSearch(GridSearch):
-    def __init__(self, feature_extractor, **kwargs):
-        super().__init__(feature_extractor.name, **kwargs)
+    def __init__(self, feature_extractor, tag=None, repeats=3):
+        super().__init__(feature_extractor.name, tag=tag, repeats=repeats)
         self.feature_extractor = feature_extractor
 
     def _create_all_configs(self, hyper_parameter_ranges):
@@ -352,8 +352,8 @@ class CNNGridSearch(GridSearch):
 
 if __name__ == "__main__":
     # grid_search = CNNGridSearch(
-    #     torch_models.resnet152,
-    #     cnn_models.final_layer_alteration_resnet,
+    #     tv_models.alexnet,
+    #     transfers.final_layer_alteration_alexnet,
     #     "images",
     #     tag="resnet_cnn",
     #     repeats=1,
@@ -366,22 +366,30 @@ if __name__ == "__main__":
     #     ],
     # )
 
-    grid_search = NNGridSearch(
-        nn_class=models.LinearNN,
-        feature_extractor=ResNetCustom("./models/grid_search_resnet_custom/best.pth"),
-        tag="resnet_custom_linearnn",
-        repeats=3,
+    # grid_search = NNGridSearch(
+    #     nn_class=models.LinearNN,
+    #     feature_extractor=features.ResNet(),
+    #     tag="resnet_linearnn",
+    #     repeats=3,
+    # )
+    # grid_search.run(
+    #     epoch_range=[1, 3, 5],
+    #     class_weight_methods=[
+    #         ClassWeightMethod.Unweighted,
+    #     ],
+    #     balance_methods=[BalanceMethod.NoSample],
+    #     dropout_range=[0.0, 0.25, 0.5]
+    # )
+
+    grid_search = XGBGridSearch(
+        feature_extractor=features.AlexNetCustom("./models/grid_search_alexnet_custom/best.pth"),
+        tag="alexnet_custom_xgb",
+        repeats=2,
     )
     grid_search.run(
-        epoch_range=[1, 3, 5],
-        class_weight_methods=[
-            ClassWeightMethod.Unweighted,
-            ClassWeightMethod.SumBased,
-            ClassWeightMethod.MaxBased,
-        ],
-        balance_methods=[
-            BalanceMethod.NoSample,
-            BalanceMethod.AvgSample,
-            BalanceMethod.OverSample,
-        ],
+        etas=[0.4, 0.5],
+        gammas=[0, 0.25],
+        depths=[1, 6],
+        c_weights=[1.25, 1.75],
+        lambdas=[0.25, 0.75],
     )

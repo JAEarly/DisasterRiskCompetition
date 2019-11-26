@@ -1,3 +1,105 @@
+         Epoch Range: [1, 3, 5]
+     Balance Methods: ['NoSample']
+Class Weight Methods: ['Unweighted']
+       Dropout Range: [0.0, 0.25]
+
+-- Configuration 1/6 --
+epochs - 1
+balance_method - BalanceMethod.NoSample
+class_weight_method - ClassWeightMethod.Unweighted
+dropout - 0.0
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.5244054198265076
+ Best Acc: 0.8071808218955994
+ Avg Loss: 0.5279126365979513
+  Avg Acc: 0.8046690026919047
+
+-- Configuration 2/6 --
+epochs - 1
+balance_method - BalanceMethod.NoSample
+class_weight_method - ClassWeightMethod.Unweighted
+dropout - 0.25
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.5181355476379395
+ Best Acc: 0.8116134405136108
+ Avg Loss: 0.5397241115570068
+  Avg Acc: 0.8059987823168436
+
+-- Configuration 3/6 --
+epochs - 3
+balance_method - BalanceMethod.NoSample
+class_weight_method - ClassWeightMethod.Unweighted
+dropout - 0.0
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.5232489705085754
+ Best Acc: 0.8067375421524048
+ Avg Loss: 0.5447836716969808
+  Avg Acc: 0.799349844455719
+
+-- Configuration 4/6 --
+epochs - 3
+balance_method - BalanceMethod.NoSample
+class_weight_method - ClassWeightMethod.Unweighted
+dropout - 0.25
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.5171428322792053
+ Best Acc: 0.8209219574928284
+ Avg Loss: 0.5213221311569214
+  Avg Acc: 0.8158983190854391
+
+-- Configuration 5/6 --
+epochs - 5
+balance_method - BalanceMethod.NoSample
+class_weight_method - ClassWeightMethod.Unweighted
+dropout - 0.0
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.5308281183242798
+ Best Acc: 0.8147162795066833
+ Avg Loss: 0.5459799965222677
+  Avg Acc: 0.8070330619812012
+
+-- Configuration 6/6 --
+epochs - 5
+balance_method - BalanceMethod.NoSample
+class_weight_method - ClassWeightMethod.Unweighted
+dropout - 0.25
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.5247230529785156
+ Best Acc: 0.8107269406318665
+ Avg Loss: 0.5373409390449524
+  Avg Acc: 0.8129432400067648
+
+--- Final Results ---
 +-----+-------+-------+-----------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
 | Pos | Loss  |  Acc  |                                                                 Params                                                                  |                 Filename                 |
 +=====+=======+=======+=========================================================================================================================================+==========================================+
@@ -13,3 +115,4 @@
 +-----+-------+-------+-----------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
 |  6  | 0.531 | 0.815 | {'epochs': 5, 'balance_method': <BalanceMethod.NoSample: 0>, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>, 'dropout': 0.0}  | alexnet_linearnn_2019-11-25_18:32:44.pth |
 +-----+-------+-------+-----------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------+
+Uploading models/grid_search_alexnet_linearnn/best.pth
