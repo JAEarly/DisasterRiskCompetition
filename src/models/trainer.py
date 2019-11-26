@@ -119,11 +119,6 @@ class FeatureTrainer(Trainer):
         )
         print("Fitting model")
         model.fit(features, labels, **kwargs)
-        print("Saving model")
-        save_path = os.path.join(
-            self.save_dir, model.name + "_" + create_timestamp_str() + ".pkl"
-        )
-        model.save(save_path)
 
         val_acc, val_loss = self.evaluate(
             model,

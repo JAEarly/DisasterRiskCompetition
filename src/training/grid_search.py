@@ -366,30 +366,30 @@ if __name__ == "__main__":
     #     ],
     # )
 
-    # grid_search = NNGridSearch(
-    #     nn_class=models.LinearNN,
-    #     feature_extractor=features.ResNet(),
-    #     tag="resnet_linearnn",
-    #     repeats=3,
-    # )
-    # grid_search.run(
-    #     epoch_range=[1, 3, 5],
-    #     class_weight_methods=[
-    #         ClassWeightMethod.Unweighted,
-    #     ],
-    #     balance_methods=[BalanceMethod.NoSample],
-    #     dropout_range=[0.0, 0.25, 0.5]
-    # )
-
-    grid_search = XGBGridSearch(
-        feature_extractor=features.AlexNetCustom("./models/grid_search_alexnet_custom/best.pth"),
-        tag="alexnet_custom_xgb",
-        repeats=2,
+    grid_search = NNGridSearch(
+        nn_class=models.LinearNN,
+        feature_extractor=features.ResNet(),
+        tag="resnet_linearnn",
+        repeats=3,
     )
     grid_search.run(
-        etas=[0.4, 0.5],
-        gammas=[0, 0.25],
-        depths=[1, 6],
-        c_weights=[1.25, 1.75],
-        lambdas=[0.25, 0.75],
+        epoch_range=[1, 3, 5],
+        class_weight_methods=[
+            ClassWeightMethod.Unweighted,
+        ],
+        balance_methods=[BalanceMethod.NoSample],
+        dropout_range=[0.0, 0.25, 0.5]
     )
+
+    # grid_search = XGBGridSearch(
+    #     feature_extractor=features.AlexNetCustom("./models/grid_search_alexnet_custom/best.pth"),
+    #     tag="alexnet_custom_xgb",
+    #     repeats=2,
+    # )
+    # grid_search.run(
+    #     etas=[0.4, 0.5],
+    #     gammas=[0, 0.25],
+    #     depths=[1, 6],
+    #     c_weights=[1.25, 1.75],
+    #     lambdas=[0.25, 0.75],
+    # )
