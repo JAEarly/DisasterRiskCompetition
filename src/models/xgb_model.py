@@ -14,7 +14,7 @@ class XGBModel(Model):
     """Model that uses XGBoost."""
 
     def __init__(self, model_path=None):
-        super().__init__("xgb")
+        super().__init__("xgb", False)
         self.xbg_bst = xgb.Booster()
         if model_path is not None:
             self.load(model_path)

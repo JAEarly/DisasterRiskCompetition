@@ -44,13 +44,12 @@ class Trainer(ABC):
 
     @staticmethod
     def evaluate(
-        model, data_loader: DataLoader, apply_softmax=True, verbose=False
+        model, data_loader: DataLoader, verbose=False
     ) -> (float, float):
         """
         Evaluate a model on a given dataset.
         :param model: Model to evaluate.
         :param data_loader: Data loader wrapper around test set.
-        :param apply_softmax: Should softmax be applied to the predictions.
         :param verbose: Output results (true) or just return them (false).
         :return: None.
         """
@@ -69,7 +68,7 @@ class Trainer(ABC):
         _, y_pred_classes = y_pred.max(1)
 
         # Calculate prediction probabilities if required
-        if apply_softmax:
+        if model.apply_softmax:
             y_probabilities = torch.softmax(y_pred, 1)
         else:
             y_probabilities = y_pred
@@ -129,6 +128,5 @@ class FeatureTrainer(Trainer):
         val_acc, val_loss = self.evaluate(
             model,
             self.feature_dataset.get_loader(DatasetType.Validation),
-            apply_softmax=True,
         )
         return val_acc, val_loss

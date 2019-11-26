@@ -36,7 +36,10 @@ def create_submission(
         competition_dataset.data_loader, desc="Predicting competition dataset"
     ):
         y_outputs = model.predict_batch(batch)
-        y_probas = torch.softmax(y_outputs, 1)
+        if model.apply_softmax:
+            y_probas = torch.softmax(y_outputs, 1)
+        else:
+            y_probas = y_outputs
         competition_labels.extend(y_probas.cpu().detach().numpy())
         ids.extend(batch_ids)
 

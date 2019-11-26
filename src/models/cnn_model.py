@@ -24,7 +24,7 @@ class PretrainedNNModel(Model):
         state_dict_path=None,
         eval_mode=False,
     ):
-        super().__init__(str(pretrained_net_class.__name__).lower())
+        super().__init__(str(pretrained_net_class.__name__).lower(), True)
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
         # Create network and apply final layer alteration to match correct number of classes
         self.net = pretrained_net_class(pretrained=True)

@@ -10,7 +10,7 @@ class BaselineModel(Model):
     """Baseline model implementation."""
 
     def __init__(self):
-        super().__init__("baseline")
+        super().__init__("baseline", False)
         self.class_dist = (
             pd.read_csv("./data/raw/train_labels.csv")
             .groupby(["verified"])

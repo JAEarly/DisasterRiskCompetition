@@ -76,7 +76,7 @@ class NNModel(Model):
         eval_mode=False,
         dropout=0,
     ):
-        super().__init__(str(net_class.__name__).lower())
+        super().__init__(str(net_class.__name__).lower(), True)
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
         # Create network
         self.net = net_class(input_size, self.num_classes, dropout=dropout).to(
