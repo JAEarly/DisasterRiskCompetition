@@ -1,0 +1,829 @@
+             Etas: [0.4, 0.5]
+           Gammas: [0, 0.25]
+           Depths: [1, 6]
+Min Child Weights: [1.25, 1.75]
+          Lambdas: [0.25, 0.75]
+
+-- Configuration 1/32 --
+eta - 0.4
+gamma - 0
+depth - 1
+c_weight - 1.25
+reg_lambda - 0.25
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+             Etas: [0.4, 0.5]
+           Gammas: [0, 0.25]
+           Depths: [1, 6]
+Min Child Weights: [1.25, 1.75]
+          Lambdas: [0.25, 0.75]
+
+-- Configuration 1/32 --
+eta - 0.4
+gamma - 0
+depth - 1
+c_weight - 1.25
+reg_lambda - 0.25
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.7783742394456838
+ Best Acc: 0.7460106382978723
+ Avg Loss: 0.7783742394456838
+  Avg Acc: 0.7460106382978723
+
+-- Configuration 2/32 --
+eta - 0.4
+gamma - 0
+depth - 1
+c_weight - 1.25
+reg_lambda - 0.75
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.7784445841816512
+ Best Acc: 0.7460106382978723
+ Avg Loss: 0.7784445841816512
+  Avg Acc: 0.7460106382978723
+
+-- Configuration 3/32 --
+eta - 0.4
+gamma - 0
+depth - 1
+c_weight - 1.75
+reg_lambda - 0.25
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.7783742394456838
+ Best Acc: 0.7460106382978723
+ Avg Loss: 0.7783742394456838
+  Avg Acc: 0.7460106382978723
+
+-- Configuration 4/32 --
+eta - 0.4
+gamma - 0
+depth - 1
+c_weight - 1.75
+reg_lambda - 0.75
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.7784445841816512
+ Best Acc: 0.7460106382978723
+ Avg Loss: 0.7784445841816512
+  Avg Acc: 0.7460106382978723
+
+-- Configuration 5/32 --
+eta - 0.4
+gamma - 0
+depth - 6
+c_weight - 1.25
+reg_lambda - 0.25
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.622119361448848
+ Best Acc: 0.81427304964539
+ Avg Loss: 0.622119361448848
+  Avg Acc: 0.81427304964539
+
+-- Configuration 6/32 --
+eta - 0.4
+gamma - 0
+depth - 6
+c_weight - 1.25
+reg_lambda - 0.75
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.6316867514401145
+ Best Acc: 0.8058510638297872
+ Avg Loss: 0.6316867514401145
+  Avg Acc: 0.8058510638297872
+
+-- Configuration 7/32 --
+eta - 0.4
+gamma - 0
+depth - 6
+c_weight - 1.75
+reg_lambda - 0.25
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.6187966551321248
+ Best Acc: 0.8138297872340425
+ Avg Loss: 0.6187966551321248
+  Avg Acc: 0.8138297872340425
+
+-- Configuration 8/32 --
+eta - 0.4
+gamma - 0
+depth - 6
+c_weight - 1.75
+reg_lambda - 0.75
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.6249424351564219
+ Best Acc: 0.8093971631205674
+ Avg Loss: 0.6249424351564219
+  Avg Acc: 0.8093971631205674
+
+-- Configuration 9/32 --
+eta - 0.4
+gamma - 0.25
+depth - 1
+c_weight - 1.25
+reg_lambda - 0.25
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.7783742394456838
+ Best Acc: 0.7460106382978723
+ Avg Loss: 0.7783742394456838
+  Avg Acc: 0.7460106382978723
+
+-- Configuration 10/32 --
+eta - 0.4
+gamma - 0.25
+depth - 1
+c_weight - 1.25
+reg_lambda - 0.75
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.7784445841816512
+ Best Acc: 0.7460106382978723
+ Avg Loss: 0.7784445841816512
+  Avg Acc: 0.7460106382978723
+
+-- Configuration 11/32 --
+eta - 0.4
+gamma - 0.25
+depth - 1
+c_weight - 1.75
+reg_lambda - 0.25
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.7783742394456838
+ Best Acc: 0.7460106382978723
+ Avg Loss: 0.7783742394456838
+  Avg Acc: 0.7460106382978723
+
+-- Configuration 12/32 --
+eta - 0.4
+gamma - 0.25
+depth - 1
+c_weight - 1.75
+reg_lambda - 0.75
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.7784445841816512
+ Best Acc: 0.7460106382978723
+ Avg Loss: 0.7784445841816512
+  Avg Acc: 0.7460106382978723
+
+-- Configuration 13/32 --
+eta - 0.4
+gamma - 0.25
+depth - 6
+c_weight - 1.25
+reg_lambda - 0.25
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.6212467515695814
+ Best Acc: 0.811613475177305
+ Avg Loss: 0.6212467515695814
+  Avg Acc: 0.811613475177305
+
+-- Configuration 14/32 --
+eta - 0.4
+gamma - 0.25
+depth - 6
+c_weight - 1.25
+reg_lambda - 0.75
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.6313397550281692
+ Best Acc: 0.8054078014184397
+ Avg Loss: 0.6313397550281692
+  Avg Acc: 0.8054078014184397
+
+-- Configuration 15/32 --
+eta - 0.4
+gamma - 0.25
+depth - 6
+c_weight - 1.75
+reg_lambda - 0.25
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.6194397891898051
+ Best Acc: 0.81427304964539
+ Avg Loss: 0.6194397891898051
+  Avg Acc: 0.81427304964539
+
+-- Configuration 16/32 --
+eta - 0.4
+gamma - 0.25
+depth - 6
+c_weight - 1.75
+reg_lambda - 0.75
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.6256950233224119
+ Best Acc: 0.8102836879432624
+ Avg Loss: 0.6256950233224119
+  Avg Acc: 0.8102836879432624
+
+-- Configuration 17/32 --
+eta - 0.5
+gamma - 0
+depth - 1
+c_weight - 1.25
+reg_lambda - 0.25
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.726681810565927
+ Best Acc: 0.7548758865248227
+ Avg Loss: 0.726681810565927
+  Avg Acc: 0.7548758865248227
+
+-- Configuration 18/32 --
+eta - 0.5
+gamma - 0
+depth - 1
+c_weight - 1.25
+reg_lambda - 0.75
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.7267508270641696
+ Best Acc: 0.7548758865248227
+ Avg Loss: 0.7267508270641696
+  Avg Acc: 0.7548758865248227
+
+-- Configuration 19/32 --
+eta - 0.5
+gamma - 0
+depth - 1
+c_weight - 1.75
+reg_lambda - 0.25
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.726681810565927
+ Best Acc: 0.7548758865248227
+ Avg Loss: 0.726681810565927
+  Avg Acc: 0.7548758865248227
+
+-- Configuration 20/32 --
+eta - 0.5
+gamma - 0
+depth - 1
+c_weight - 1.75
+reg_lambda - 0.75
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.7267508270641696
+ Best Acc: 0.7548758865248227
+ Avg Loss: 0.7267508270641696
+  Avg Acc: 0.7548758865248227
+
+-- Configuration 21/32 --
+eta - 0.5
+gamma - 0
+depth - 6
+c_weight - 1.25
+reg_lambda - 0.25
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.5813289349337261
+ Best Acc: 0.8147163120567376
+ Avg Loss: 0.5813289349337261
+  Avg Acc: 0.8147163120567376
+
+-- Configuration 22/32 --
+eta - 0.5
+gamma - 0
+depth - 6
+c_weight - 1.25
+reg_lambda - 0.75
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.5801265465346634
+ Best Acc: 0.8120567375886525
+ Avg Loss: 0.5801265465346634
+  Avg Acc: 0.8120567375886525
+
+-- Configuration 23/32 --
+eta - 0.5
+gamma - 0
+depth - 6
+c_weight - 1.75
+reg_lambda - 0.25
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.5821668410984179
+ Best Acc: 0.811613475177305
+ Avg Loss: 0.5821668410984179
+  Avg Acc: 0.811613475177305
+
+-- Configuration 24/32 --
+eta - 0.5
+gamma - 0
+depth - 6
+c_weight - 1.75
+reg_lambda - 0.75
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.585908673465886
+ Best Acc: 0.8085106382978723
+ Avg Loss: 0.585908673465886
+  Avg Acc: 0.8085106382978723
+
+-- Configuration 25/32 --
+eta - 0.5
+gamma - 0.25
+depth - 1
+c_weight - 1.25
+reg_lambda - 0.25
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.726681810565927
+ Best Acc: 0.7548758865248227
+ Avg Loss: 0.726681810565927
+  Avg Acc: 0.7548758865248227
+
+-- Configuration 26/32 --
+eta - 0.5
+gamma - 0.25
+depth - 1
+c_weight - 1.25
+reg_lambda - 0.75
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.7267508270641696
+ Best Acc: 0.7548758865248227
+ Avg Loss: 0.7267508270641696
+  Avg Acc: 0.7548758865248227
+
+-- Configuration 27/32 --
+eta - 0.5
+gamma - 0.25
+depth - 1
+c_weight - 1.75
+reg_lambda - 0.25
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.726681810565927
+ Best Acc: 0.7548758865248227
+ Avg Loss: 0.726681810565927
+  Avg Acc: 0.7548758865248227
+
+-- Configuration 28/32 --
+eta - 0.5
+gamma - 0.25
+depth - 1
+c_weight - 1.75
+reg_lambda - 0.75
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.7267508270641696
+ Best Acc: 0.7548758865248227
+ Avg Loss: 0.7267508270641696
+  Avg Acc: 0.7548758865248227
+
+-- Configuration 29/32 --
+eta - 0.5
+gamma - 0.25
+depth - 6
+c_weight - 1.25
+reg_lambda - 0.25
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.5806948764097765
+ Best Acc: 0.8138297872340425
+ Avg Loss: 0.5806948764097765
+  Avg Acc: 0.8138297872340425
+
+-- Configuration 30/32 --
+eta - 0.5
+gamma - 0.25
+depth - 6
+c_weight - 1.25
+reg_lambda - 0.75
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.5808344169731205
+ Best Acc: 0.8156028368794326
+ Avg Loss: 0.5808344169731205
+  Avg Acc: 0.8156028368794326
+
+-- Configuration 31/32 --
+eta - 0.5
+gamma - 0.25
+depth - 6
+c_weight - 1.75
+reg_lambda - 0.25
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.5851730228540428
+ Best Acc: 0.811613475177305
+ Avg Loss: 0.5851730228540428
+  Avg Acc: 0.811613475177305
+
+-- Configuration 32/32 --
+eta - 0.5
+gamma - 0.25
+depth - 6
+c_weight - 1.75
+reg_lambda - 0.75
+Repeat 1/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Repeat 2/2
+Loading features
+Fitting model
+Creating DMatrix
+Training
+Saving model
+Best Loss: 0.580596121094117
+ Best Acc: 0.811613475177305
+ Avg Loss: 0.580596121094117
+  Avg Acc: 0.811613475177305
+
+--- Final Results ---
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| Pos | Loss  |  Acc  |                                    Params                                     |                  Filename                  |
++=====+=======+=======+===============================================================================+============================================+
+|  1  | 0.580 | 0.812 |  {'eta': 0.5, 'gamma': 0, 'depth': 6, 'c_weight': 1.25, 'reg_lambda': 0.75}   | alexnet_custom_xgb_2019-11-26_18:53:18.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+|  2  | 0.581 | 0.812 | {'eta': 0.5, 'gamma': 0.25, 'depth': 6, 'c_weight': 1.75, 'reg_lambda': 0.75} | alexnet_custom_xgb_2019-11-26_19:05:13.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+|  3  | 0.581 | 0.814 | {'eta': 0.5, 'gamma': 0.25, 'depth': 6, 'c_weight': 1.25, 'reg_lambda': 0.25} | alexnet_custom_xgb_2019-11-26_19:00:31.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+|  4  | 0.581 | 0.816 | {'eta': 0.5, 'gamma': 0.25, 'depth': 6, 'c_weight': 1.25, 'reg_lambda': 0.75} | alexnet_custom_xgb_2019-11-26_19:02:05.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+|  5  | 0.581 | 0.815 |  {'eta': 0.5, 'gamma': 0, 'depth': 6, 'c_weight': 1.25, 'reg_lambda': 0.25}   | alexnet_custom_xgb_2019-11-26_18:51:44.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+|  6  | 0.582 | 0.812 |  {'eta': 0.5, 'gamma': 0, 'depth': 6, 'c_weight': 1.75, 'reg_lambda': 0.25}   | alexnet_custom_xgb_2019-11-26_18:54:51.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+|  7  | 0.585 | 0.812 | {'eta': 0.5, 'gamma': 0.25, 'depth': 6, 'c_weight': 1.75, 'reg_lambda': 0.25} | alexnet_custom_xgb_2019-11-26_19:03:39.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+|  8  | 0.586 | 0.809 |  {'eta': 0.5, 'gamma': 0, 'depth': 6, 'c_weight': 1.75, 'reg_lambda': 0.75}   | alexnet_custom_xgb_2019-11-26_18:56:25.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+|  9  | 0.619 | 0.814 |  {'eta': 0.4, 'gamma': 0, 'depth': 6, 'c_weight': 1.75, 'reg_lambda': 0.25}   | alexnet_custom_xgb_2019-11-26_18:37:13.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 10  | 0.619 | 0.814 | {'eta': 0.4, 'gamma': 0.25, 'depth': 6, 'c_weight': 1.75, 'reg_lambda': 0.25} | alexnet_custom_xgb_2019-11-26_18:46:03.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 11  | 0.621 | 0.812 | {'eta': 0.4, 'gamma': 0.25, 'depth': 6, 'c_weight': 1.25, 'reg_lambda': 0.25} | alexnet_custom_xgb_2019-11-26_18:42:55.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 12  | 0.622 | 0.814 |  {'eta': 0.4, 'gamma': 0, 'depth': 6, 'c_weight': 1.25, 'reg_lambda': 0.25}   | alexnet_custom_xgb_2019-11-26_18:34:04.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 13  | 0.625 | 0.809 |  {'eta': 0.4, 'gamma': 0, 'depth': 6, 'c_weight': 1.75, 'reg_lambda': 0.75}   | alexnet_custom_xgb_2019-11-26_18:38:47.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 14  | 0.626 | 0.810 | {'eta': 0.4, 'gamma': 0.25, 'depth': 6, 'c_weight': 1.75, 'reg_lambda': 0.75} | alexnet_custom_xgb_2019-11-26_18:47:38.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 15  | 0.631 | 0.805 | {'eta': 0.4, 'gamma': 0.25, 'depth': 6, 'c_weight': 1.25, 'reg_lambda': 0.75} | alexnet_custom_xgb_2019-11-26_18:44:30.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 16  | 0.632 | 0.806 |  {'eta': 0.4, 'gamma': 0, 'depth': 6, 'c_weight': 1.25, 'reg_lambda': 0.75}   | alexnet_custom_xgb_2019-11-26_18:35:39.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 17  | 0.727 | 0.755 |  {'eta': 0.5, 'gamma': 0, 'depth': 1, 'c_weight': 1.25, 'reg_lambda': 0.25}   | alexnet_custom_xgb_2019-11-26_18:48:16.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 18  | 0.727 | 0.755 |  {'eta': 0.5, 'gamma': 0, 'depth': 1, 'c_weight': 1.75, 'reg_lambda': 0.25}   | alexnet_custom_xgb_2019-11-26_18:49:33.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 19  | 0.727 | 0.755 | {'eta': 0.5, 'gamma': 0.25, 'depth': 1, 'c_weight': 1.25, 'reg_lambda': 0.25} | alexnet_custom_xgb_2019-11-26_18:57:02.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 20  | 0.727 | 0.755 | {'eta': 0.5, 'gamma': 0.25, 'depth': 1, 'c_weight': 1.75, 'reg_lambda': 0.25} | alexnet_custom_xgb_2019-11-26_18:58:19.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 21  | 0.727 | 0.755 |  {'eta': 0.5, 'gamma': 0, 'depth': 1, 'c_weight': 1.25, 'reg_lambda': 0.75}   | alexnet_custom_xgb_2019-11-26_18:48:54.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 22  | 0.727 | 0.755 |  {'eta': 0.5, 'gamma': 0, 'depth': 1, 'c_weight': 1.75, 'reg_lambda': 0.75}   | alexnet_custom_xgb_2019-11-26_18:50:11.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 23  | 0.727 | 0.755 | {'eta': 0.5, 'gamma': 0.25, 'depth': 1, 'c_weight': 1.25, 'reg_lambda': 0.75} | alexnet_custom_xgb_2019-11-26_18:57:41.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 24  | 0.727 | 0.755 | {'eta': 0.5, 'gamma': 0.25, 'depth': 1, 'c_weight': 1.75, 'reg_lambda': 0.75} | alexnet_custom_xgb_2019-11-26_18:58:57.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 25  | 0.778 | 0.746 |  {'eta': 0.4, 'gamma': 0, 'depth': 1, 'c_weight': 1.25, 'reg_lambda': 0.25}   | alexnet_custom_xgb_2019-11-26_18:30:36.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 26  | 0.778 | 0.746 |  {'eta': 0.4, 'gamma': 0, 'depth': 1, 'c_weight': 1.75, 'reg_lambda': 0.25}   | alexnet_custom_xgb_2019-11-26_18:31:52.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 27  | 0.778 | 0.746 | {'eta': 0.4, 'gamma': 0.25, 'depth': 1, 'c_weight': 1.25, 'reg_lambda': 0.25} | alexnet_custom_xgb_2019-11-26_18:39:26.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 28  | 0.778 | 0.746 | {'eta': 0.4, 'gamma': 0.25, 'depth': 1, 'c_weight': 1.75, 'reg_lambda': 0.25} | alexnet_custom_xgb_2019-11-26_18:40:43.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 29  | 0.778 | 0.746 |  {'eta': 0.4, 'gamma': 0, 'depth': 1, 'c_weight': 1.25, 'reg_lambda': 0.75}   | alexnet_custom_xgb_2019-11-26_18:31:14.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 30  | 0.778 | 0.746 |  {'eta': 0.4, 'gamma': 0, 'depth': 1, 'c_weight': 1.75, 'reg_lambda': 0.75}   | alexnet_custom_xgb_2019-11-26_18:32:31.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 31  | 0.778 | 0.746 | {'eta': 0.4, 'gamma': 0.25, 'depth': 1, 'c_weight': 1.25, 'reg_lambda': 0.75} | alexnet_custom_xgb_2019-11-26_18:40:05.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+| 32  | 0.778 | 0.746 | {'eta': 0.4, 'gamma': 0.25, 'depth': 1, 'c_weight': 1.75, 'reg_lambda': 0.75} | alexnet_custom_xgb_2019-11-26_18:41:22.pth |
++-----+-------+-------+-------------------------------------------------------------------------------+--------------------------------------------+
+Uploading models/grid_search_alexnet_custom_xgb/best.pth
