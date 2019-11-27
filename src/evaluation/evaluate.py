@@ -13,18 +13,18 @@ from models.cnn_model import PretrainedNNTrainer
 
 
 def setup_feature_evaluation():
-    feature_extractor = features.AlexNetSMOTE()
+    feature_extractor = features.ResNetCustomSMOTE("./models/grid_search_resnet_custom/best.pth")
     features_datasets = FeatureDatasets(feature_extractor)
     trainer = FeatureTrainer(feature_extractor)
-    # model = models.NNModel(
-    #     models.LinearNN,
-    #     feature_extractor.feature_size,
-    #     state_dict_path="./models/grid_search_resnet_smote_linearnn/best.pth",
-    #     eval_mode=True,
-    # )
-    model = models.XGBModel(
-        model_path="./models/grid_search_alexnet_smote_xgb/best.pth"
+    model = models.NNModel(
+        models.LinearNN,
+        feature_extractor.feature_size,
+        state_dict_path="./models/grid_search_resnet_custom_smote_linearnn/best.pth",
+        eval_mode=True,
     )
+    # model = models.XGBModel(
+    #     model_path="./models/grid_search_resnet_custom_smote_linearnn/best.pth"
+    # )
     print("Running evaluation for", feature_extractor.name, model.name)
     return features_datasets, trainer, model
 

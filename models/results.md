@@ -9,6 +9,7 @@
 | BiggerNN    | AlexNetCustom      |   0.905   |   0.268   |   0.843   |   0.443   |   0.836   |   0.441   |
 | LinearNN    | ResNet             |   0.835   |   0.438   |   0.844   |   0.431   |   0.820   |   0.465   |
 | Retrain CNN | AlexNet            |   0.877   |   0.360   |   0.836   |   0.469   |   0.827   |   0.467   |
+| LinearNN    | ResNetCustomSmote  |   0.872   |   0.355   |   0.812   |   0.508   |   0.795   |   0.518   |
 | LinearNN    | AlexNet            |   0.872   |   0.357   |   0.821   |   0.517   |   0.793   |   0.552   |
 | XGB         | AlexNetCustom      |   0.896   |   0.396   |   0.812   |   0.580   |   0.810   |   0.578   |
 | LinearNN    | AlexNetSmote       |   0.914   |   0.278   |   0.781   |   0.610   |   0.768   |   0.625   |
