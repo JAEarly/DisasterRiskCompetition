@@ -54,7 +54,7 @@ def create_from_model(
 
     # Boost if requested
     if confidence_threshold is not None:
-        competition_labels = _boost_labels(
+        competition_labels = boost_labels(
             competition_labels, confidence_threshold=confidence_threshold
         )
 
@@ -82,7 +82,7 @@ def boost_existing(filename, competition_threshold=DEFAULT_CONFIDENCE_THRESHOLD)
         competition_labels.append(row.to_numpy().tolist())
 
     # Boost
-    competition_labels = _boost_labels(competition_labels, competition_threshold)
+    competition_labels = boost_labels(competition_labels, competition_threshold)
 
     # Write to csv file
     filename = filename[:-4] + "_boosted.csv"
@@ -114,34 +114,37 @@ def _write_submission(ids, competition_labels, filename):
     submission.to_csv(filepath)
 
 
-def _boost_labels(
-    competition_labels, confidence_threshold=DEFAULT_CONFIDENCE_THRESHOLD
+def boost_labels(
+    competition_labels, confidence_threshold=DEFAULT_CONFIDENCE_THRESHOLD, confirm=True, verbose=True
 ):
     """
     Boost a set of competition labels. Asks for confirmation.
     :param competition_labels: Labels to boost.
     :param confidence_threshold: Threshold above which labels will be maxed (i.e. set to 1).
+    :param confirm: Ask for confirmation from user.
     :return: Boosted labels.
     """
-    # Establish max, avg, min confidences of current labels.
-    max_confidences = []
-    for label in competition_labels:
-        max_confidences.append(max(label))
-    print("Max confidence:", max(max_confidences))
-    print("Avg confidence:", statistics.mean(max_confidences))
-    print("Min confidence:", min(max_confidences))
+    if verbose:
+        # Establish max, avg, min confidences of current labels.
+        max_confidences = []
+        for label in competition_labels:
+            max_confidences.append(max(label))
+        print("Max confidence:", max(max_confidences))
+        print("Avg confidence:", statistics.mean(max_confidences))
+        print("Min confidence:", min(max_confidences))
 
-    # Establish number of labels that will be boosted and ask for user confirmation.
-    print("Boosting confidence with threshold", confidence_threshold)
-    num_to_boost = sum(x >= confidence_threshold for x in max_confidences)
-    print(
-        "Will boost", str(num_to_boost) + "/" + str(len(competition_labels)), "labels"
-    )
-    reply = str(input("Continue? (Y/n)")).lower().strip()
-    if not (reply == "" or reply[0] == "y" or reply[0] == "Y"):
-        print("Aborting")
-        exit(0)
-    print("Continuing...")
+        # Establish number of labels that will be boosted and ask for user confirmation.
+        print("Boosting confidence with threshold", confidence_threshold)
+        num_to_boost = sum(x >= confidence_threshold for x in max_confidences)
+        print(
+            "Will boost", str(num_to_boost) + "/" + str(len(competition_labels)), "labels"
+        )
+    if confirm:
+        reply = str(input("Continue? (Y/n)")).lower().strip()
+        if not (reply == "" or reply[0] == "y" or reply[0] == "Y"):
+            print("Aborting")
+            exit(0)
+        print("Continuing...")
 
     # Boost labels
     boosted_labels = []
