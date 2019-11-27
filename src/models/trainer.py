@@ -83,6 +83,16 @@ class Trainer(ABC):
             margins=True,
         )
 
+        # Create normalised confusion matrix (normalised by expected class distribution).
+        norm_conf_mat = conf_mat.copy(deep=True)
+        expected_class_counts = [y_true.detach().cpu().numpy().tolist().count(x) for x in range(5)]
+        for i in range(5):
+            # Normalise each row by it's expected count
+            norm_conf_mat.iloc[i] /= expected_class_counts[i]
+            # Normalise the total counts by expected count
+            norm_conf_mat.iloc[5, i] /= expected_class_counts[i]
+        norm_conf_mat = norm_conf_mat.round(decimals=3)
+
         # Print accuracy and log loss
         acc = accuracy_score(y_true, y_pred_classes)
         ll = log_loss(y_true, y_probabilities, labels=[0, 1, 2, 3, 4])
@@ -91,6 +101,8 @@ class Trainer(ABC):
             print("Log loss: {:.3f}".format(ll))
             print("Confusion matrix")
             print(conf_mat)
+            print("Normalised confusion matrix")
+            print(norm_conf_mat)
 
         return acc, ll
 

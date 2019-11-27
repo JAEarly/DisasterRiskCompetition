@@ -13,13 +13,13 @@ from models.cnn_model import PretrainedNNTrainer
 
 
 def setup_feature_evaluation():
-    feature_extractor = features.ResNetCustomSMOTE("./models/grid_search_resnet_custom/best.pth")
+    feature_extractor = features.AlexNetSMOTE()
     features_datasets = FeatureDatasets(feature_extractor)
     trainer = FeatureTrainer(feature_extractor)
     model = models.NNModel(
-        models.LinearNN,
+        models.BiggerNN,
         feature_extractor.feature_size,
-        state_dict_path="./models/grid_search_resnet_custom_smote_linearnn/best.pth",
+        state_dict_path="./models/grid_search_alexnet_smote_biggernn/best.pth",
         eval_mode=True,
     )
     # model = models.XGBModel(
