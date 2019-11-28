@@ -2,7 +2,6 @@
 
 from enum import Enum
 
-import os
 import pandas as pd
 import torch
 from abc import ABC
@@ -18,7 +17,6 @@ from features import (
     BalanceMethod,
     ImageDatasets,
 )
-from utils import create_timestamp_str
 
 
 class ClassWeightMethod(Enum):
@@ -43,9 +41,7 @@ class Trainer(ABC):
         """
 
     @staticmethod
-    def evaluate(
-        model, data_loader: DataLoader, verbose=False
-    ) -> (float, float):
+    def evaluate(model, data_loader: DataLoader, verbose=False) -> (float, float):
         """
         Evaluate a model on a given dataset.
         :param model: Model to evaluate.
@@ -85,7 +81,9 @@ class Trainer(ABC):
 
         # Create normalised confusion matrix (normalised by expected class distribution).
         norm_conf_mat = conf_mat.copy(deep=True)
-        expected_class_counts = [y_true.detach().cpu().numpy().tolist().count(x) for x in range(5)]
+        expected_class_counts = [
+            y_true.detach().cpu().numpy().tolist().count(x) for x in range(5)
+        ]
         for i in range(5):
             # Normalise each row by it's expected count
             norm_conf_mat.iloc[i] /= expected_class_counts[i]
@@ -129,11 +127,19 @@ class FeatureTrainer(Trainer):
         features, labels = self.feature_dataset.get_features_and_labels(
             DatasetType.Train
         )
+
+        if "pass_val" in kwargs and kwargs["pass_val"]:
+            val_features, val_labels = self.feature_dataset.get_features_and_labels(
+                DatasetType.Validation
+            )
+            kwargs["val_features"] = val_features
+            kwargs["val_labels"] = val_labels
+            del kwargs["pass_val"]
+
         print("Fitting model")
         model.fit(features, labels, **kwargs)
 
         val_acc, val_loss = self.evaluate(
-            model,
-            self.feature_dataset.get_loader(DatasetType.Validation),
+            model, self.feature_dataset.get_loader(DatasetType.Validation),
         )
         return val_acc, val_loss

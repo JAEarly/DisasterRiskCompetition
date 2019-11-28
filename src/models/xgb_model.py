@@ -35,11 +35,14 @@ class XGBModel(Model):
         self,
         training_features: torch.Tensor,
         labels,
+        val_features: torch.Tensor = None,
+        val_labels=None,
         eta=0.3,
         gamma=0,
         depth=6,
         c_weight=1,
         reg_lambda=1,
+        num_rounds=5,
     ):
         param = {
             # Fixed parameters
@@ -58,10 +61,22 @@ class XGBModel(Model):
         training_features = training_features.cpu().detach().numpy()
         print("Creating DMatrix")
         d_train = xgb.DMatrix(training_features, label=labels)
+        d_val = None
+        if val_features is not None and val_labels is not None:
+            print("Using validation dataset for eval")
+            val_features = val_features.cpu().detach().numpy()
+            d_val = xgb.DMatrix(val_features, label=val_labels)
         print("Training")
-
-        num_round = 5
-        self.xbg_bst = xgb.train(param, d_train, num_round)
+        if d_val is not None:
+            self.xbg_bst = xgb.train(
+                param,
+                d_train,
+                num_rounds,
+                evals=[[d_val, "ValidationSet"]],
+                verbose_eval=True,
+            )
+        else:
+            self.xbg_bst = xgb.train(param, d_train, num_rounds)
 
     def load(self, path):
         with open(path, "rb") as file:

@@ -267,6 +267,7 @@ class XGBGridSearch(GridSearch):
         depths = self._extract_range(hyper_parameter_ranges, "depths", [6])
         c_weights = self._extract_range(hyper_parameter_ranges, "c_weights", [1])
         lambdas = self._extract_range(hyper_parameter_ranges, "lambdas", [1])
+        rounds = self._extract_range(hyper_parameter_ranges, "rounds", [3])
 
         # Output parameter values
         print("             Etas:", etas)
@@ -277,12 +278,13 @@ class XGBGridSearch(GridSearch):
 
         # Create configs
         all_configs = (
-            (eta, gamma, depth, c_weight, reg_lambda)
+            (eta, gamma, depth, c_weight, reg_lambda, num_rounds)
             for eta in etas
             for gamma in gammas
             for depth in depths
             for c_weight in c_weights
             for reg_lambda in lambdas
+            for num_rounds in rounds
         )
 
         dict_configs = []
@@ -294,6 +296,7 @@ class XGBGridSearch(GridSearch):
                     "depth": config[2],
                     "c_weight": config[3],
                     "reg_lambda": config[4],
+                    "num_rounds": config[5],
                 }
             )
 
@@ -302,6 +305,7 @@ class XGBGridSearch(GridSearch):
     def _train_model(self, config) -> (float, float, Model):
         trainer = FeatureTrainer(self.feature_extractor)
         model = XGBModel()
+        config["pass_val"] = True
         val_acc, val_loss = trainer.train(model, **config)
         return val_acc, val_loss, model
 
@@ -366,30 +370,31 @@ if __name__ == "__main__":
     #     ],
     # )
 
-    grid_search = NNGridSearch(
-        nn_class=models.BiggerNN,
-        feature_extractor=features.ResNetCustom("./models/grid_search_resnet_custom/best.pth"),
-        tag="resnet_custom_biggernn",
-        repeats=3,
-    )
-    grid_search.run(
-        epoch_range=[1, 3, 5, 10],
-        class_weight_methods=[
-            ClassWeightMethod.Unweighted,
-        ],
-        balance_methods=[BalanceMethod.NoSample],
-        dropout_range=[0, 0.25, 0.5, 0.75]
-    )
-
-    # grid_search = XGBGridSearch(
-    #     feature_extractor=features.AlexNetSMOTE(),
-    #     tag="alexnet_smote_xgb",
-    #     repeats=1,
+    # grid_search = NNGridSearch(
+    #     nn_class=models.BiggerNN,
+    #     feature_extractor=features.ResNetCustom("./models/grid_search_resnet_custom/best.pth"),
+    #     tag="resnet_custom_biggernn",
+    #     repeats=3,
     # )
     # grid_search.run(
-    #     etas=[0.5, 0.6],
-    #     gammas=[0, 0.25],
-    #     depths=[6, 10],
-    #     c_weights=[1.25, 1.75],
-    #     lambdas=[0.25, 0.75],
+    #     epoch_range=[1, 3, 5, 10],
+    #     class_weight_methods=[
+    #         ClassWeightMethod.Unweighted,
+    #     ],
+    #     balance_methods=[BalanceMethod.NoSample],
+    #     dropout_range=[0, 0.25, 0.5, 0.75]
     # )
+
+    grid_search = XGBGridSearch(
+        feature_extractor=features.AlexNet(),
+        tag="alexnet_xgb",
+        repeats=1,
+    )
+    grid_search.run(
+        etas=[0.5],
+        gammas=[0, 0.25],
+        depths=[5, 10],
+        c_weights=[1.5],
+        lambdas=[0.5],
+        num_rounds=[1, 3, 5],
+    )
