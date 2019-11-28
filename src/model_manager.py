@@ -1,6 +1,6 @@
 import os
 from azure.storage.blob import BlobServiceClient
-
+from utils import create_dirs_if_not_found
 
 class ModelManager:
 
@@ -51,6 +51,7 @@ class ModelManager:
         blob_client = self.blob_service_client.get_blob_client(
             container=self.container_name, blob=model_path
         )
+        create_dirs_if_not_found(os.path.dirname(model_path))
         with open(model_path, "wb+") as download_file:
             download_file.write(blob_client.download_blob().readall())
 
@@ -60,3 +61,5 @@ class ModelManager:
         for blob in blob_list:
             self.download_model(blob.name)
         print("Done")
+
+ModelManager().download_all()

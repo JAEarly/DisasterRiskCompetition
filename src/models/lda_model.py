@@ -8,7 +8,7 @@ from sklearn.preprocessing import StandardScaler
 
 import features
 import models
-from models import FeatureTrainer
+from training import FeatureTrainer
 from models import Model
 
 
