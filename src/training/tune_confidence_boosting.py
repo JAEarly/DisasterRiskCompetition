@@ -55,7 +55,6 @@ def run_boost_tuning():
     print('    Threshold:', best_boost)
 
 
-
 def evaluate_boosted(y_true, y_pred, boost_threshold, apply_softmax):
     # Calculate prediction probabilities if required
     if apply_softmax:
