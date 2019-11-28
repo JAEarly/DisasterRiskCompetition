@@ -45,7 +45,7 @@ class XGBModel(Model):
             # Fixed parameters
             "objective": "multi:softprob",
             "nthread": 4,
-            "eval_metric": "auc",
+            "eval_metric": "mlogloss",
             "num_class": self.num_classes,
             # Hyper parameters
             "eta": eta,
