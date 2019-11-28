@@ -368,32 +368,17 @@ if __name__ == "__main__":
 
     grid_search = NNGridSearch(
         nn_class=models.BiggerNN,
-        feature_extractor=features.AlexNet(),
-        tag="alexnet_biggernn",
+        feature_extractor=features.ResNet(),
+        tag="resnet_biggernn",
         repeats=3,
     )
     grid_search.run(
-        epoch_range=[1, 5, 10, 15],
+        epoch_range=[1, 3, 5],
         class_weight_methods=[
             ClassWeightMethod.Unweighted,
         ],
         balance_methods=[BalanceMethod.NoSample],
-        dropout_range=[0.0, 0.2, 0.4]
-    )
-
-    grid_search = NNGridSearch(
-        nn_class=models.BiggerNN,
-        feature_extractor=features.AlexNetSMOTE(),
-        tag="alexnet_smote_biggernn",
-        repeats=3,
-    )
-    grid_search.run(
-        epoch_range=[1, 5, 10, 15],
-        class_weight_methods=[
-            ClassWeightMethod.Unweighted,
-        ],
-        balance_methods=[BalanceMethod.NoSample],
-        dropout_range=[0.0, 0.2, 0.4]
+        dropout_range=[0, 0.25, 0.5]
     )
 
     # grid_search = XGBGridSearch(

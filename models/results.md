@@ -13,6 +13,7 @@
 | LinearNN    | ResNetCustomSmote  |   0.872   |   0.355   |   0.812   |   0.508   |   0.795   |   0.518   |
 | LinearNN    | AlexNet            |   0.872   |   0.357   |   0.821   |   0.517   |   0.793   |   0.552   |
 | XGB         | AlexNetCustom      |   0.896   |   0.396   |   0.812   |   0.580   |   0.810   |   0.578   |
+| BiggerNN    | AlexNetCustomSmote |   0.956   |   0.146   |   0.799   |   0.587   |   0.800   |   0.591   |
 | LinearNN    | AlexNetSmote       |   0.914   |   0.278   |   0.781   |   0.610   |   0.768   |   0.625   |
 | BiggerNN    | AlexNetSmote       |   0.927   |   0.207   |   0.776   |   0.597   |   0.770   |   0.631   |
 | LinearNN    | ResNetSmote        |   0.887   |   0.354   |   0.768   |   0.581   |   0.759   |   0.638   |
