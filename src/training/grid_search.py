@@ -264,7 +264,7 @@ class XGBGridSearch(GridSearch):
         # Extract hyper parameter ranges
         etas = self._extract_range(hyper_parameter_ranges, "etas", [0.3])
         gammas = self._extract_range(hyper_parameter_ranges, "gammas", [0])
-        depths = self._extract_range(hyper_parameter_ranges, "depths", [6])
+        depths = self._extract_range(hyper_parameter_ranges, "depths", [5])
         c_weights = self._extract_range(hyper_parameter_ranges, "c_weights", [1])
         lambdas = self._extract_range(hyper_parameter_ranges, "lambdas", [1])
         rounds = self._extract_range(hyper_parameter_ranges, "num_rounds", [3])
@@ -387,15 +387,13 @@ if __name__ == "__main__":
     # )
 
     grid_search = XGBGridSearch(
-        feature_extractor=features.AlexNet(),
-        tag="alexnet_xgb_4",
-        repeats=1,
+        feature_extractor=features.AlexNetCustom("./models/grid_search_alexnet_custom/best.pth"),
+        tag="alexnet_custom_xgb",
+        repeats=2,
     )
     grid_search.run(
         etas=[0.5],
-        gammas=[0.0, 0.25],
-        depths=[4, 5, 6],
-        c_weights=[1.5],
+        c_weights=[1.0, 1.5],
         lambdas=[0.5],
-        num_rounds=[12, 13, 14],
+        num_rounds=[10, 15, 20],
     )
