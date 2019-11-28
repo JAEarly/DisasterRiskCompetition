@@ -21,7 +21,7 @@ from models import (
     ClassWeightMethod,
     PretrainedNNModel,
 )
-from models.cnn_model import PretrainedNNTrainer
+from models.pretrained_model import PretrainedNNTrainer
 from models.nn_model import NNTrainer
 from utils import (
     create_timestamp_str,
@@ -267,7 +267,7 @@ class XGBGridSearch(GridSearch):
         depths = self._extract_range(hyper_parameter_ranges, "depths", [6])
         c_weights = self._extract_range(hyper_parameter_ranges, "c_weights", [1])
         lambdas = self._extract_range(hyper_parameter_ranges, "lambdas", [1])
-        rounds = self._extract_range(hyper_parameter_ranges, "rounds", [3])
+        rounds = self._extract_range(hyper_parameter_ranges, "num_rounds", [3])
 
         # Output parameter values
         print("             Etas:", etas)
@@ -275,6 +275,7 @@ class XGBGridSearch(GridSearch):
         print("           Depths:", depths)
         print("Min Child Weights:", c_weights)
         print("          Lambdas:", lambdas)
+        print("           Rounds:", rounds)
 
         # Create configs
         all_configs = (
@@ -372,8 +373,8 @@ if __name__ == "__main__":
 
     # grid_search = NNGridSearch(
     #     nn_class=models.BiggerNN,
-    #     feature_extractor=features.ResNetCustom("./models/grid_search_resnet_custom/best.pth"),
-    #     tag="resnet_custom_biggernn",
+    #     feature_extractor=features.ResNetCustomSMOTE("./models/grid_search_resnet_custom/best.pth"),
+    #     tag="resnet_custom_smote_biggernn",
     #     repeats=3,
     # )
     # grid_search.run(
@@ -387,14 +388,14 @@ if __name__ == "__main__":
 
     grid_search = XGBGridSearch(
         feature_extractor=features.AlexNet(),
-        tag="alexnet_xgb",
+        tag="alexnet_xgb_4",
         repeats=1,
     )
     grid_search.run(
         etas=[0.5],
-        gammas=[0, 0.25],
-        depths=[5, 10],
+        gammas=[0.0, 0.25],
+        depths=[4, 5, 6],
         c_weights=[1.5],
         lambdas=[0.5],
-        num_rounds=[1, 3, 5],
+        num_rounds=[12, 13, 14],
     )

@@ -6,7 +6,7 @@ from features import DatasetType, FeatureDatasets, ImageDatasets
 from features import ResNetCustom
 from models import FeatureTrainer
 from models import NNModel
-from models.cnn_model import PretrainedNNTrainer
+from models.pretrained_model import PretrainedNNTrainer
 
 feature_extractor = ResNetCustom("./models/grid_search_resnet_custom/best.pth")
 
