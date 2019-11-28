@@ -8,19 +8,21 @@ import features
 import models
 import models.transfers as transfers
 from features import DatasetType, FeatureDatasets, ImageDatasets
-from models import FeatureTrainer
-from models.cnn_model import PretrainedNNTrainer
+from models.pretrained_model import PretrainedNNTrainer
+from training import FeatureTrainer
 
 
 def setup_feature_evaluation():
     # Don't use SMOTE feature extractors, just usual normal version
-    feature_extractor = features.ResNetCustom("./models/grid_search_resnet_custom/best.pth")
+    feature_extractor = features.ResNetCustom(
+        "./models/grid_search_resnet_custom/best.pth"
+    )
     features_datasets = FeatureDatasets(feature_extractor)
     trainer = FeatureTrainer(feature_extractor)
     model = models.NNModel(
         models.BiggerNN,
         feature_extractor.feature_size,
-        state_dict_path="./models/grid_search_resnet_custom_biggernn/best.pth",
+        state_dict_path="./models/grid_search_resnet_custom_smote_biggernn/best.pth",
         eval_mode=True,
     )
 
@@ -50,27 +52,21 @@ if __name__ == "__main__":
 
     print("Training Set Results")
     train_acc, train_loss = _trainer.evaluate(
-        _model,
-        _datasets.get_loader(DatasetType.Train),
-        verbose=True,
+        _model, _datasets.get_loader(DatasetType.Train), verbose=True,
     )
 
     time.sleep(0.1)
     print("")
     print("Validation Set Results")
     val_acc, val_loss = _trainer.evaluate(
-        _model,
-        _datasets.get_loader(DatasetType.Validation),
-        verbose=True,
+        _model, _datasets.get_loader(DatasetType.Validation), verbose=True,
     )
 
     time.sleep(0.1)
     print("")
     print("Test Set Results")
     test_acc, test_loss = _trainer.evaluate(
-        _model,
-        _datasets.get_loader(DatasetType.Test),
-        verbose=True,
+        _model, _datasets.get_loader(DatasetType.Test), verbose=True,
     )
 
     time.sleep(0.1)

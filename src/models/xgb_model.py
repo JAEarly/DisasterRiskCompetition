@@ -6,8 +6,8 @@ import torch
 import xgboost as xgb
 
 import features
-from models import FeatureTrainer
 from models import Model
+from training import FeatureTrainer
 
 
 class XGBModel(Model):
