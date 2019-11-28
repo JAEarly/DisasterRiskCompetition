@@ -61,5 +61,3 @@ class ModelManager:
         for blob in blob_list:
             self.download_model(blob.name)
         print("Done")
-
-ModelManager().download_all()
