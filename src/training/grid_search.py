@@ -10,19 +10,15 @@ from shutil import copyfile
 from texttable import Texttable
 
 import features
-import models
 from features import BalanceMethod, FeatureExtractor
 from model_manager import ModelManager
 from models import (
-    FeatureTrainer,
     NNModel,
     Model,
     XGBModel,
-    ClassWeightMethod,
     PretrainedNNModel,
 )
-from models.pretrained_model import PretrainedNNTrainer
-from models.nn_model import NNTrainer
+from training import FeatureTrainer, ClassWeightMethod, PretrainedNNTrainer, NNTrainer
 from utils import (
     create_timestamp_str,
     create_dirs_if_not_found,
