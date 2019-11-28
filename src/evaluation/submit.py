@@ -59,7 +59,7 @@ def create_from_model(
         )
 
     # Write to csv file
-    filename = model.name + "_" + feature_name + "_" + create_timestamp_str() + ".csv"
+    filename = feature_name + "_" + model.name + "_" + create_timestamp_str() + ".csv"
     _write_submission(ids, competition_labels, filename)
 
 
@@ -164,9 +164,9 @@ def _setup_feature_submission():
         "./models/grid_search_resnet_custom/best.pth"
     )
     model = models.NNModel(
-        models.LinearNN,
+        models.BiggerNN,
         feature_extractor.feature_size,
-        state_dict_path="./models/grid_search_resnet_custom_linearnn/best.pth",
+        state_dict_path="./models/grid_search_resnet_custom_biggernn/best.pth",
         eval_mode=True,
     )
     print("Running submission for", feature_extractor.name, model.name, "\n")
@@ -188,6 +188,6 @@ def _setup_image_submission():
 if __name__ == "__main__":
     # _model, _competition_dataset, _feature_name = _setup_feature_submission()
     # _model, _competition_dataset, _feature_name = setup_image_submission()
-
     # create_from_model(_model, _competition_dataset, _feature_name)
-    boost_existing("resnet_custom_linearnn_2019-11-25_14:22:26_2.csv")
+
+    boost_existing("resnet_custom_biggernn_2019-11-28_18:27:37.csv", competition_threshold=0.99993896484375)

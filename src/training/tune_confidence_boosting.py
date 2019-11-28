@@ -72,12 +72,12 @@ def evaluate_boosted(y_true, y_pred, boost_threshold, apply_softmax):
 
 
 def setup_feature_evaluation():
-    feature_extractor = features.AlexNetCustomSMOTE("./models/grid_search_alexnet_custom/best.pth")
+    feature_extractor = features.ResNetCustom("./models/grid_search_resnet_custom/best.pth")
     data_loader = FeatureDatasets(feature_extractor).get_loader(DatasetType.Validation)
     model = models.NNModel(
-        models.LinearNN,
+        models.BiggerNN,
         feature_extractor.feature_size,
-        state_dict_path="./models/grid_search_alexnet_custom_smote_linearnn/best.pth",
+        state_dict_path="./models/grid_search_resnet_custom_biggernn/best.pth",
         eval_mode=True,
     )
     print("Running boost tuning for", feature_extractor.name, model.name)
