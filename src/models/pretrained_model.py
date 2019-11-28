@@ -10,7 +10,8 @@ from torch import optim
 from torchbearer import Trial
 from torchvision import models as torch_models
 
-from models import Model, ClassWeightMethod, ImageTrainer
+from models import Model
+from training import ClassWeightMethod, ImageTrainer
 from utils import class_distribution
 
 
