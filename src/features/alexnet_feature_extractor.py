@@ -8,6 +8,8 @@ from torchvision import models
 import models.transfers as transfers
 from features import FeatureExtractor, SmoteExtractor, IdentityLayer, DatasetType
 
+DEFAULT_CUSTOM_PATH = "./models/grid_search_alexnet_custom/best.pth"
+
 
 def setup_alexnet():
     alexnet = models.alexnet(pretrained=True)
@@ -62,7 +64,7 @@ class AlexNetSMOTE(SmoteExtractor):
 class AlexNetCustom(FeatureExtractor):
     """AlexNet feature extractor using a custom trained model."""
 
-    def __init__(self, model_path="./models/grid_search_alexnet_custom/best.pth"):
+    def __init__(self, model_path=DEFAULT_CUSTOM_PATH):
         self.model_path = model_path
         if not os.path.exists(model_path):
             raise FileNotFoundError(model_path)
@@ -76,7 +78,7 @@ class AlexNetCustom(FeatureExtractor):
 class AlexNetCustomSMOTE(SmoteExtractor):
     """AlexNet feature extractor using a custom trained model with SMOTE."""
 
-    def __init__(self, model_path):
+    def __init__(self, model_path=DEFAULT_CUSTOM_PATH):
         self.model_path = model_path
         if not os.path.exists(model_path):
             raise FileNotFoundError(model_path)
@@ -102,7 +104,7 @@ if __name__ == "__main__":
     feature_extractor.extract(DatasetType.Train)
 
     print("Creating custom AlexNet extractor")
-    feature_extractor = AlexNetCustom("./models/grid_search_alexnet_custom/best.pth")
+    feature_extractor = AlexNetCustom()
     print("Extracting")
     feature_extractor.extract(DatasetType.Train)
     feature_extractor.extract(DatasetType.Validation)
@@ -110,6 +112,6 @@ if __name__ == "__main__":
     feature_extractor.extract(DatasetType.Competition)
 
     print("Creating AlexNet Custom SMOTE extractor")
-    feature_extractor = AlexNetCustomSMOTE("./models/grid_search_alexnet_custom/best.pth")
+    feature_extractor = AlexNetCustomSMOTE()
     print("Extracting")
     feature_extractor.extract(DatasetType.Train)
