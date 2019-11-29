@@ -8,7 +8,6 @@ from torch import optim
 from torchbearer import Trial
 from torchvision import models as torch_models
 
-from models import PretrainedNNModel
 from models import transfers
 from training import ClassWeightMethod, ImageTrainer
 from utils import class_distribution
@@ -26,7 +25,7 @@ class PretrainedNNTrainer(ImageTrainer):
         self.num_epochs = num_epochs
         self.class_weight_method = class_weight_method
 
-    def train(self, model: PretrainedNNModel, **kwargs) -> (float, float):
+    def train(self, model, **kwargs) -> (float, float):
         # Get transfer model and put it in training mode
         net = model.net
         net.train()
@@ -77,8 +76,8 @@ class PretrainedNNTrainer(ImageTrainer):
         return acc, loss
 
 
-if __name__ == "__main__":
-    _network_class = torch_models.alexnet
-    _model = PretrainedNNModel(_network_class, transfers.final_layer_alteration_alexnet)
-    _trainer = PretrainedNNTrainer(num_epochs=1)
-    _trainer.train(_model)
+# if __name__ == "__main__":
+#     _network_class = torch_models.alexnet
+#     _model = PretrainedNNModel(_network_class, transfers.final_layer_alteration_alexnet)
+#     _trainer = PretrainedNNTrainer(num_epochs=1)
+#     _trainer.train(_model)

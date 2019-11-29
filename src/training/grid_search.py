@@ -388,7 +388,6 @@ if __name__ == "__main__":
         repeats=1,
     )
     grid_search.run(
-        etas=[0.3, 0.4],
-        lambdas=[0.5, 1.0],
-        num_rounds=[25, 30],
+        etas=[0.2, 0.3],
+        num_rounds=[30, 35],
     )
