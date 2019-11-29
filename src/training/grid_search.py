@@ -258,7 +258,7 @@ class XGBGridSearch(GridSearch):
 
     def _create_all_configs(self, hyper_parameter_ranges):
         # Extract hyper parameter ranges
-        etas = self._extract_range(hyper_parameter_ranges, "etas", [0.5])
+        etas = self._extract_range(hyper_parameter_ranges, "etas", [0.3])
         gammas = self._extract_range(hyper_parameter_ranges, "gammas", [0])
         depths = self._extract_range(hyper_parameter_ranges, "depths", [5])
         c_weights = self._extract_range(hyper_parameter_ranges, "c_weights", [1])
@@ -388,6 +388,5 @@ if __name__ == "__main__":
         repeats=1,
     )
     grid_search.run(
-        etas=[0.2, 0.3],
         num_rounds=[30, 35],
     )
