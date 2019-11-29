@@ -383,10 +383,10 @@ if __name__ == "__main__":
     # )
 
     grid_search = XGBGridSearch(
-        feature_extractor=features.ResNet(),
-        tag="resnet_xgb_2",
+        feature_extractor=features.ResNetCustom(),
+        tag="resnet_custom_xgb_2",
         repeats=1,
     )
     grid_search.run(
-        num_rounds=[30, 35],
+        num_rounds=[20],
     )
