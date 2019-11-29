@@ -6,15 +6,15 @@ from features import DatasetType, FeatureDatasets, ImageDatasets
 from features import ResNetCustom
 from models import FeatureTrainer
 from models import NNModel
-from models.cnn_model import PretrainedNNTrainer
+from models.pretrained_model import PretrainedNNTrainer
 
-feature_extractor = ResNetCustom("./models/grid_search_resnet_cnn/best.pth")
+feature_extractor = ResNetCustom("./models/grid_search_resnet_custom/best.pth")
 
 print("Loading CNN Model")
 cnn_model = models.PretrainedNNModel(
     tv_models.resnet152,
     transfers.final_layer_alteration_resnet,
-    state_dict_path="./models/grid_search_resnet_cnn/best.pth",
+    state_dict_path="./models/grid_search_resnet_custom/best.pth",
     eval_mode=True,
 )
 

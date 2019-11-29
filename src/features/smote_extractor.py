@@ -1,10 +1,9 @@
 """Extension of feature extraction that uses smote balancing."""
 
-import pickle
+import csv
 from collections import Counter
 
 import os
-import torch
 from abc import ABC
 from imblearn.over_sampling import SMOTE
 
@@ -19,12 +18,14 @@ class SmoteExtractor(FeatureExtractor, ABC):
         super().__init__(base_feature_extractor.name)
         self.base_feature_extractor = base_feature_extractor
         self.feature_datasets = FeatureDatasets(self.base_feature_extractor)
-        labels = self.feature_datasets.get_dataset(DatasetType.Train).labels
+        labels = self.feature_datasets.get_dataset(
+            DatasetType.Train
+        ).path2label.values()
 
         training_dir = self.get_features_dir(DatasetType.Train)
         create_dirs_if_not_found(training_dir)
 
-        features_dist = Counter([l.item() for l in labels]).values()
+        features_dist = Counter(labels).values()
         biggest_class = max(features_dist)
         current_size = len(os.listdir(training_dir))
         expected_size = biggest_class * len(features_dist)
@@ -66,16 +67,19 @@ class SmoteExtractor(FeatureExtractor, ABC):
             print("Saving tensors")
             # Save feature tensors
             i = 0
+            filenames = []
             for feature in features:
                 self._save_tensor(DatasetType.Train, feature, i)
+                filenames.append(i)
                 i += 1
 
             print("Saving labels")
             # Save labels file
-            labels = torch.tensor(labels)
             labels_filepath = self.get_labels_filepath(DatasetType.Train)
-            with open(labels_filepath, "wb") as file:
-                pickle.dump(labels, file)
+            with open(labels_filepath, "w+") as file:
+                csv_writer = csv.writer(file)
+                for filename, label in zip(filenames, labels):
+                    csv_writer.writerow([filename, label])
 
             print("Done")
 

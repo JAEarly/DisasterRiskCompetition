@@ -1,6 +1,6 @@
 import os
 from azure.storage.blob import BlobServiceClient
-
+from utils import create_dirs_if_not_found
 
 class ModelManager:
 
@@ -24,11 +24,16 @@ class ModelManager:
         return self.blob_service_client.create_container(self.container_name)
 
     def upload_model(self, model_path):
+        if model_path.startswith("./"):
+            model_path = model_path[2:]
         print("Uploading", model_path)
         blob_client = self.blob_service_client.get_blob_client(
             container=self.container_name, blob=model_path
         )
-        blob_client.delete_blob()
+        blob_list = self.container_client.list_blobs()
+        blob_names = [b.name for b in blob_list]
+        if model_path in blob_names:
+            blob_client.delete_blob()
         with open(model_path, "rb") as data:
             blob_client.upload_blob(data)
 
@@ -46,6 +51,7 @@ class ModelManager:
         blob_client = self.blob_service_client.get_blob_client(
             container=self.container_name, blob=model_path
         )
+        create_dirs_if_not_found(os.path.dirname(model_path))
         with open(model_path, "wb+") as download_file:
             download_file.write(blob_client.download_blob().readall())
 

@@ -8,21 +8,24 @@ import features
 import models
 import models.transfers as transfers
 from features import DatasetType, FeatureDatasets, ImageDatasets
-from models import FeatureTrainer
-from models.cnn_model import PretrainedNNTrainer
+from training import FeatureTrainer, PretrainedNNTrainer
 
 
 def setup_feature_evaluation():
-    feature_extractor = features.ResNetCustom(
-        "./models/grid_search_resnet_cnn/best.pth"
-    )
+    # Don't use SMOTE feature extractors, just usual normal version
+    feature_extractor = features.ResNetCustom()
     features_datasets = FeatureDatasets(feature_extractor)
     trainer = FeatureTrainer(feature_extractor)
-    model = models.NNModel(
-        models.LinearNN,
-        feature_extractor.feature_size,
-        state_dict_path="./models/grid_search_resnet_custom_linearnn/best.pth",
-        eval_mode=True,
+
+    # model = models.NNModel(
+    #     models.BiggerNN,
+    #     feature_extractor.feature_size,
+    #     state_dict_path="./models/grid_search_resnet_custom_smote_biggernn/best.pth",
+    #     eval_mode=True,
+    # )
+
+    model = models.XGBModel(
+        model_path="./models/grid_search_resnet_custom_smote_xgb/best.pth"
     )
     print("Running evaluation for", feature_extractor.name, model.name)
     return features_datasets, trainer, model
@@ -34,7 +37,7 @@ def setup_image_evaluation():
     model = models.PretrainedNNModel(
         tv_models.resnet152,
         transfers.final_layer_alteration_resnet,
-        state_dict_path="./models/grid_search_resnet_cnn/best.pth",
+        state_dict_path="./models/grid_search_resnet_custom/best.pth",
         eval_mode=True,
     )
     print("Running evaluation for", model.name)
@@ -45,33 +48,23 @@ if __name__ == "__main__":
     _datasets, _trainer, _model = setup_feature_evaluation()
     # _datasets, _trainer, _model = setup_image_evaluation()
 
-    use_softmax = True
     print("Training Set Results")
     train_acc, train_loss = _trainer.evaluate(
-        _model,
-        _datasets.get_loader(DatasetType.Train),
-        apply_softmax=use_softmax,
-        verbose=True,
+        _model, _datasets.get_loader(DatasetType.Train), verbose=True,
     )
 
     time.sleep(0.1)
     print("")
     print("Validation Set Results")
     val_acc, val_loss = _trainer.evaluate(
-        _model,
-        _datasets.get_loader(DatasetType.Validation),
-        apply_softmax=use_softmax,
-        verbose=True,
+        _model, _datasets.get_loader(DatasetType.Validation), verbose=True,
     )
 
     time.sleep(0.1)
     print("")
     print("Test Set Results")
     test_acc, test_loss = _trainer.evaluate(
-        _model,
-        _datasets.get_loader(DatasetType.Test),
-        apply_softmax=use_softmax,
-        verbose=True,
+        _model, _datasets.get_loader(DatasetType.Test), verbose=True,
     )
 
     time.sleep(0.1)

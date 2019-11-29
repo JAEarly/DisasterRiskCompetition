@@ -8,6 +8,27 @@ from torchvision import models
 import models.transfers as transfers
 from features import FeatureExtractor, SmoteExtractor, IdentityLayer, DatasetType
 
+DEFAULT_CUSTOM_PATH = "./models/grid_search_resnet_custom/best.pth"
+
+
+def setup_resnet():
+    resnet = models.resnet152(pretrained=True)  # type: nn.Module
+    resnet.fc = IdentityLayer()
+    resnet.eval()
+    return resnet
+
+
+def setup_resnet_custom(model_path):
+    # Create ResNet model from custom pretrained state.
+    #  Must initially alter the final layer to match architectures.
+    resnet = models.resnet152()
+    resnet = transfers.final_layer_alteration_resnet(resnet, 5)
+    resnet.load_state_dict(torch.load(model_path))
+    # Now replace final layer with an identity layer
+    resnet.fc = IdentityLayer()
+    resnet.eval()
+    return resnet
+
 
 class ResNet(FeatureExtractor):
     """ResNet feature extractor."""
@@ -20,8 +41,7 @@ class ResNet(FeatureExtractor):
         Create a pre-trained ResNet model with the final layer replaced.
         :return: ResNet model.
         """
-        resnet = models.resnet152(pretrained=True)  # type: nn.Module
-        resnet.fc = IdentityLayer()
+        resnet = setup_resnet()
         return resnet, 2048
 
 
@@ -36,30 +56,35 @@ class ResNetSMOTE(SmoteExtractor):
         Create a pre-trained ResNet model with the final layer replaced.
         :return: ResNet model.
         """
-        resnet = models.resnet152(pretrained=True)  # type: nn.Module
-        resnet.fc = IdentityLayer()
+        resnet = setup_resnet()
         return resnet, 2048
 
 
 class ResNetCustom(FeatureExtractor):
-    """AlexNet feature extractor using a custom trained model."""
+    """ResNet feature extractor using a custom trained model."""
 
-    def __init__(self, model_path):
+    def __init__(self, model_path=DEFAULT_CUSTOM_PATH):
         self.model_path = model_path
         if not os.path.exists(model_path):
             raise FileNotFoundError(model_path)
-        print("Creating ResNet from", model_path)
         super().__init__("resnet_custom")
 
     def setup_model(self) -> (nn.Module, int):
-        # Create ResNet model from custom pretrained state.
-        #  Must initially alter the final layer to match architectures.
-        resnet = models.resnet152()
-        resnet = transfers.final_layer_alteration_resnet(resnet, 5)
-        resnet.load_state_dict(torch.load(self.model_path))
-        # Now replace final layer with an identity layer
-        resnet.fc = IdentityLayer()
-        resnet.eval()
+        resnet = setup_resnet_custom(self.model_path)
+        return resnet, 2048
+
+
+class ResNetCustomSMOTE(SmoteExtractor):
+    """ResNet feature extractor using a custom trained model with SMOTE."""
+
+    def __init__(self, model_path=DEFAULT_CUSTOM_PATH):
+        self.model_path = model_path
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(model_path)
+        super().__init__(ResNetCustom(model_path))
+
+    def setup_model(self) -> (nn.Module, int):
+        resnet = setup_resnet_custom(self.model_path)
         return resnet, 2048
 
 
@@ -76,11 +101,16 @@ if __name__ == "__main__":
     feature_extractor = ResNetSMOTE()
     print("Extracting features")
     feature_extractor.extract(DatasetType.Train)
-
+    #
     print("Creating ResNet custom extractor")
-    feature_extractor = ResNetCustom("./models/grid_search_resnet_cnn/best.pth")
+    feature_extractor = ResNetCustom()
     print("Extracting features")
     feature_extractor.extract(DatasetType.Train)
     feature_extractor.extract(DatasetType.Validation)
     feature_extractor.extract(DatasetType.Test)
     feature_extractor.extract(DatasetType.Competition)
+
+    print("Creating ResNet SMOTE extractor")
+    feature_extractor = ResNetCustomSMOTE()
+    print("Extracting features")
+    feature_extractor.extract(DatasetType.Train)
