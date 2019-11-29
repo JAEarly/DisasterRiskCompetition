@@ -75,15 +75,11 @@ def setup_feature_evaluation():
     feature_extractor = features.ResNetCustom()
     data_loader = FeatureDatasets(feature_extractor).get_loader(DatasetType.Validation)
 
-    # model = models.NNModel(
-    #     models.BiggerNN,
-    #     feature_extractor.feature_size,
-    #     state_dict_path="./models/grid_search_resnet_custom_biggernn/best.pth",
-    #     eval_mode=True,
-    # )
-
-    model = models.XGBModel(
-        model_path="./models/grid_search_resnet_custom_xgb/best.pth"
+    model = models.NNModel(
+        models.BiggerNN,
+        feature_extractor.feature_size,
+        state_dict_path="./models/kfold_test/best.pth",
+        eval_mode=True,
     )
     print("Running boost tuning for", feature_extractor.name, model.name)
     return data_loader, model
