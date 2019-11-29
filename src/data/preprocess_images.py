@@ -14,7 +14,7 @@ INPUT_PATH = "data/interim/"
 TRAIN_OUTPUT_PATH = "data/processed/train"
 VALIDATION_OUTPUT_PATH = "data/processed/validation"
 TEST_OUTPUT_PATH = "data/processed/test"
-COMPETITION_OUTPUT_PATH = "data/processed/competition"
+COMPETITION_OUTPUT_PATH = "data/processed/competition/all"
 VALIDATION_SPLIT = 0.1
 TEST_SPLIT = 0.1
 
