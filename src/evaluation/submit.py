@@ -13,7 +13,7 @@ import features
 import models
 import models.transfers as transfers
 from features import (
-    CompetitionDataset,
+    CompetitionLoader,
     CompetitionFeatureDataset,
     CompetitionImageDataset,
 )
@@ -26,14 +26,14 @@ DEFAULT_CONFIDENCE_THRESHOLD = 0.99
 
 def create_from_model(
     model: models.Model,
-    competition_dataset: CompetitionDataset,
+    competition_loader: CompetitionLoader,
     feature_name: str,
     confidence_threshold=None,
 ) -> None:
     """
     Create a submission.
     :param model: Model to use.
-    :param competition_dataset: Competition dataset to use.
+    :param competition_loader: Competition loader to use.
     :param feature_name: Tag for feature extractor used.
     :param confidence_threshold: Threshold for boosting. If None, no boosting is used.
     :return: None.
@@ -42,7 +42,7 @@ def create_from_model(
     ids = []
     competition_labels = []
     for batch_ids, batch in tqdm(
-        competition_dataset.data_loader, desc="Predicting competition dataset"
+        competition_loader, desc="Predicting competition dataset"
     ):
         y_outputs = model.predict_batch(batch)
         if model.apply_softmax:
@@ -62,8 +62,8 @@ def create_from_model(
     counts = [0] * 5
     for label in competition_labels:
         counts[int(np.argmax(label))] += 1
-    print('Class counts:', counts)
-    print('Normalised:', ["{:.3f}".format(x/sum(counts)) for x in counts])
+    print("Class counts:", counts)
+    print("Normalised:", ["{:.3f}".format(x / sum(counts)) for x in counts])
 
     # Write to csv file
     filename = feature_name + "_" + model.name + "_" + create_timestamp_str() + ".csv"
@@ -122,7 +122,10 @@ def _write_submission(ids, competition_labels, filename):
 
 
 def boost_labels(
-    competition_labels, confidence_threshold=DEFAULT_CONFIDENCE_THRESHOLD, confirm=True, verbose=True
+    competition_labels,
+    confidence_threshold=DEFAULT_CONFIDENCE_THRESHOLD,
+    confirm=True,
+    verbose=True,
 ):
     """
     Boost a set of competition labels. Asks for confirmation.
@@ -144,7 +147,9 @@ def boost_labels(
         print("Boosting confidence with threshold", confidence_threshold)
         num_to_boost = sum(x >= confidence_threshold for x in max_confidences)
         print(
-            "Will boost", str(num_to_boost) + "/" + str(len(competition_labels)), "labels"
+            "Will boost",
+            str(num_to_boost) + "/" + str(len(competition_labels)),
+            "labels",
         )
     if confirm:
         reply = str(input("Continue? (Y/n)")).lower().strip()
@@ -199,6 +204,8 @@ def _setup_image_submission():
 if __name__ == "__main__":
     _model, _competition_dataset, _feature_name = _setup_feature_submission()
     # _model, _competition_dataset, _feature_name = setup_image_submission()
-    create_from_model(_model, _competition_dataset, _feature_name)
+
+    _competition_loader = CompetitionLoader(_competition_dataset)
+    create_from_model(_model, _competition_loader, _feature_name)
 
     # boost_existing("resnet_custom_biggernn_2019-11-28_18:27:37.csv", competition_threshold=0.99993896484375)

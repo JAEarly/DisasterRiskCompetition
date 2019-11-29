@@ -7,35 +7,26 @@ Different to Datasets as it works with unlabelled data (i.e. class labels not gi
 import pickle
 
 import os
-from PIL import Image
-from torch.utils import data
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
+from torchvision.datasets import ImageFolder
 from torchvision.transforms import transforms
 
 from features import DatasetType
 
 
-class CompetitionDataset(Dataset):
-    """Abstract base class for competition dataset."""
-
-    def __init__(self, batch_size=8):
-        self.batch_size = batch_size
-        self.data_loader = data.DataLoader(
-            self, batch_size=self.batch_size, shuffle=False
-        )
+class CompetitionLoader(DataLoader):
+    def __init__(self, competition_dataset, batch_size=8):
+        super().__init__(competition_dataset, batch_size=batch_size, shuffle=False)
 
 
-class CompetitionImageDataset(CompetitionDataset):
+class CompetitionImageDataset(ImageFolder):
     """Competition dataset backed by images."""
 
     data_dir = "./data/processed/competition"
 
     def __init__(self, transform=None):
-        super().__init__()
-        self.filenames = os.listdir(self.data_dir)
-        self.transform = transform
-        if self.transform is None:
-            self.transform = transforms.Compose(
+        if transform is None:
+            transform = transforms.Compose(
                 [
                     transforms.Resize(256),
                     transforms.CenterCrop(224),
@@ -45,21 +36,20 @@ class CompetitionImageDataset(CompetitionDataset):
                     ),
                 ]
             )
-
-    def __len__(self):
-        return len(self.filenames)
+        super().__init__(self.data_dir, transform=transform)
+        self.filenames = os.listdir(self.data_dir + "/all")
 
     def __getitem__(self, index):
         filename = self.filenames[index]
         file_id = filename[: filename.index(".png")]
-        image = Image.open(os.path.join(self.data_dir, filename))
-        image = image.convert("RGB")
+        path, _ = self.samples[index]
+        sample = self.loader(path)
         if self.transform is not None:
-            image = self.transform(image)
-        return file_id, image
+            sample = self.transform(sample)
+        return file_id, sample
 
 
-class CompetitionFeatureDataset(CompetitionDataset):
+class CompetitionFeatureDataset(Dataset):
     """Competition dataset backed with extracted features."""
 
     def __init__(self, feature_extractor):
