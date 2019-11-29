@@ -13,7 +13,7 @@ from training import FeatureTrainer, PretrainedNNTrainer
 
 def setup_feature_evaluation():
     # Don't use SMOTE feature extractors, just usual normal version
-    feature_extractor = features.AlexNetCustom("./models/grid_search_alexnet_custom/best.pth")
+    feature_extractor = features.ResNet()
     features_datasets = FeatureDatasets(feature_extractor)
     trainer = FeatureTrainer(feature_extractor)
 
@@ -25,7 +25,7 @@ def setup_feature_evaluation():
     # )
 
     model = models.XGBModel(
-        model_path="./models/grid_search_alexnet_custom_xgb/best.pth"
+        model_path="./models/grid_search_resnet_xgb/best.pth"
     )
     print("Running evaluation for", feature_extractor.name, model.name)
     return features_datasets, trainer, model
