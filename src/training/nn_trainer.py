@@ -5,6 +5,7 @@ import torch
 import torchbearer
 from torch import nn
 from torch import optim
+from torch.utils.data import DataLoader
 from torchbearer import Trial
 
 import features
@@ -31,7 +32,9 @@ class NNTrainer(FeatureTrainer):
         self.num_epochs = num_epochs
         self.class_weight_method = class_weight_method
 
-    def train(self, model: NNModel) -> (float, float):
+    def train(
+        self, model, train_loader: DataLoader, validation_loader: DataLoader, **kwargs
+    ) -> (float, float):
         # Get transfer model and put it in training mode
         net = model.net
         net.train()
@@ -65,8 +68,7 @@ class NNTrainer(FeatureTrainer):
             device
         )
         trial.with_generators(
-            self.feature_dataset.train_loader,
-            test_generator=self.feature_dataset.validation_loader,
+            train_loader, test_generator=validation_loader,
         )
 
         # Actually run the training

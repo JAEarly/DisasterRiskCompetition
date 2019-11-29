@@ -14,7 +14,7 @@ import os
 import torch
 from abc import ABC, abstractmethod
 from torch.utils import data
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
 from torchvision import datasets as torch_datasets
 from torchvision.datasets import ImageFolder
 from torchvision.transforms import transforms
@@ -276,6 +276,7 @@ class FeatureDatasets(Datasets):
         )
         return train_dataset, validation_dataset, test_dataset, competition_dataset
 
+
     def get_features_and_labels(
         self, dataset_type: DatasetType
     ) -> (torch.Tensor, torch.Tensor):
@@ -286,9 +287,12 @@ class FeatureDatasets(Datasets):
         """
         if dataset_type == DatasetType.Competition:
             raise ValueError("Cannot get features and labels for unlabelled dataset competition data.")
+        return self.get_features_and_labels_from_dataloader(self.get_loader(dataset_type))
+
+    def get_features_and_labels_from_dataloader(self, data_loader: DataLoader):
         features = []
         labels = []
-        for batch, batch_labels in self.get_loader(dataset_type):
+        for batch, batch_labels in data_loader:
             features.extend(batch)
             labels.extend(batch_labels)
         features = torch.stack(features)
