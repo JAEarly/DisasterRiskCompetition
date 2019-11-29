@@ -383,10 +383,28 @@ if __name__ == "__main__":
     # )
 
     grid_search = XGBGridSearch(
-        feature_extractor=features.ResNetCustom(),
-        tag="resnet_custom_xgb_2",
+        feature_extractor=features.AlexNetCustomSMOTE(),
+        tag="alexnet_custom_smote_xgb",
         repeats=1,
     )
     grid_search.run(
-        num_rounds=[20],
+        num_rounds=[10, 20, 30, 40],
+    )
+
+    grid_search = XGBGridSearch(
+        feature_extractor=features.ResNetSMOTE(),
+        tag="resnet_smote_xgb",
+        repeats=1,
+    )
+    grid_search.run(
+        num_rounds=[10, 20, 30, 40],
+    )
+
+    grid_search = XGBGridSearch(
+        feature_extractor=features.ResNetCustomSMOTE(),
+        tag="resnet_custom_smote_xgb",
+        repeats=1,
+    )
+    grid_search.run(
+        num_rounds=[10, 20, 30, 40],
     )
