@@ -58,6 +58,13 @@ def create_from_model(
             competition_labels, confidence_threshold=confidence_threshold
         )
 
+    # Get labels distribution
+    counts = [0] * 5
+    for label in competition_labels:
+        counts[int(np.argmax(label))] += 1
+    print('Class counts:', counts)
+    print('Normalised:', ["{:.3f}".format(x/sum(counts)) for x in counts])
+
     # Write to csv file
     filename = feature_name + "_" + model.name + "_" + create_timestamp_str() + ".csv"
     _write_submission(ids, competition_labels, filename)
@@ -162,16 +169,16 @@ def _setup_feature_submission():
     """Get required information for a feature based submission."""
     feature_extractor = features.ResNetCustom()
 
-    # model = models.NNModel(
-    #     models.BiggerNN,
-    #     feature_extractor.feature_size,
-    #     state_dict_path="./models/grid_search_resnet_custom_biggernn/best.pth",
-    #     eval_mode=True,
-    # )
-
-    model = models.XGBModel(
-        model_path="./models/grid_search_resnet_custom_xgb/best.pth"
+    model = models.NNModel(
+        models.LinearNN,
+        feature_extractor.feature_size,
+        state_dict_path="./models/grid_search_resnet_custom_linearnn/best.pth",
+        eval_mode=True,
     )
+
+    # model = models.XGBModel(
+    #     model_path="./models/grid_search_resnet_custom_xgb/best.pth"
+    # )
 
     print("Running submission for", feature_extractor.name, model.name, "\n")
     return model, CompetitionFeatureDataset(feature_extractor), feature_extractor.name
@@ -190,8 +197,8 @@ def _setup_image_submission():
 
 
 if __name__ == "__main__":
-    # _model, _competition_dataset, _feature_name = _setup_feature_submission()
+    _model, _competition_dataset, _feature_name = _setup_feature_submission()
     # _model, _competition_dataset, _feature_name = setup_image_submission()
-    # create_from_model(_model, _competition_dataset, _feature_name)
+    create_from_model(_model, _competition_dataset, _feature_name)
 
-    boost_existing("resnet_custom_biggernn_2019-11-28_18:27:37.csv", competition_threshold=0.99993896484375)
+    # boost_existing("resnet_custom_biggernn_2019-11-28_18:27:37.csv", competition_threshold=0.99993896484375)
