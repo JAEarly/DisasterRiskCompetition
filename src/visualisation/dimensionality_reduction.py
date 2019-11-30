@@ -56,12 +56,12 @@ def visualise_reduction(dataframe, targets, fe_name) -> None:
 
     for target in targets:
         indices_to_keep = dataframe["target"] == target
-        # Attempt
-        num_points = len(dataframe[(dataframe["target"] == target)])
-        reduction_step = int(num_points / 200)
+        # Percentage to points to render
+        reduce_to = 0.3
+        reduction_step = int(1/reduce_to)
         axis.scatter(
-            dataframe.loc[indices_to_keep, "pc1"],#[::reduction_step],
-            dataframe.loc[indices_to_keep, "pc2"],#[::reduction_step],
+            dataframe.loc[indices_to_keep, "pc1"][::reduction_step],
+            dataframe.loc[indices_to_keep, "pc2"][::reduction_step],
             marker="x",
             label=str(target),
             alpha=0.4
@@ -107,11 +107,11 @@ def plot_dataset_comparison(feature_extractor):
     comp_df["target"] = "comp"
 
     final_df = pd.concat([labelled_df, comp_df])
-    visualise_reduction(final_df, ["comp", "labelled"], feature_extractor.name)
+    visualise_reduction(final_df, ["labelled", "comp"], feature_extractor.name)
 
 
 if __name__ == "__main__":
-    _feature_extractor = features.AlexNet()
+    _feature_extractor = features.ResNet()
 
     # LDA 2D
     # plot_dataset(_feature_extractor, DatasetType.Train, LinearDiscriminantAnalysis(n_components=2))
