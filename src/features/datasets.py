@@ -16,6 +16,7 @@ from abc import ABC, abstractmethod
 from torch.utils import data
 from torch.utils.data import Dataset
 from torchvision import datasets as torch_datasets
+from torchvision.datasets import ImageFolder
 from torchvision.transforms import transforms
 
 
@@ -48,6 +49,7 @@ class Datasets(ABC):
             self.train_dataset,
             self.validation_dataset,
             self.test_dataset,
+            self.competition_dataset,
         ) = self.create_datasets(balance_method)
 
         # Create dataloaders from datasets.
@@ -60,15 +62,18 @@ class Datasets(ABC):
         self.test_loader = data.DataLoader(
             self.test_dataset, batch_size=self.batch_size, shuffle=False
         )
+        self.competition_loader = data.DataLoader(
+            self.competition_dataset, batch_size=self.batch_size, shuffle=False
+        )
 
     @abstractmethod
     def create_datasets(
         self, balance_method: BalanceMethod
-    ) -> Tuple[data.Dataset, data.Dataset, data.Dataset]:
+    ) -> Tuple[data.Dataset, data.Dataset, data.Dataset, data.Dataset]:
         """
         Create the train, validation and test datasets.
         :param balance_method: Method for balancing the training dataset.
-        :return: Train, validation and test datasets as a tuple.
+        :return: Train, validation, test and competition datasets as a tuple.
         """
 
     def get_dataset(self, dataset_type: DatasetType) -> data.Dataset:
@@ -83,6 +88,8 @@ class Datasets(ABC):
             return self.validation_dataset
         if dataset_type == DatasetType.Test:
             return self.test_dataset
+        if dataset_type == DatasetType.Competition:
+            return self.competition_dataset
         raise IndexError("Could not find dataset for type " + dataset_type.name)
 
     def get_loader(self, dataset_type: DatasetType) -> data.DataLoader:
@@ -97,6 +104,8 @@ class Datasets(ABC):
             return self.validation_loader
         if dataset_type == DatasetType.Test:
             return self.test_loader
+        if dataset_type == DatasetType.Competition:
+            return self.competition_loader
         raise IndexError("Could not find data loader for type " + dataset_type.name)
 
 
@@ -152,8 +161,9 @@ class ImageDatasets(Datasets):
             self.validation_dir, transform=self.transform
         )
         test_dataset = ImageFolderWithFilenames(self.test_dir, transform=self.transform)
+        competition_dataset = CompetitionImageDataset(transform=transforms)
 
-        return train_dataset, validation_dataset, test_dataset
+        return train_dataset, validation_dataset, test_dataset, competition_dataset
 
 
 class FeatureDataset(Dataset):
@@ -241,6 +251,7 @@ class FeatureDatasets(Datasets):
         self.feature_extractor.extract(DatasetType.Train)
         self.feature_extractor.extract(DatasetType.Validation)
         self.feature_extractor.extract(DatasetType.Test)
+        self.feature_extractor.extract(DatasetType.Competition)
         super().__init__(balance_method=balance_method)
 
     def create_datasets(self, balance_method):
@@ -260,7 +271,10 @@ class FeatureDatasets(Datasets):
             self.feature_extractor.get_labels_filepath(DatasetType.Test),
             balance_method=BalanceMethod.NoSample,
         )
-        return train_dataset, validation_dataset, test_dataset
+        competition_dataset = CompetitionFeatureDataset(
+            self.feature_extractor
+        )
+        return train_dataset, validation_dataset, test_dataset, competition_dataset
 
     def get_features_and_labels(
         self, dataset_type: DatasetType
@@ -270,6 +284,8 @@ class FeatureDatasets(Datasets):
         :param dataset_type: Dataset to fetch labels for.
         :return: Tensor of features and tensor of labels.
         """
+        if dataset_type == DatasetType.Competition:
+            raise ValueError("Cannot get features and labels for unlabelled dataset competition data.")
         features = []
         labels = []
         for batch, batch_labels in self.get_loader(dataset_type):
@@ -278,3 +294,62 @@ class FeatureDatasets(Datasets):
         features = torch.stack(features)
         labels = torch.tensor(labels)
         return features, labels
+
+    def get_features(
+        self, dataset_type: DatasetType
+    ) -> (torch.Tensor, torch.Tensor):
+        features = []
+        for batch, _ in self.get_loader(dataset_type):
+            features.extend(batch)
+        features = torch.stack(features)
+        return features
+
+
+class CompetitionImageDataset(ImageFolder):
+    """Competition dataset backed by images."""
+
+    data_dir = "./data/processed/competition"
+
+    def __init__(self, transform=None):
+        if transform is None:
+            transform = transforms.Compose(
+                [
+                    transforms.Resize(256),
+                    transforms.CenterCrop(224),
+                    transforms.ToTensor(),
+                    transforms.Normalize(
+                        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                    ),
+                ]
+            )
+        super().__init__(self.data_dir, transform=transform)
+        self.filenames = os.listdir(self.data_dir + "/all")
+
+    def __getitem__(self, index):
+        filename = self.filenames[index]
+        file_id = filename[: filename.index(".png")]
+        path, _ = self.samples[index]
+        sample = self.loader(path)
+        if self.transform is not None:
+            sample = self.transform(sample)
+        return sample, file_id
+
+
+class CompetitionFeatureDataset(Dataset):
+    """Competition dataset backed with extracted features."""
+
+    def __init__(self, feature_extractor):
+        super().__init__()
+        self.feature_extractor = feature_extractor
+        self.feature_extractor.extract(DatasetType.Competition)
+        self.data_dir = self.feature_extractor.get_features_dir(DatasetType.Competition)
+        self.filenames = os.listdir(self.data_dir)
+
+    def __len__(self):
+        return len(self.filenames)
+
+    def __getitem__(self, index):
+        filepath = os.path.join(self.data_dir, self.filenames[index])
+        with open(filepath, "rb") as file:
+            feature = pickle.load(file)[0]
+        return feature, self.filenames[index].split(".")[0]
