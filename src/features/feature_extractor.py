@@ -14,7 +14,7 @@ from torch import nn
 from torchvision import transforms
 from tqdm import tqdm
 
-from features import ImageDatasets, DatasetType, CompetitionImageDataset
+from features import ImageDatasets, DatasetType
 from utils import create_dirs_if_not_found
 
 
@@ -27,7 +27,6 @@ class FeatureExtractor(ABC):
         self.name = name
         self.extractor_model, self.feature_size = self.setup_model()
         self.image_datasets = ImageDatasets(self.get_transform())
-        self.competition_dataset = CompetitionImageDataset(self.get_transform())
 
     @abstractmethod
     def setup_model(self) -> (nn.Module, int):
@@ -60,11 +59,7 @@ class FeatureExtractor(ABC):
         :return: None.
         """
         features_dir = self.get_features_dir(dataset_type)
-        image_dataset = (
-            self.competition_dataset
-            if dataset_type == DatasetType.Competition
-            else self.image_datasets.get_dataset(dataset_type)
-        )
+        image_dataset = self.image_datasets.get_dataset(dataset_type)
         # Only extract if missing features
         if not os.path.exists(features_dir) or len(os.listdir(features_dir)) != len(
             image_dataset
@@ -75,7 +70,7 @@ class FeatureExtractor(ABC):
 
             create_dirs_if_not_found(features_dir)
             if dataset_type is DatasetType.Competition:
-                self._run_unlabelled_extraction(device)
+                self._run_unlabelled_extraction(dataset_type, device)
             else:
                 self._run_labelled_extraction(dataset_type, device)
 
@@ -107,12 +102,12 @@ class FeatureExtractor(ABC):
             for filename, label in zip(filenames, labels):
                 csv_writer.writerow([filename, label])
 
-    def _run_unlabelled_extraction(self, device: str) -> None:
+    def _run_unlabelled_extraction(self, dataset_type: DatasetType, device: str) -> None:
         """
         Run the extraction for unlabelled data (i.e. competition dataset).
         :return: None.
         """
-        dataset = self.competition_dataset
+        dataset = self.image_datasets.get_dataset(dataset_type)
         self.extractor_model = self.extractor_model.to(device)
 
         for filename, image in tqdm(
