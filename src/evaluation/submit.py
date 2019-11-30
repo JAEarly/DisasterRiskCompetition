@@ -12,11 +12,7 @@ from tqdm import tqdm
 import features
 import models
 import models.transfers as transfers
-from features import (
-    CompetitionLoader,
-    CompetitionFeatureDataset,
-    CompetitionImageDataset,
-)
+from features import FeatureDatasets, ImageDatasets, DatasetType
 from utils import create_timestamp_str
 
 SUBMISSION_FOLDER = "./submissions"
@@ -26,7 +22,7 @@ DEFAULT_CONFIDENCE_THRESHOLD = 0.99
 
 def create_from_model(
     model: models.Model,
-    competition_loader: CompetitionLoader,
+    competition_loader,
     feature_name: str,
     confidence_threshold=None,
 ) -> None:
@@ -41,7 +37,7 @@ def create_from_model(
     # Get predicted labels for competition data
     ids = []
     competition_labels = []
-    for batch_ids, batch in tqdm(
+    for batch, batch_ids in tqdm(
         competition_loader, desc="Predicting competition dataset"
     ):
         y_outputs = model.predict_batch(batch)
@@ -172,12 +168,13 @@ def boost_labels(
 
 def _setup_feature_submission():
     """Get required information for a feature based submission."""
-    feature_extractor = features.ResNetCustom()
+    feature_extractor = features.ResNet()
+    datasets = FeatureDatasets(feature_extractor)
 
     model = models.NNModel(
         models.LinearNN,
         feature_extractor.feature_size,
-        state_dict_path="./models/grid_search_resnet_custom_linearnn/best.pth",
+        state_dict_path="./models/grid_search_resnet_linearnn/best.pth",
         eval_mode=True,
     )
 
@@ -186,11 +183,13 @@ def _setup_feature_submission():
     # )
 
     print("Running submission for", feature_extractor.name, model.name, "\n")
-    return model, CompetitionFeatureDataset(feature_extractor), feature_extractor.name
+    return model, datasets.get_loader(DatasetType.Competition), feature_extractor.name
 
 
 def _setup_image_submission():
     """Get required information for an image based submission."""
+    datasets = ImageDatasets()
+
     model = models.PretrainedNNModel(
         tv_models.resnet152,
         transfers.final_layer_alteration_resnet,
@@ -198,14 +197,13 @@ def _setup_image_submission():
         eval_mode=True,
     )
     print("Running submission for", model.name, "\n")
-    return model, CompetitionImageDataset(), "custom"
+    return model, datasets.get_loader(DatasetType.Competition), "custom"
 
 
 if __name__ == "__main__":
-    _model, _competition_dataset, _feature_name = _setup_feature_submission()
+    _model, _competition_loader, _feature_name = _setup_feature_submission()
     # _model, _competition_dataset, _feature_name = setup_image_submission()
 
-    _competition_loader = CompetitionLoader(_competition_dataset)
     create_from_model(_model, _competition_loader, _feature_name)
 
     # boost_existing("resnet_custom_biggernn_2019-11-28_18:27:37.csv", competition_threshold=0.99993896484375)
