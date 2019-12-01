@@ -12,6 +12,7 @@ from texttable import Texttable
 import features
 from features import BalanceMethod, FeatureExtractor
 from model_manager import ModelManager
+import models
 from models import (
     NNModel,
     Model,
@@ -367,44 +368,26 @@ if __name__ == "__main__":
     #     ],
     # )
 
-    # grid_search = NNGridSearch(
-    #     nn_class=models.BiggerNN,
-    #     feature_extractor=features.ResNetCustomSMOTE("./models/grid_search_resnet_custom/best.pth"),
-    #     tag="resnet_custom_smote_biggernn",
-    #     repeats=3,
+    grid_search = NNGridSearch(
+        nn_class=models.LinearNN,
+        feature_extractor=features.VggNet(),
+        tag="vgg_linearnn",
+        repeats=3,
+    )
+    grid_search.run(
+        epoch_range=[5, 10, 15],
+        class_weight_methods=[
+            ClassWeightMethod.Unweighted,
+        ],
+        balance_methods=[BalanceMethod.NoSample],
+        dropout_range=[0, 0.1, 0.2, 0.3]
+    )
+
+    # grid_search = XGBGridSearch(
+    #     feature_extractor=features.AlexNetCustomSMOTE(),
+    #     tag="alexnet_custom_smote_xgb",
+    #     repeats=1,
     # )
     # grid_search.run(
-    #     epoch_range=[1, 3, 5, 10],
-    #     class_weight_methods=[
-    #         ClassWeightMethod.Unweighted,
-    #     ],
-    #     balance_methods=[BalanceMethod.NoSample],
-    #     dropout_range=[0, 0.25, 0.5, 0.75]
+    #     num_rounds=[10, 20, 30, 40],
     # )
-
-    grid_search = XGBGridSearch(
-        feature_extractor=features.AlexNetCustomSMOTE(),
-        tag="alexnet_custom_smote_xgb",
-        repeats=1,
-    )
-    grid_search.run(
-        num_rounds=[10, 20, 30, 40],
-    )
-
-    grid_search = XGBGridSearch(
-        feature_extractor=features.ResNetSMOTE(),
-        tag="resnet_smote_xgb",
-        repeats=1,
-    )
-    grid_search.run(
-        num_rounds=[10, 20, 30, 40],
-    )
-
-    grid_search = XGBGridSearch(
-        feature_extractor=features.ResNetCustomSMOTE(),
-        tag="resnet_custom_smote_xgb",
-        repeats=1,
-    )
-    grid_search.run(
-        num_rounds=[10, 20, 30, 40],
-    )

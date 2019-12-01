@@ -111,10 +111,10 @@ def plot_dataset_comparison(feature_extractor):
 
 
 if __name__ == "__main__":
-    _feature_extractor = features.ResNet()
+    _feature_extractor = features.VggNet()
 
-    # LDA 2D
-    # plot_dataset(_feature_extractor, DatasetType.Train, LinearDiscriminantAnalysis(n_components=2))
+    # Class comparison
+    plot_dataset(_feature_extractor, [DatasetType.Train], LinearDiscriminantAnalysis(n_components=2))
 
     # Dataset comparison
-    plot_dataset_comparison(_feature_extractor)
+    # plot_dataset_comparison(_feature_extractor)

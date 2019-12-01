@@ -13,14 +13,14 @@ from training import FeatureTrainer, PretrainedNNTrainer
 
 def setup_feature_evaluation():
     # Don't use SMOTE feature extractors, just usual normal version
-    feature_extractor = features.ResNet()
+    feature_extractor = features.VggNet()
     features_datasets = FeatureDatasets(feature_extractor)
     trainer = FeatureTrainer(feature_extractor)
 
     model = models.NNModel(
         models.LinearNN,
         feature_extractor.feature_size,
-        state_dict_path="./models/grid_search_resnet_linearnn_2/best.pth",
+        state_dict_path="./models/grid_search_vggnet_linearnn/best.pth",
         eval_mode=True,
     )
 
