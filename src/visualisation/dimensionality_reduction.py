@@ -23,6 +23,8 @@ def run_dimensionality_reduction(
     feature_datasets = FeatureDatasets(feature_extractor)
     xs = []
     ys = []
+    if type(dataset_types) == DatasetType:
+        dataset_types = [dataset_types]
     for dataset_type in dataset_types:
         if dataset_type == DatasetType.Competition:
             new_xs, new_ys = feature_datasets.get_features(dataset_type), None
@@ -81,40 +83,40 @@ def plot_dataset_comparison(feature_extractor):
 
     print('Fitting LDA model on labelled data')
     labelled_df = run_dimensionality_reduction(
-        feature_extractor, [DatasetType.Train, DatasetType.Validation, DatasetType.Test], lda_model,
+        feature_extractor, DatasetType.Train, lda_model,
     )
-    labelled_df["target"] = "labelled"
+    labelled_df["target"] = "train"
 
-    # print('')
-    # print('Reducing validation data')
-    # val_df = run_dimensionality_reduction(
-    #     feature_extractor, DatasetType.Validation, lda_model, already_fit=True
-    # )
-    # val_df["target"] = "val"
-    #
-    # print('')
-    # print('Reducing testing data')
-    # test_df = run_dimensionality_reduction(
-    #     feature_extractor, DatasetType.Test, lda_model, already_fit=True
-    # )
-    # test_df["target"] = "test"
+    print('')
+    print('Reducing validation data')
+    val_df = run_dimensionality_reduction(
+        feature_extractor, DatasetType.Validation, lda_model, already_fit=True
+    )
+    val_df["target"] = "val"
+
+    print('')
+    print('Reducing testing data')
+    test_df = run_dimensionality_reduction(
+        feature_extractor, DatasetType.Test, lda_model, already_fit=True
+    )
+    test_df["target"] = "test"
 
     print('')
     print('Reducing competition data')
     comp_df = run_dimensionality_reduction(
-        feature_extractor, [DatasetType.Competition], lda_model, already_fit=True
+        feature_extractor, DatasetType.Competition, lda_model, already_fit=True
     )
     comp_df["target"] = "comp"
 
     final_df = pd.concat([labelled_df, comp_df])
-    visualise_reduction(final_df, ["labelled", "comp"], feature_extractor.name)
+    visualise_reduction(final_df, ["train", "val", "test", "comp"], feature_extractor.name)
 
 
 if __name__ == "__main__":
-    _feature_extractor = features.VggNet()
+    _feature_extractor = features.ResNet()
 
     # Class comparison
-    plot_dataset(_feature_extractor, [DatasetType.Train], LinearDiscriminantAnalysis(n_components=2))
+    # plot_dataset(_feature_extractor, [DatasetType.Train], LinearDiscriminantAnalysis(n_components=2))
 
     # Dataset comparison
-    # plot_dataset_comparison(_feature_extractor)
+    plot_dataset_comparison(_feature_extractor)
