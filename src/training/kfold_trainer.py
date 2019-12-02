@@ -10,6 +10,7 @@ import models
 from evaluation import evaluate
 from training import NNTrainer, BalanceMethod, ClassWeightMethod, FeatureTrainer
 from utils import create_dirs_if_not_found, DualLogger
+from model_manager import ModelManager
 
 ROOT_DIR = "./models"
 
@@ -103,7 +104,9 @@ class FeatureKFoldTrainer(KFoldTrainer, ABC):
         print("  Std Acc:", std_acc)
         print(" Std Loss:", std_loss)
 
-        best_model.save(os.path.join(self.save_dir, "best.pth"))
+        save_path = os.path.join(self.save_dir, "best.pth")
+        best_model.save()
+        ModelManager().upload_model(save_path)
 
         print("")
         evaluate.run_evaluation(self.feature_trainer.feature_dataset, best_model)
@@ -151,9 +154,18 @@ class XGBKFoldTrainer(FeatureKFoldTrainer):
 
 
 if __name__ == "__main__":
-    _feature_extractor = features.ResNetCustom()
-    _num_rounds = 20
-    kfold_trainer = XGBKFoldTrainer(
-        _feature_extractor, "resnet_custom_xgb", _num_rounds
+    _feature_extractor = features.ResNet()
+
+    kfold_trainer = NNKFoldTrainer(
+        _feature_extractor,
+        models.BiggerNN,
+        save_tag="resnet_biggernn",
+        epochs=13,
+        dropout=0
     )
+
+    # _num_rounds = 20
+    # kfold_trainer = XGBKFoldTrainer(
+    #     _feature_extractor, "resnet_custom_xgb", _num_rounds
+    # )
     kfold_trainer.train_kfold()
