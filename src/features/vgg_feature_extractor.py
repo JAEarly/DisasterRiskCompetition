@@ -12,10 +12,10 @@ DEFAULT_CUSTOM_PATH = "./models/grid_search_vggnet_custom/best.pth"
 
 
 def setup_vgg():
-    resnet = models.vgg19_bn(pretrained=True)  # type: nn.Module
-    resnet.classifier[6] = IdentityLayer()
-    resnet.eval()
-    return resnet
+    vggnet = models.vgg19_bn(pretrained=True)  # type: nn.Module
+    vggnet.classifier[6] = IdentityLayer()
+    vggnet.eval()
+    return vggnet
 
 
 # def setup_resnet_custom(model_path):

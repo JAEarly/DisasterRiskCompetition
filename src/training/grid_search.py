@@ -8,10 +8,12 @@ import os
 from abc import ABC, abstractmethod
 from shutil import copyfile
 from texttable import Texttable
+from torchvision import models as tv_models
 
 import features
 from features import BalanceMethod, FeatureExtractor
 from model_manager import ModelManager
+from models import transfers
 import models
 from models import (
     NNModel,
@@ -353,35 +355,34 @@ class CNNGridSearch(GridSearch):
 
 
 if __name__ == "__main__":
-    # grid_search = CNNGridSearch(
-    #     tv_models.alexnet,
-    #     transfers.final_layer_alteration_alexnet,
-    #     "images",
-    #     tag="resnet_cnn",
-    #     repeats=1,
-    # )
-    # grid_search.run(
-    #     epoch_range=[1, 3, 5, 10],
-    #     class_weight_methods=[
-    #         ClassWeightMethod.Unweighted,
-    #         ClassWeightMethod.SumBased,
-    #     ],
-    # )
-
-    grid_search = NNGridSearch(
-        nn_class=models.LinearNN,
-        feature_extractor=features.VggNet(),
-        tag="vgg_linearnn",
-        repeats=3,
+    grid_search = CNNGridSearch(
+        tv_models.vgg19_bn,
+        transfers.final_layer_alteration_vggnet,
+        "images",
+        tag="vggnet_custom",
+        repeats=1,
     )
     grid_search.run(
-        epoch_range=[5, 10, 15],
+        epoch_range=[1, 3],
         class_weight_methods=[
             ClassWeightMethod.Unweighted,
         ],
-        balance_methods=[BalanceMethod.NoSample],
-        dropout_range=[0, 0.1, 0.2, 0.3]
     )
+
+    # grid_search = NNGridSearch(
+    #     nn_class=models.LinearNN,
+    #     feature_extractor=features.VggNet(),
+    #     tag="vgg_linearnn",
+    #     repeats=3,
+    # )
+    # grid_search.run(
+    #     epoch_range=[5, 10, 15],
+    #     class_weight_methods=[
+    #         ClassWeightMethod.Unweighted,
+    #     ],
+    #     balance_methods=[BalanceMethod.NoSample],
+    #     dropout_range=[0, 0.1, 0.2, 0.3]
+    # )
 
     # grid_search = XGBGridSearch(
     #     feature_extractor=features.AlexNetCustomSMOTE(),
