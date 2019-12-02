@@ -2,10 +2,11 @@
 
 | Method         | Feature Extractor  | Train Acc | Train LL  |  Val Acc  |   Val LL  |  Test Acc | Test Loss |
 | :------------: | :----------------: | :-------: | :-------: | :-------: | :-------: | :-------: | :-------: |
-| LinearNN Kfold | ResNetCustom       |   0.890   |   0.308   | **0.863** | **0.387** |   0.845   | **0.399** |
+| LinearNN Kfold | ResNetCustom       |   0.890   |   0.308   |   0.863   | **0.387** |   0.845   | **0.399** |
 | LinearNN       | ResNetCustom       |   0.888   |   0.305   |   0.859   |   0.399   |   0.851   |   0.400   |
 | BiggerNN       | ResNetCustom       |   0.888   |   0.308   |   0.859   |   0.394   |   0.847   |   0.402   |
 | XGB            | ResNetCustom       |   0.942   |   0.166   |   0.860   |   0.403   | **0.852** |   0.402   |
+| BiggerNN Kfold | ResNetCustom       |   0.888   |   0.310   | **0.865** |   0.389   |   0.851   |   0.406   |
 | Retrain CNN    | ResNet             |   0.876   |   0.355   |   0.847   |   0.423   |   0.839   |   0.432   |
 | LinearNN       | AlexNetCustom      |   0.876   |   0.334   |   0.849   |   0.441   |   0.842   |   0.433   |
 | LinearNN       | AlexNetCustomSmote |   0.899   |   0.287   |   0.846   |   0.440   |   0.842   |   0.435   |

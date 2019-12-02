@@ -105,17 +105,19 @@ class FeatureKFoldTrainer(KFoldTrainer, ABC):
 
 
 class NNKFoldTrainer(FeatureKFoldTrainer):
-    def __init__(self, feature_extractor, nn_model, save_tag, k=10):
-        super().__init__(feature_extractor, save_tag, k=k)
+    def __init__(self, feature_extractor, nn_model, save_tag, epochs, dropout, k=10):
         self.nn_model = nn_model
+        self.epochs = epochs
+        self.dropout = dropout
+        super().__init__(feature_extractor, save_tag, k=k)
 
     def create_fresh_model(self):
-        return NNModel(self.nn_model, self.feature_extractor.feature_size, dropout=0,)
+        return NNModel(self.nn_model, self.feature_extractor.feature_size, dropout=self.dropout,)
 
     def create_base_trainer(self):
         return NNTrainer(
             self.feature_extractor,
-            num_epochs=5,
+            num_epochs=self.epochs,
             balance_method=BalanceMethod.NoSample,
             class_weight_method=ClassWeightMethod.Unweighted,
         )
@@ -123,8 +125,10 @@ class NNKFoldTrainer(FeatureKFoldTrainer):
 
 if __name__ == "__main__":
     _feature_extractor = features.ResNetCustom()
-    _nn_model = models.LinearNN
+    _nn_model = models.BiggerNN
+    _epochs = 3
+    _dropout = 0.25
     kfold_trainer = NNKFoldTrainer(
-        _feature_extractor, _nn_model, "resnet_custom_linearnn"
+        _feature_extractor, _nn_model, "resnet_custom_biggernn", _epochs, _dropout
     )
     kfold_trainer.train_kfold()
