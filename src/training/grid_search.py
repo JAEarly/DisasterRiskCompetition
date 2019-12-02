@@ -8,10 +8,13 @@ import os
 from abc import ABC, abstractmethod
 from shutil import copyfile
 from texttable import Texttable
+from torchvision import models as tv_models
 
 import features
 from features import BalanceMethod, FeatureExtractor
 from model_manager import ModelManager
+from models import transfers
+import models
 from models import (
     NNModel,
     Model,
@@ -352,59 +355,40 @@ class CNNGridSearch(GridSearch):
 
 
 if __name__ == "__main__":
-    # grid_search = CNNGridSearch(
-    #     tv_models.alexnet,
-    #     transfers.final_layer_alteration_alexnet,
-    #     "images",
-    #     tag="resnet_cnn",
-    #     repeats=1,
-    # )
-    # grid_search.run(
-    #     epoch_range=[1, 3, 5, 10],
-    #     class_weight_methods=[
-    #         ClassWeightMethod.Unweighted,
-    #         ClassWeightMethod.SumBased,
-    #     ],
-    # )
+    grid_search = CNNGridSearch(
+        tv_models.vgg19_bn,
+        transfers.final_layer_alteration_vggnet,
+        "images",
+        tag="vggnet_custom",
+        repeats=1,
+    )
+    grid_search.run(
+        epoch_range=[1, 3],
+        class_weight_methods=[
+            ClassWeightMethod.Unweighted,
+        ],
+    )
 
     # grid_search = NNGridSearch(
-    #     nn_class=models.BiggerNN,
-    #     feature_extractor=features.ResNetCustomSMOTE("./models/grid_search_resnet_custom/best.pth"),
-    #     tag="resnet_custom_smote_biggernn",
+    #     nn_class=models.LinearNN,
+    #     feature_extractor=features.VggNet(),
+    #     tag="vgg_linearnn",
     #     repeats=3,
     # )
     # grid_search.run(
-    #     epoch_range=[1, 3, 5, 10],
+    #     epoch_range=[5, 10, 15],
     #     class_weight_methods=[
     #         ClassWeightMethod.Unweighted,
     #     ],
     #     balance_methods=[BalanceMethod.NoSample],
-    #     dropout_range=[0, 0.25, 0.5, 0.75]
+    #     dropout_range=[0, 0.1, 0.2, 0.3]
     # )
 
-    grid_search = XGBGridSearch(
-        feature_extractor=features.AlexNetCustomSMOTE(),
-        tag="alexnet_custom_smote_xgb",
-        repeats=1,
-    )
-    grid_search.run(
-        num_rounds=[10, 20, 30, 40],
-    )
-
-    grid_search = XGBGridSearch(
-        feature_extractor=features.ResNetSMOTE(),
-        tag="resnet_smote_xgb",
-        repeats=1,
-    )
-    grid_search.run(
-        num_rounds=[10, 20, 30, 40],
-    )
-
-    grid_search = XGBGridSearch(
-        feature_extractor=features.ResNetCustomSMOTE(),
-        tag="resnet_custom_smote_xgb",
-        repeats=1,
-    )
-    grid_search.run(
-        num_rounds=[10, 20, 30, 40],
-    )
+    # grid_search = XGBGridSearch(
+    #     feature_extractor=features.AlexNetCustomSMOTE(),
+    #     tag="alexnet_custom_smote_xgb",
+    #     repeats=1,
+    # )
+    # grid_search.run(
+    #     num_rounds=[10, 20, 30, 40],
+    # )
