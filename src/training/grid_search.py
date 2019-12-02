@@ -363,7 +363,7 @@ if __name__ == "__main__":
         repeats=1,
     )
     grid_search.run(
-        epoch_range=[1, 3],
+        epoch_range=[5, 7, 10],
         class_weight_methods=[
             ClassWeightMethod.Unweighted,
         ],
