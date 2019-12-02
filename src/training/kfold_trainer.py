@@ -7,10 +7,9 @@ from torch.utils.data import ConcatDataset, random_split, DataLoader
 
 import features
 import models
-from models import NNModel
-from training import NNTrainer, BalanceMethod, ClassWeightMethod
-from utils import create_dirs_if_not_found, DualLogger
 from evaluation import evaluate
+from training import NNTrainer, BalanceMethod, ClassWeightMethod, FeatureTrainer
+from utils import create_dirs_if_not_found, DualLogger
 
 ROOT_DIR = "./models"
 
@@ -18,6 +17,18 @@ ROOT_DIR = "./models"
 class KFoldTrainer(ABC):
     def __init__(self, k=10):
         self.k = k
+
+    @abstractmethod
+    def create_fresh_model(self):
+        pass
+
+    @abstractmethod
+    def create_base_trainer(self):
+        pass
+
+    @abstractmethod
+    def train_model(self, trainer, model, train_loader, val_loader):
+        pass
 
 
 class FeatureKFoldTrainer(KFoldTrainer, ABC):
@@ -30,15 +41,7 @@ class FeatureKFoldTrainer(KFoldTrainer, ABC):
         self.feature_trainer = self.create_base_trainer()
         self.concat_dataset = self.combine_train_and_val_loaders()
         create_dirs_if_not_found(self.save_dir)
-        print("Running", self.save_tag, 'k=' + str(k))
-
-    @abstractmethod
-    def create_fresh_model(self):
-        pass
-
-    @abstractmethod
-    def create_base_trainer(self):
-        pass
+        print("Running", self.save_tag, "k=" + str(k))
 
     def combine_train_and_val_loaders(self) -> ConcatDataset:
         train_dataset = self.feature_trainer.feature_dataset.train_dataset
@@ -72,8 +75,10 @@ class FeatureKFoldTrainer(KFoldTrainer, ABC):
             )
 
             model = self.create_fresh_model()
+            acc, loss = self.train_model(
+                self.feature_trainer, model, train_loader, val_loader
+            )
 
-            acc, loss = self.feature_trainer.train(model, train_loader, val_loader)
             accs.append(acc)
             losses.append(loss)
             trained_models.append(model)
@@ -100,7 +105,7 @@ class FeatureKFoldTrainer(KFoldTrainer, ABC):
 
         best_model.save(os.path.join(self.save_dir, "best.pth"))
 
-        print('')
+        print("")
         evaluate.run_evaluation(self.feature_trainer.feature_dataset, best_model)
 
 
@@ -112,7 +117,9 @@ class NNKFoldTrainer(FeatureKFoldTrainer):
         super().__init__(feature_extractor, save_tag, k=k)
 
     def create_fresh_model(self):
-        return NNModel(self.nn_model, self.feature_extractor.feature_size, dropout=self.dropout,)
+        return models.NNModel(
+            self.nn_model, self.feature_extractor.feature_size, dropout=self.dropout,
+        )
 
     def create_base_trainer(self):
         return NNTrainer(
@@ -122,13 +129,31 @@ class NNKFoldTrainer(FeatureKFoldTrainer):
             class_weight_method=ClassWeightMethod.Unweighted,
         )
 
+    def train_model(self, trainer, model, train_loader, val_loader):
+        return trainer.train(model, train_loader, val_loader)
+
+
+class XGBKFoldTrainer(FeatureKFoldTrainer):
+    def __init__(self, feature_extractor, save_tag, num_rounds, k=10):
+        self.num_rounds = num_rounds
+        super().__init__(feature_extractor, save_tag, k=k)
+
+    def create_fresh_model(self):
+        return models.XGBModel()
+
+    def create_base_trainer(self):
+        return FeatureTrainer(self.feature_extractor)
+
+    def train_model(self, trainer, model, train_loader, val_loader):
+        return trainer.train(
+            model, train_loader, val_loader, num_rounds=self.num_rounds, pass_val=True
+        )
+
 
 if __name__ == "__main__":
     _feature_extractor = features.ResNetCustom()
-    _nn_model = models.BiggerNN
-    _epochs = 3
-    _dropout = 0.25
-    kfold_trainer = NNKFoldTrainer(
-        _feature_extractor, _nn_model, "resnet_custom_biggernn", _epochs, _dropout
+    _num_rounds = 20
+    kfold_trainer = XGBKFoldTrainer(
+        _feature_extractor, "resnet_custom_xgb", _num_rounds
     )
     kfold_trainer.train_kfold()

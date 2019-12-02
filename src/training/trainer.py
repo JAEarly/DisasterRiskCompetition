@@ -131,6 +131,14 @@ class FeatureTrainer(Trainer):
             train_loader
         )
 
+        if kwargs["pass_val"]:
+            x_val, y_val = self.feature_dataset.get_features_and_labels_from_dataloader(
+                validation_loader
+            )
+            kwargs["val_features"] = x_val
+            kwargs["val_labels"] = y_val
+            del kwargs["pass_val"]
+
         print("Fitting model")
         model.fit(x_train, y_train, **kwargs)
 
