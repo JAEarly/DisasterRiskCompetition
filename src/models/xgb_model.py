@@ -39,10 +39,10 @@ class XGBModel(Model):
         val_labels=None,
         eta=0.3,
         gamma=0,
-        depth=6,
+        depth=5,
         c_weight=1,
         reg_lambda=1,
-        num_rounds=5,
+        num_rounds=3,
     ):
         param = {
             # Fixed parameters

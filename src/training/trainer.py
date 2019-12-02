@@ -13,7 +13,6 @@ from tqdm import tqdm
 from features import (
     FeatureDatasets,
     FeatureExtractor,
-    DatasetType,
     BalanceMethod,
     ImageDatasets,
 )
@@ -33,7 +32,9 @@ class Trainer(ABC):
     save_dir = "./models"
 
     @abstractmethod
-    def train(self, model, **kwargs) -> (float, float):
+    def train(
+        self, model, train_loader: DataLoader, validation_loader: DataLoader, **kwargs
+    ) -> (float, float):
         """
         Train a model.
         :param model: Model to train.
@@ -122,24 +123,24 @@ class FeatureTrainer(Trainer):
             feature_extractor, balance_method=balance_method
         )
 
-    def train(self, model, **kwargs) -> (float, float):
+    def train(
+        self, model, train_loader: DataLoader, validation_loader: DataLoader, **kwargs
+    ) -> (float, float):
         print("Loading features")
-        features, labels = self.feature_dataset.get_features_and_labels(
-            DatasetType.Train
+        x_train, y_train = self.feature_dataset.get_features_and_labels_from_dataloader(
+            train_loader
         )
 
-        if "pass_val" in kwargs and kwargs["pass_val"]:
-            val_features, val_labels = self.feature_dataset.get_features_and_labels(
-                DatasetType.Validation
+        if kwargs["pass_val"]:
+            x_val, y_val = self.feature_dataset.get_features_and_labels_from_dataloader(
+                validation_loader
             )
-            kwargs["val_features"] = val_features
-            kwargs["val_labels"] = val_labels
+            kwargs["val_features"] = x_val
+            kwargs["val_labels"] = y_val
             del kwargs["pass_val"]
 
         print("Fitting model")
-        model.fit(features, labels, **kwargs)
+        model.fit(x_train, y_train, **kwargs)
 
-        val_acc, val_loss = self.evaluate(
-            model, self.feature_dataset.get_loader(DatasetType.Validation),
-        )
+        val_acc, val_loss = self.evaluate(model, validation_loader,)
         return val_acc, val_loss
