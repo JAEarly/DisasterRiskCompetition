@@ -20,7 +20,7 @@ from torchvision.datasets import ImageFolder
 from torchvision.transforms import transforms
 
 
-CUSTOM_BALANCE = [0.1, 0.1, 0.1, 0.2, 0.5]
+CUSTOM_BALANCE = [0.083, 0.520, 0.037, 0.350, 0.010]
 
 
 class DatasetType(Enum):
@@ -183,37 +183,37 @@ class FeatureDataset(Dataset):
         self.path2label = self._load_labels(labels_path)
         if balance_method == BalanceMethod.NoSample:
             pass
-        # if balance_method == BalanceMethod.UnderSample:
-        #     self._undersample()
-        # elif balance_method == BalanceMethod.AvgSample:
-        #     self._avgsample()
-        # elif balance_method == BalanceMethod.OverSample:
-        #     self._oversample()
+        elif balance_method == BalanceMethod.UnderSample:
+            self._undersample()
+        elif balance_method == BalanceMethod.AvgSample:
+            self._avgsample()
+        elif balance_method == BalanceMethod.OverSample:
+            self._oversample()
         elif balance_method == BalanceMethod.CustomSample:
             self._custom_sample()
         else:
             raise NotImplementedError("No balance method implemented for " + balance_method.name)
 
-    # def _undersample(self):
-    #     data_dist = [0] * 5
-    #     for label in self.path2label.values():
-    #         data_dist[label] += 1
-    #     min_class_size = min(data_dist)
-    #     self._sample_to_target(min_class_size)
-    #
-    # def _avgsample(self):
-    #     data_dist = [0] * 5
-    #     for label in self.path2label.values():
-    #         data_dist[label] += 1
-    #     avg_class_size = int(sum(data_dist) / 5)
-    #     self._sample_to_target(avg_class_size)
-    #
-    # def _oversample(self):
-    #     data_dist = [0] * 5
-    #     for label in self.path2label.values():
-    #         data_dist[label] += 1
-    #     max_class_size = max(data_dist)
-    #     self._sample_to_target(max_class_size)
+    def _undersample(self):
+        data_dist = [0] * 5
+        for label in self.path2label.values():
+            data_dist[label] += 1
+        min_class_size = min(data_dist)
+        self._sample_to_target_dist([min_class_size] * 5)
+
+    def _avgsample(self):
+        data_dist = [0] * 5
+        for label in self.path2label.values():
+            data_dist[label] += 1
+        avg_class_size = int(sum(data_dist) / 5)
+        self._sample_to_target_dist([avg_class_size] * 5)
+
+    def _oversample(self):
+        data_dist = [0] * 5
+        for label in self.path2label.values():
+            data_dist[label] += 1
+        max_class_size = max(data_dist)
+        self._sample_to_target_dist([max_class_size] * 5)
 
     def _custom_sample(self):
         data_dist = [0] * 5

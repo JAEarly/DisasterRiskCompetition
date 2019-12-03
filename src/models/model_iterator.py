@@ -24,6 +24,7 @@ class ModelIterator:
             features.ResNetSMOTE,
             features.ResNetCustom,
             features.ResNetCustomSMOTE,
+            features.VggNet,
         ]
         self.nn_models = [models.LinearNN, models.BiggerNN]
         self.pretrained_models = [
@@ -36,7 +37,7 @@ class ModelIterator:
 
         self.model_list = []
         self._add_feature_nn_models()
-        self._add_retrained_nn_models()
+        #self._add_retrained_nn_models()
         self._add_xgb_models()
 
         self.idx = 0
@@ -103,9 +104,13 @@ class ModelIterator:
                         + "/best.pth",
                         eval_mode=True,
                     )
+                    desc = training_method + "_" + feature_extractor.name + "_" + model_class.__name__.lower()
+
                 # XGB
                 else:
                     model = XGBModel(model_path=path + "xgb/best.pth")
+                    desc = training_method + "_" + feature_extractor.name + "_xgb"
+
             # ImageDataset
             else:
                 path = (
@@ -124,13 +129,15 @@ class ModelIterator:
                     eval_mode=True,
                 )
                 datasets = datasets_type()
+                desc = training_method + "_" + model_class.name + "_custom"
 
-            return model, datasets
-        except:
+            return model, datasets, desc
+        except Exception as e:
+            print(e)
             return next(self)
 
 
 # Test iterator
 if __name__ == "__main__":
-    for _m, _d in ModelIterator():
-        print(_m, _d)
+    for _, _, _desc in ModelIterator():
+        print(_desc)

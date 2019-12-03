@@ -24,7 +24,7 @@ def get_estimated_distribution(model, competition_loader):
 if __name__ == "__main__":
     print("Running competition dataset estimation")
     all_estimations = []
-    for _model, _datasets in tqdm(ModelIterator(), desc="Iterating over models"):
+    for _model, _datasets, _ in tqdm(ModelIterator(), desc="Iterating over models"):
         estimated_dist = get_estimated_distribution(
             _model, _datasets.competition_loader
         )

@@ -8,8 +8,15 @@ import os
 import features
 import models
 import models.transfers as transfers
-from features import DatasetType, FeatureDatasets, ImageDatasets, BalanceMethod, SmoteExtractor
+from features import (
+    DatasetType,
+    FeatureDatasets,
+    ImageDatasets,
+    BalanceMethod,
+    SmoteExtractor,
+)
 from training import FeatureTrainer, PretrainedNNTrainer, Trainer
+from models import ModelIterator
 
 
 def setup_feature_evaluation():
@@ -85,43 +92,12 @@ def evaluate_short(features_datasets, model):
 
 
 def evaluate_all():
-    feature_extractors = [features.AlexNet(), features.AlexNetSMOTE(), features.AlexNetCustom(), features.AlexNetCustomSMOTE(),
-                          features.ResNet(), features.ResNetSMOTE(), features.ResNetCustom(), features.ResNetCustomSMOTE()]
-
-    for feature_extractor in feature_extractors:
-        features_datasets = FeatureDatasets(
-            feature_extractor,
-            balance_method=BalanceMethod.CustomSample,
-            override_balance_methods=True,
-        )
-        fe_name = feature_extractor.name
-        if issubclass(type(feature_extractor), SmoteExtractor):
-            fe_name += "_smote"
-
-        # NN Models
-        nn_models = [(models.LinearNN, "linearnn"), (models.BiggerNN, "biggernn")]
-        for nn_model, model_name in nn_models:
-            try:
-                print(fe_name, model_name)
-                model = models.NNModel(
-                    nn_model,
-                    feature_extractor.feature_size,
-                    state_dict_path="./models/grid_search_" + fe_name + "_" + model_name + "/best.pth",
-                    eval_mode=True,
-                )
-                evaluate_short(features_datasets, model)
-            except:
-                print("Not found")
-
-        # XGB Model
-        try:
-            print(fe_name, "xgb")
-            model = models.XGBModel(
-                model_path="./models/grid_search_" + fe_name + "_xgb/best.pth"
-            )
-            evaluate_short(features_datasets, model)
-        except:
-            print("Not found")
+    print('Evaluating all')
+    for model, datasets, desc in ModelIterator(
+        balance_method=BalanceMethod.AvgSample, override_balance_methods=True
+    ):
+        print(desc)
+        evaluate_short(datasets, model)
 
 
 if __name__ == "__main__":
