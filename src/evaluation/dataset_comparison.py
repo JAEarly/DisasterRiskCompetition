@@ -49,19 +49,19 @@ def get_predicted_distribution_and_per_class_error(model, datasets, dataset_type
 
 
 if __name__ == "__main__":
-    _feature_extractor = features.ResNetCustom()
+    _feature_extractor = features.ResNetCustomSMOTE()
     _datasets = FeatureDatasets(_feature_extractor)
 
-    # _model = models.NNModel(
-    #     models.LinearNN,
-    #     _feature_extractor.feature_size,
-    #     state_dict_path="./models/kfold_resnet_custom_linearnn/best.pth",
-    #     eval_mode=True,
-    # )
-
-    _model = models.XGBModel(
-        model_path="./models/kfold_resnet_custom_xgb/best.pth"
+    _model = models.NNModel(
+        models.LinearNN,
+        _feature_extractor.feature_size,
+        state_dict_path="./models/grid_search_resnet_custom_smote_linearnn/best.pth",
+        eval_mode=True,
     )
+
+    # _model = models.XGBModel(
+    #     model_path="./models/kfold_resnet_custom_xgb/best.pth"
+    # )
 
     test_dist, test_losses = get_predicted_distribution_and_per_class_error(
         _model, _datasets, DatasetType.Test

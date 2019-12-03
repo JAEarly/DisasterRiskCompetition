@@ -66,6 +66,9 @@ class ModelIterator:
     def __iter__(self):
         return self
 
+    def __len__(self):
+        return len(self.model_list)
+
     def __next__(self):
         if self.idx == len(self.model_list):
             raise StopIteration
@@ -129,5 +132,5 @@ class ModelIterator:
 
 # Test iterator
 if __name__ == "__main__":
-    for _, _ in ModelIterator():
-        pass
+    for _m, _d in ModelIterator():
+        print(_m, _d)
