@@ -91,7 +91,7 @@ def evaluate_all():
     for feature_extractor in feature_extractors:
         features_datasets = FeatureDatasets(
             feature_extractor,
-            balance_method=BalanceMethod.AvgSample,
+            balance_method=BalanceMethod.CustomSample,
             override_balance_methods=True,
         )
         fe_name = feature_extractor.name
@@ -102,7 +102,6 @@ def evaluate_all():
         nn_models = [(models.LinearNN, "linearnn"), (models.BiggerNN, "biggernn")]
         for nn_model, model_name in nn_models:
             try:
-
                 print(fe_name, model_name)
                 model = models.NNModel(
                     nn_model,

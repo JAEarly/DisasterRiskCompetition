@@ -20,6 +20,9 @@ from torchvision.datasets import ImageFolder
 from torchvision.transforms import transforms
 
 
+CUSTOM_BALANCE = [0.1, 0.1, 0.1, 0.2, 0.5]
+
+
 class DatasetType(Enum):
     """Enum for dataset types."""
 
@@ -36,6 +39,7 @@ class BalanceMethod(Enum):
     UnderSample = 1
     AvgSample = 2
     OverSample = 3
+    CustomSample = 4
 
 
 class Datasets(ABC):
@@ -177,45 +181,66 @@ class FeatureDataset(Dataset):
         self.data_dir = features_dir
         self.filenames = os.listdir(self.data_dir)
         self.path2label = self._load_labels(labels_path)
-        if balance_method == BalanceMethod.UnderSample:
-            self._undersample()
-        elif balance_method == BalanceMethod.AvgSample:
-            self._avgsample()
-        elif balance_method == BalanceMethod.OverSample:
-            self._oversample()
+        if balance_method == BalanceMethod.NoSample:
+            pass
+        # if balance_method == BalanceMethod.UnderSample:
+        #     self._undersample()
+        # elif balance_method == BalanceMethod.AvgSample:
+        #     self._avgsample()
+        # elif balance_method == BalanceMethod.OverSample:
+        #     self._oversample()
+        elif balance_method == BalanceMethod.CustomSample:
+            self._custom_sample()
+        else:
+            raise NotImplementedError("No balance method implemented for " + balance_method.name)
 
-    def _undersample(self):
-        data_dist = [0] * 5
-        for label in self.path2label.values():
-            data_dist[label] += 1
-        min_class_size = min(data_dist)
-        self._sample_to_target(min_class_size)
+    # def _undersample(self):
+    #     data_dist = [0] * 5
+    #     for label in self.path2label.values():
+    #         data_dist[label] += 1
+    #     min_class_size = min(data_dist)
+    #     self._sample_to_target(min_class_size)
+    #
+    # def _avgsample(self):
+    #     data_dist = [0] * 5
+    #     for label in self.path2label.values():
+    #         data_dist[label] += 1
+    #     avg_class_size = int(sum(data_dist) / 5)
+    #     self._sample_to_target(avg_class_size)
+    #
+    # def _oversample(self):
+    #     data_dist = [0] * 5
+    #     for label in self.path2label.values():
+    #         data_dist[label] += 1
+    #     max_class_size = max(data_dist)
+    #     self._sample_to_target(max_class_size)
 
-    def _avgsample(self):
-        data_dist = [0] * 5
-        for label in self.path2label.values():
-            data_dist[label] += 1
-        avg_class_size = int(sum(data_dist) / 5)
-        self._sample_to_target(avg_class_size)
-
-    def _oversample(self):
+    def _custom_sample(self):
         data_dist = [0] * 5
         for label in self.path2label.values():
             data_dist[label] += 1
         max_class_size = max(data_dist)
-        self._sample_to_target(max_class_size)
+        target_dist = [0] * 5
+        for i in range(5):
+            target_dist[i] = int(CUSTOM_BALANCE[i] * max_class_size)
+        self._sample_to_target_dist(target_dist)
 
-    def _sample_to_target(self, target):
+    def _sample_to_target_dist(self, target_dist):
         data_dist = [0] * 5
         reduced_filenames = []
         reduced_labels = []
-        while len(reduced_filenames) < target * 5:
-            for filename in self.filenames:
-                label = self.path2label[filename]
-                if data_dist[label] < target:
-                    reduced_filenames.append(filename)
-                    reduced_labels.append(label)
-                    data_dist[label] += 1
+
+        for i in range(5):
+            while data_dist[i] < target_dist[i]:
+                for filename in self.filenames:
+                    label = self.path2label[filename]
+                    if label == i:
+                        reduced_filenames.append(filename)
+                        reduced_labels.append(label)
+                        data_dist[label] += 1
+                        if data_dist[i] == target_dist[i]:
+                            break
+
         self.filenames = reduced_filenames
         self.labels = reduced_labels
 
