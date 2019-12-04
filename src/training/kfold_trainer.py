@@ -3,7 +3,7 @@ import sys
 import numpy as np
 import os
 from abc import ABC, abstractmethod
-from torch.utils.data import ConcatDataset, random_split, DataLoader
+from torch.utils.data import ConcatDataset, random_split, DataLoader, Subset
 
 import features
 import models
@@ -24,7 +24,7 @@ class KFoldTrainer(ABC):
         pass
 
     @abstractmethod
-    def create_base_trainer(self):
+    def create_base_trainer(self, balance_method, override_balance_methods):
         pass
 
     @abstractmethod
@@ -33,13 +33,15 @@ class KFoldTrainer(ABC):
 
 
 class FeatureKFoldTrainer(KFoldTrainer, ABC):
-    def __init__(self, feature_extractor, save_tag, k=10):
+    def __init__(
+        self, feature_extractor, save_tag, k=10, balance_method=BalanceMethod.NoSample, override_balance_methods=False
+    ):
         super().__init__(k)
         self.feature_extractor = feature_extractor
         self.save_tag = "kfold_" + save_tag
         self.save_dir = os.path.join(ROOT_DIR, self.save_tag)
         self.log_path = os.path.join(self.save_dir, "log.txt")
-        self.feature_trainer = self.create_base_trainer()
+        self.feature_trainer = self.create_base_trainer(balance_method, override_balance_methods)
         self.concat_dataset = self.combine_train_and_val_loaders()
         create_dirs_if_not_found(self.save_dir)
         print("Running", self.save_tag, "k=" + str(k))
@@ -58,6 +60,7 @@ class FeatureKFoldTrainer(KFoldTrainer, ABC):
 
         split_size = int(len(self.concat_dataset) / self.k)
         split_size = int(split_size)
+        self.concat_dataset = Subset(self.concat_dataset, range(split_size * self.k))
         splits = random_split(self.concat_dataset, [split_size] * self.k)
         for i, val_dataset in enumerate(splits):
             print("")
@@ -105,31 +108,29 @@ class FeatureKFoldTrainer(KFoldTrainer, ABC):
         print(" Std Loss:", std_loss)
 
         save_path = os.path.join(self.save_dir, "best.pth")
-        best_model.save()
+        best_model.save(save_path)
         ModelManager().upload_model(save_path)
-
-        print("")
-        evaluate.run_evaluation(self.feature_trainer.feature_dataset, best_model)
 
 
 class NNKFoldTrainer(FeatureKFoldTrainer):
-    def __init__(self, feature_extractor, nn_model, save_tag, epochs, dropout, k=10):
+    def __init__(self, feature_extractor, nn_model, save_tag, epochs, dropout, balance_method=BalanceMethod.NoSample, override_balance_methods=False, k=10):
         self.nn_model = nn_model
         self.epochs = epochs
         self.dropout = dropout
-        super().__init__(feature_extractor, save_tag, k=k)
+        super().__init__(feature_extractor, save_tag, balance_method=balance_method, override_balance_methods=override_balance_methods, k=k)
 
     def create_fresh_model(self):
         return models.NNModel(
             self.nn_model, self.feature_extractor.feature_size, dropout=self.dropout,
         )
 
-    def create_base_trainer(self):
+    def create_base_trainer(self, balance_method, override_balance_methods):
         return NNTrainer(
             self.feature_extractor,
             num_epochs=self.epochs,
-            balance_method=BalanceMethod.NoSample,
+            balance_method=balance_method,
             class_weight_method=ClassWeightMethod.Unweighted,
+            override_balance_methods=override_balance_methods
         )
 
     def train_model(self, trainer, model, train_loader, val_loader):
@@ -144,7 +145,7 @@ class XGBKFoldTrainer(FeatureKFoldTrainer):
     def create_fresh_model(self):
         return models.XGBModel()
 
-    def create_base_trainer(self):
+    def create_base_trainer(self, balance_method=BalanceMethod.AvgSample, override_balance_methods=True):
         return FeatureTrainer(self.feature_extractor)
 
     def train_model(self, trainer, model, train_loader, val_loader):
@@ -154,14 +155,16 @@ class XGBKFoldTrainer(FeatureKFoldTrainer):
 
 
 if __name__ == "__main__":
-    _feature_extractor = features.ResNet()
+    _feature_extractor = features.ResNetCustom()
 
     kfold_trainer = NNKFoldTrainer(
         _feature_extractor,
-        models.BiggerNN,
-        save_tag="resnet_biggernn",
-        epochs=13,
-        dropout=0
+        models.LinearNN,
+        save_tag="cstm_resnet_custom_linearnn",
+        epochs=5,
+        dropout=0,
+        balance_method=BalanceMethod.CustomSample,
+        override_balance_methods=True
     )
 
     # _num_rounds = 20

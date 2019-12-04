@@ -22,16 +22,26 @@ from models import ModelIterator
 def setup_feature_evaluation():
     # Don't use SMOTE feature extractors, just usual normal version
     feature_extractor = features.ResNetCustom()
-    features_datasets = FeatureDatasets(
+    standard_datasets = FeatureDatasets(
+        feature_extractor,
+        balance_method=BalanceMethod.NoSample,
+        override_balance_methods=False,
+    )
+    avg_datasets = FeatureDatasets(
         feature_extractor,
         balance_method=BalanceMethod.AvgSample,
+        override_balance_methods=True,
+    )
+    custom_datasets = FeatureDatasets(
+        feature_extractor,
+        balance_method=BalanceMethod.CustomSample,
         override_balance_methods=True,
     )
 
     model = models.NNModel(
         models.LinearNN,
         feature_extractor.feature_size,
-        state_dict_path="./models/grid_search_resnet_custom_linearnn/best.pth",
+        state_dict_path="./models/kfold_cstm_resnet_custom_linearnn/best.pth",
         eval_mode=True,
     )
 
@@ -39,7 +49,7 @@ def setup_feature_evaluation():
     #     model_path="./models/grid_search_resnet_custom_smote_xgb/best.pth"
     # )
     print("Running evaluation for", feature_extractor.name, model.name)
-    return features_datasets, model
+    return [standard_datasets, avg_datasets, custom_datasets], model
 
 
 def setup_image_evaluation():
@@ -51,14 +61,18 @@ def setup_image_evaluation():
         eval_mode=True,
     )
     print("Running evaluation for", model.name)
-    return image_datasets, model
+    return [image_datasets, None, None], model
 
 
-def run_evaluation(datasets, model):
+def run_evaluation(datasets, model, avg_datasets=None, custom_datasets=None):
+    results = []
+
     print("Training Set Results")
     train_acc, train_loss = Trainer.evaluate(
         model, datasets.get_loader(DatasetType.Train), verbose=True,
     )
+    results.append(train_acc)
+    results.append(train_loss)
 
     time.sleep(0.1)
     print("")
@@ -66,6 +80,8 @@ def run_evaluation(datasets, model):
     val_acc, val_loss = Trainer.evaluate(
         model, datasets.get_loader(DatasetType.Validation), verbose=True,
     )
+    results.append(val_acc)
+    results.append(val_loss)
 
     time.sleep(0.1)
     print("")
@@ -73,14 +89,34 @@ def run_evaluation(datasets, model):
     test_acc, test_loss = Trainer.evaluate(
         model, datasets.get_loader(DatasetType.Test), verbose=True,
     )
+    results.append(test_acc)
+    results.append(test_loss)
+
+    if avg_datasets is not None:
+        time.sleep(0.1)
+        print("")
+        print("Avg Test Set Results")
+        avg_test_acc, avg_test_loss = Trainer.evaluate(
+            model, avg_datasets.get_loader(DatasetType.Test), verbose=True,
+        )
+        results.append(avg_test_acc)
+        results.append(avg_test_loss)
+
+    if custom_datasets is not None:
+        time.sleep(0.1)
+        print("")
+        print("Custom Test Set Results")
+        cstm_test_acc, cstm_test_loss = Trainer.evaluate(
+            model, custom_datasets.get_loader(DatasetType.Test), verbose=True,
+        )
+        results.append(cstm_test_acc)
+        results.append(cstm_test_loss)
 
     time.sleep(0.1)
     print("")
     print("Output for results.md")
     print(
-        ("   {:.3f}   |" * 6).format(
-            train_acc, train_loss, val_acc, val_loss, test_acc, test_loss
-        )
+        ("   {:.3f}   |" * len(results)).format(*results)
     )
 
 
@@ -101,8 +137,8 @@ def evaluate_all():
 
 
 if __name__ == "__main__":
-    # _datasets, _model = setup_feature_evaluation()
+    _datasets_list, _model = setup_feature_evaluation()
     # _datasets, _model = setup_image_evaluation()
 
-    # run_evaluation(_datasets, _model)
-    evaluate_all()
+    run_evaluation(_datasets_list[0], _model, avg_datasets=_datasets_list[1], custom_datasets=_datasets_list[2])
+    # evaluate_all()

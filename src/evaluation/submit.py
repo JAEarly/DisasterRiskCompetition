@@ -172,9 +172,9 @@ def _setup_feature_submission():
     datasets = FeatureDatasets(feature_extractor)
 
     model = models.NNModel(
-        models.BiggerNN,
+        models.LinearNN,
         feature_extractor.feature_size,
-        state_dict_path="./models/kfold_resnet_custom_biggernn/best.pth",
+        state_dict_path="./models/kfold_cstm_resnet_custom_linearnn/best.pth",
         eval_mode=True,
     )
 
