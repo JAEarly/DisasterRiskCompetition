@@ -21,7 +21,7 @@ from models import ModelIterator
 
 def setup_feature_evaluation():
     # Don't use SMOTE feature extractors, just usual normal version
-    feature_extractor = features.ResNetCustom()
+    feature_extractor = features.ResNet()
     standard_datasets = FeatureDatasets(
         feature_extractor,
         balance_method=BalanceMethod.NoSample,
@@ -39,9 +39,9 @@ def setup_feature_evaluation():
     )
 
     model = models.NNModel(
-        models.LinearNN,
+        models.BiggerNN,
         feature_extractor.feature_size,
-        state_dict_path="./models/kfold_cstm_resnet_custom_linearnn/best.pth",
+        state_dict_path="./models/kfold_avg_resnet_biggernn/best.pth",
         eval_mode=True,
     )
 

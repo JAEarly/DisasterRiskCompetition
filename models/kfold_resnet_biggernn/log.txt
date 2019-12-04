@@ -1,0 +1,126 @@
+
+Repeat 1/10
+Training using cuda:0
+
+Repeat 2/10
+Training using cuda:0
+
+Repeat 3/10
+Training using cuda:0
+
+Repeat 4/10
+Training using cuda:0
+
+Repeat 5/10
+Training using cuda:0
+
+Repeat 6/10
+Training using cuda:0
+
+Repeat 7/10
+Training using cuda:0
+
+Repeat 8/10
+Training using cuda:0
+
+Repeat 9/10
+Training using cuda:0
+
+Repeat 10/10
+Training using cuda:0
+
+ Best Acc: 0.8325948119163513
+Best Loss: 0.42817649245262146
+  Avg Acc: 0.8296405792236328
+ Avg Loss: 0.4626262217760086
+  Std Acc: 0.006715014483636199
+ Std Loss: 0.024381856177492472
+
+Training Set Results
+Accuracy: 0.872
+Log loss: 0.338
+Confusion matrix
+Predicted     0      1    2     3    4    All
+Actual                                       
+0           972    155   22    68    0   1217
+1            44  11061   20   714   17  11856
+2            43     39  228   226    0    536
+3            33    713   56  3386    7   4195
+4             1    118    0    35   96    250
+All        1093  12086  326  4429  120  18054
+Normalised confusion matrix
+Predicted      0      1      2      3      4      All
+Actual                                               
+0          0.799  0.127  0.018  0.056  0.000      1.0
+1          0.004  0.933  0.002  0.060  0.001      1.0
+2          0.080  0.073  0.425  0.422  0.000      1.0
+3          0.008  0.170  0.013  0.807  0.002      1.0
+4          0.004  0.472  0.000  0.140  0.384      1.0
+All        0.898  1.019  0.608  1.056  0.480  18054.0
+
+Validation Set Results
+Accuracy: 0.882
+Log loss: 0.309
+Confusion matrix
+Predicted    0     1   2    3   4   All
+Actual                                 
+0          120    21   2    9   0   152
+1            2  1406   3   67   3  1481
+2            7     5  23   33   0    68
+3            4    85   4  428   3   524
+4            0    15   0    3  13    31
+All        133  1532  32  540  19  2256
+Normalised confusion matrix
+Predicted      0      1      2      3      4     All
+Actual                                              
+0          0.789  0.138  0.013  0.059  0.000     1.0
+1          0.001  0.949  0.002  0.045  0.002     1.0
+2          0.103  0.074  0.338  0.485  0.000     1.0
+3          0.008  0.162  0.008  0.817  0.006     1.0
+4          0.000  0.484  0.000  0.097  0.419     1.0
+All        0.875  1.034  0.471  1.031  0.613  2256.0
+
+Test Set Results
+Accuracy: 0.829
+Log loss: 0.442
+Confusion matrix
+Predicted    0     1   2    3   4   All
+Actual                                 
+0           98    33   6   12   0   149
+1           10  1339   1  122   8  1480
+2            9     5  27   24   0    65
+3            4   116  11  389   2   522
+4            0    16   0    4   7    27
+All        121  1509  45  551  17  2243
+Normalised confusion matrix
+Predicted      0      1      2      3      4     All
+Actual                                              
+0          0.658  0.221  0.040  0.081  0.000     1.0
+1          0.007  0.905  0.001  0.082  0.005     1.0
+2          0.138  0.077  0.415  0.369  0.000     1.0
+3          0.008  0.222  0.021  0.745  0.004     1.0
+4          0.000  0.593  0.000  0.148  0.259     1.0
+All        0.812  1.020  0.692  1.056  0.630  2243.0
+
+Output for results.md
+   0.872   |   0.338   |   0.882   |   0.309   |   0.829   |   0.442   |
+2030
+20300
+20305
+2030
+20300
+20305
+2030
+20300
+20305
+20300
+
+Repeat 1/10
+Training using cuda:0
+2030
+20300
+20305
+20300
+
+Repeat 1/10
+Training using cuda:0

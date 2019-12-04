@@ -77,7 +77,7 @@ class GridSearch(ABC):
             trained_models = []
             for r in range(self.repeats):
                 print("Repeat " + str(r + 1) + "/" + str(self.repeats))
-                acc, loss, model = self._train_model(config)
+                acc, loss, model = self._train_model(config, **kwargs)
                 accs.append(acc)
                 losses.append(loss)
                 trained_models.append(model)
@@ -177,7 +177,7 @@ class GridSearch(ABC):
         """
 
     @abstractmethod
-    def _train_model(self, config) -> (float, float, Model):
+    def _train_model(self, config, **kwargs) -> (float, float, Model):
         """
         Train and evaluate a model.
         :param config: Configuration of hyper parameters.
@@ -238,12 +238,13 @@ class NNGridSearch(GridSearch):
 
         return dict_configs
 
-    def _train_model(self, config):
+    def _train_model(self, config, **kwargs):
         trainer = NNTrainer(
             self.feature_extractor,
             num_epochs=config["epochs"],
             balance_method=config["balance_method"],
             class_weight_method=config["class_weight_method"],
+            override_balance_methods=kwargs["override_balance_methods"]
         )
         model = NNModel(
             self.nn_class,
@@ -302,7 +303,7 @@ class XGBGridSearch(GridSearch):
 
         return dict_configs
 
-    def _train_model(self, config) -> (float, float, Model):
+    def _train_model(self, config, **kwargs) -> (float, float, Model):
         trainer = FeatureTrainer(self.feature_extractor)
         model = XGBModel()
         config["pass_val"] = True
@@ -344,7 +345,7 @@ class CNNGridSearch(GridSearch):
 
         return dict_configs
 
-    def _train_model(self, config) -> (float, float, Model):
+    def _train_model(self, config, **kwargs) -> (float, float, Model):
         trainer = PretrainedNNTrainer(
             num_epochs=config["epochs"],
             class_weight_method=config["class_weight_method"],
@@ -355,34 +356,35 @@ class CNNGridSearch(GridSearch):
 
 
 if __name__ == "__main__":
-    grid_search = CNNGridSearch(
-        tv_models.vgg19_bn,
-        transfers.final_layer_alteration_vggnet,
-        "images",
-        tag="vggnet_custom",
-        repeats=1,
-    )
-    grid_search.run(
-        epoch_range=[5, 7, 10],
-        class_weight_methods=[
-            ClassWeightMethod.Unweighted,
-        ],
-    )
-
-    # grid_search = NNGridSearch(
-    #     nn_class=models.LinearNN,
-    #     feature_extractor=features.VggNet(),
-    #     tag="vgg_linearnn",
-    #     repeats=3,
+    # grid_search = CNNGridSearch(
+    #     tv_models.vgg19_bn,
+    #     transfers.final_layer_alteration_vggnet,
+    #     "images",
+    #     tag="vggnet_custom",
+    #     repeats=1,
     # )
     # grid_search.run(
-    #     epoch_range=[5, 10, 15],
+    #     epoch_range=[5, 7, 10],
     #     class_weight_methods=[
     #         ClassWeightMethod.Unweighted,
     #     ],
-    #     balance_methods=[BalanceMethod.NoSample],
-    #     dropout_range=[0, 0.1, 0.2, 0.3]
     # )
+
+    grid_search = NNGridSearch(
+        nn_class=models.LinearNN,
+        feature_extractor=features.ResNetCustom(),
+        tag="avg_resnet_custom_linearnn",
+        repeats=3,
+    )
+    grid_search.run(
+        epoch_range=[1, 2, 3, 4],
+        class_weight_methods=[
+            ClassWeightMethod.Unweighted,
+        ],
+        balance_methods=[BalanceMethod.AvgSample],
+        dropout_range=[0, 0.1, 0.2],
+        override_balance_methods=True,
+    )
 
     # grid_search = XGBGridSearch(
     #     feature_extractor=features.AlexNetCustomSMOTE(),

@@ -34,8 +34,13 @@ class NNTrainer(FeatureTrainer):
         self.class_weight_method = class_weight_method
 
     def train(
-        self, model, train_loader: DataLoader, validation_loader: DataLoader, **kwargs
+        self, model, train_loader: DataLoader = None, validation_loader: DataLoader = None, **kwargs
     ) -> (float, float):
+        if train_loader is None:
+            train_loader = self.feature_dataset.train_loader
+        if validation_loader is None:
+            validation_loader = self.feature_dataset.validation_loader
+
         # Get transfer model and put it in training mode
         net = model.net
         net.train()

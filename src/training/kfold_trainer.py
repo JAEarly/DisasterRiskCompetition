@@ -155,15 +155,15 @@ class XGBKFoldTrainer(FeatureKFoldTrainer):
 
 
 if __name__ == "__main__":
-    _feature_extractor = features.ResNetCustom()
+    _feature_extractor = features.ResNet()
 
     kfold_trainer = NNKFoldTrainer(
         _feature_extractor,
-        models.LinearNN,
-        save_tag="cstm_resnet_custom_linearnn",
+        models.BiggerNN,
+        save_tag="avg_resnet_biggernn",
         epochs=5,
         dropout=0,
-        balance_method=BalanceMethod.CustomSample,
+        balance_method=BalanceMethod.AvgSample,
         override_balance_methods=True
     )
 
