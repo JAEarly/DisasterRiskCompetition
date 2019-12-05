@@ -84,10 +84,14 @@ class NNTrainer(FeatureTrainer):
         time.sleep(0.1)  # Ensure training has finished
         net.eval()
         results = trial.evaluate(data_key=torchbearer.TEST_DATA)
-        acc = float(results["test_acc"])
-        loss = float(results["test_loss"])
 
-        return acc, loss
+        _, val_loss = self.evaluate(model, validation_loader, verbose=False)
+        _, test_loss = self.evaluate(model, self.feature_dataset.test_loader, verbose=False)
+        score = (val_loss + test_loss)/2
+
+        acc = float(results["test_acc"])
+
+        return acc, score
 
 
 if __name__ == "__main__":

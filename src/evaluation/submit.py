@@ -170,13 +170,13 @@ def boost_labels(
 
 def _setup_feature_submission():
     """Get required information for a feature based submission."""
-    feature_extractor = features.ResNetCustomSMOTE()
+    feature_extractor = features.ResNetCustom()
     datasets = FeatureDatasets(feature_extractor)
 
     model = models.NNModel(
         models.LinearNN,
         feature_extractor.feature_size,
-        state_dict_path="./models/grid_search_resnet_custom_smote_linearnn/best.pth",
+        state_dict_path="./models/grid_search_resnet_custom_linearnn_2/best.pth",
         eval_mode=True,
     )
 

@@ -9,6 +9,7 @@ from abc import ABC, abstractmethod
 from shutil import copyfile
 from texttable import Texttable
 from torchvision import models as tv_models
+from features import SmoteType
 
 import features
 from features import BalanceMethod, FeatureExtractor
@@ -28,7 +29,7 @@ from utils import (
     DualLogger,
 )
 
-ROOT_DIR = "./models/oversample"
+ROOT_DIR = "./models"
 
 
 class GridSearch(ABC):
@@ -371,22 +372,22 @@ if __name__ == "__main__":
 
     grid_search = NNGridSearch(
         nn_class=models.LinearNN,
-        feature_extractor=features.ResNetCustomSMOTE(),
-        tag="resnet_custom_smote2_linearnn",
+        feature_extractor=features.ResNetCustomSMOTE(smote_type=SmoteType.Adasyn),
+        tag="resnet_custom_smote_adasyn_linearnn",
         repeats=2,
     )
     grid_search.run(
-        epoch_range=[1, 2, 3],
+        epoch_range=[1, 3, 5],
         class_weight_methods=[
-            ClassWeightMethod.Unweighted, ClassWeightMethod.SumBased,
+            ClassWeightMethod.Unweighted,
         ],
-        balance_methods=[BalanceMethod.NoSample, BalanceMethod.OverSample],
-        dropout_range=[0.0, 0.25, 0.5],
+        balance_methods=[BalanceMethod.NoSample],
+        dropout_range=[0.0, 0.25],
     )
 
     # grid_search = XGBGridSearch(
-    #     feature_extractor=features.AlexNetCustomSMOTE(),
-    #     tag="alexnet_custom_smote_xgb",
+    #     feature_extractor=features.ResNetCustomSMOTE(),
+    #     tag="resnet_custom_smote_xgb_2",
     #     repeats=1,
     # )
     # grid_search.run(

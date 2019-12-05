@@ -122,9 +122,14 @@ class FeatureTrainer(Trainer):
         )
 
     def train(
-        self, model, train_loader: DataLoader, validation_loader: DataLoader, **kwargs
+        self, model, train_loader: DataLoader = None, validation_loader: DataLoader = None, **kwargs
     ) -> (float, float):
         print("Loading features")
+        if train_loader is None:
+            train_loader = self.feature_dataset.train_loader
+        if validation_loader is None:
+            validation_loader = self.feature_dataset.validation_loader
+            
         x_train, y_train = self.feature_dataset.get_features_and_labels_from_dataloader(
             train_loader
         )
@@ -141,4 +146,8 @@ class FeatureTrainer(Trainer):
         model.fit(x_train, y_train, **kwargs)
 
         val_acc, val_loss = self.evaluate(model, validation_loader,)
-        return val_acc, val_loss
+
+        _, test_loss = self.evaluate(model, self.feature_dataset.test_loader, verbose=False)
+        score = (val_loss + test_loss) / 2
+
+        return val_acc, score
