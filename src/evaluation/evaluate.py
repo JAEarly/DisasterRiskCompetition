@@ -21,7 +21,7 @@ from models import ModelIterator
 
 def setup_feature_evaluation():
     # Don't use SMOTE feature extractors, just usual normal version
-    feature_extractor = features.ResNet()
+    feature_extractor = features.ResNetCustomSMOTE()
     standard_datasets = FeatureDatasets(
         feature_extractor,
         balance_method=BalanceMethod.NoSample,
@@ -29,19 +29,19 @@ def setup_feature_evaluation():
     )
     avg_datasets = FeatureDatasets(
         feature_extractor,
-        balance_method=BalanceMethod.AvgSample,
+        balance_method=BalanceMethod.OverSample,
         override_balance_methods=True,
     )
-    custom_datasets = FeatureDatasets(
-        feature_extractor,
-        balance_method=BalanceMethod.CustomSample,
-        override_balance_methods=True,
-    )
+    # custom_datasets = FeatureDatasets(
+    #     feature_extractor,
+    #     balance_method=BalanceMethod.CustomSample,
+    #     override_balance_methods=True,
+    # )
 
     model = models.NNModel(
         models.BiggerNN,
         feature_extractor.feature_size,
-        state_dict_path="./models/kfold_avg_resnet_biggernn/best.pth",
+        state_dict_path="./models/oversample/grid_search_resnet_custom_smote_biggernn_3/best.pth",
         eval_mode=True,
     )
 
@@ -49,7 +49,7 @@ def setup_feature_evaluation():
     #     model_path="./models/grid_search_resnet_custom_smote_xgb/best.pth"
     # )
     print("Running evaluation for", feature_extractor.name, model.name)
-    return [standard_datasets, avg_datasets, custom_datasets], model
+    return [standard_datasets, avg_datasets, None], model
 
 
 def setup_image_evaluation():
@@ -130,7 +130,7 @@ def evaluate_short(features_datasets, model):
 def evaluate_all():
     print('Evaluating all')
     for model, datasets, desc in ModelIterator(
-        balance_method=BalanceMethod.AvgSample, override_balance_methods=True
+        balance_method=BalanceMethod.OverSample, override_balance_methods=True
     ):
         print(desc)
         evaluate_short(datasets, model)
@@ -139,6 +139,6 @@ def evaluate_all():
 if __name__ == "__main__":
     _datasets_list, _model = setup_feature_evaluation()
     # _datasets, _model = setup_image_evaluation()
-
     run_evaluation(_datasets_list[0], _model, avg_datasets=_datasets_list[1], custom_datasets=_datasets_list[2])
-    # evaluate_all()
+
+    #evaluate_all()

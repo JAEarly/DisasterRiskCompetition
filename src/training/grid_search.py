@@ -28,7 +28,7 @@ from utils import (
     DualLogger,
 )
 
-ROOT_DIR = "./models"
+ROOT_DIR = "./models/oversample"
 
 
 class GridSearch(ABC):
@@ -371,18 +371,18 @@ if __name__ == "__main__":
     # )
 
     grid_search = NNGridSearch(
-        nn_class=models.LinearNN,
-        feature_extractor=features.ResNetCustom(),
-        tag="avg_resnet_custom_linearnn",
+        nn_class=models.BiggerNN,
+        feature_extractor=features.ResNetCustomSMOTE(),
+        tag="resnet_custom_smote_biggernn_3",
         repeats=3,
     )
     grid_search.run(
-        epoch_range=[1, 2, 3, 4],
+        epoch_range=[1, 2],
         class_weight_methods=[
             ClassWeightMethod.Unweighted,
         ],
-        balance_methods=[BalanceMethod.AvgSample],
-        dropout_range=[0, 0.1, 0.2],
+        balance_methods=[BalanceMethod.OverSample],
+        dropout_range=[0.6],
         override_balance_methods=True,
     )
 

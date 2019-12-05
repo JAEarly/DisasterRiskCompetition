@@ -70,6 +70,7 @@ class Trainer(ABC):
         else:
             y_probabilities = y_pred
 
+        # Create confusion matrix
         y_true_pd = pd.Series(y_true, name="Actual")
         y_pred_pd = pd.Series(y_pred_classes, name="Predicted")
         conf_mat = pd.crosstab(
@@ -79,18 +80,15 @@ class Trainer(ABC):
             colnames=["Predicted"],
             margins=True,
         )
-
         # Create normalised confusion matrix (normalised by expected class distribution).
-        norm_conf_mat = conf_mat.copy(deep=True)
-        expected_class_counts = [
-            y_true.detach().cpu().numpy().tolist().count(x) for x in range(5)
-        ]
-        for i in range(5):
-            # Normalise each row by it's expected count
-            norm_conf_mat.iloc[i] /= expected_class_counts[i]
-            # Normalise the total counts by expected count
-            norm_conf_mat.iloc[5, i] /= expected_class_counts[i]
-        norm_conf_mat = norm_conf_mat.round(decimals=3)
+        norm_conf_mat = pd.crosstab(
+            y_true_pd,
+            y_pred_pd,
+            rownames=["Actual"],
+            colnames=["Predicted"],
+            margins=True,
+            normalize='index'
+        )
 
         # Print accuracy and log loss
         acc = accuracy_score(y_true, y_pred_classes)
