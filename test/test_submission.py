@@ -33,7 +33,7 @@ class TestSubmission(unittest.TestCase):
         print("Running log loss test \n")
 
         test_ll = self.write_test_submission(
-            self.test_submission_filename, self.feature_extractor, self.model
+            self.test_submission_filename, self.model
         )
         submission_ll = self.evaluate_test_submission(
             self.test_submission_filename, self.feature_extractor
@@ -58,7 +58,7 @@ class TestSubmission(unittest.TestCase):
         for i in range(len(latest_submission)):
             self.assertEqual(latest_submission.iloc[i].tolist(), correct_submission.iloc[i].tolist())
 
-    def write_test_submission(self, filename, feature_extractor, model):
+    def write_test_submission(self, filename, model):
         test_dataset = self.datasets.get_dataset(DatasetType.Test)
 
         ids = []

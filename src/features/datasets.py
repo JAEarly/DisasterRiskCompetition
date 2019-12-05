@@ -357,12 +357,11 @@ class CompetitionImageDataset(ImageFolder):
                 ]
             )
         super().__init__(self.data_dir, transform=transform)
-        self.filenames = os.listdir(self.data_dir + "/all")
 
     def __getitem__(self, index):
-        filename = self.filenames[index]
-        file_id = filename[: filename.index(".png")]
         path, _ = self.samples[index]
+        file_name = os.path.basename(path)
+        file_id = file_name[: file_name.index(".png")]
         sample = self.loader(path)
         if self.transform is not None:
             sample = self.transform(sample)

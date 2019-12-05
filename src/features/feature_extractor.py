@@ -110,22 +110,22 @@ class FeatureExtractor(ABC):
         dataset = self.image_datasets.get_dataset(dataset_type)
         self.extractor_model = self.extractor_model.to(device)
 
-        for filename, image in tqdm(
+        for image, file_id in tqdm(
             dataset, desc="Extracting features  - competition",
         ):
             feature_tensor = self.extractor_model(image.unsqueeze(0).to(device))
-            self._save_tensor(DatasetType.Competition, feature_tensor, filename)
+            self._save_tensor(DatasetType.Competition, feature_tensor, file_id)
 
-    def _save_tensor(self, dataset_type, tensor, filename) -> None:
+    def _save_tensor(self, dataset_type, tensor, file_id) -> None:
         """
         Save a tensor to a file.
         :param dataset_type: Dataset in use (train, test etc.). Determines filepath.
         :param tensor: The tensor to save.
-        :param filename: The original filename of the image.
+        :param file_id: The original filename of the image.
         :return: None.
         """
         feature_dir = self.get_features_dir(dataset_type)
-        path = os.path.join(feature_dir, str(filename) + ".pkl")
+        path = os.path.join(feature_dir, str(file_id) + ".pkl")
         with open(path, "wb") as file:
             pickle.dump(tensor, file)
 

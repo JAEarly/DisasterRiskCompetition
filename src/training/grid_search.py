@@ -378,7 +378,7 @@ if __name__ == "__main__":
     grid_search.run(
         epoch_range=[1, 2, 3],
         class_weight_methods=[
-            ClassWeightMethod.Unweighted, ClassWeightMethod.SumBased, ClassWeightMethod.MaxBased
+            ClassWeightMethod.Unweighted, ClassWeightMethod.SumBased,
         ],
         balance_methods=[BalanceMethod.NoSample, BalanceMethod.OverSample],
         dropout_range=[0.0, 0.25, 0.5],
