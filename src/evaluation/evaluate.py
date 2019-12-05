@@ -21,7 +21,7 @@ from models import ModelIterator
 
 def setup_feature_evaluation():
     # Don't use SMOTE feature extractors, just usual normal version
-    feature_extractor = features.ResNetCustom()
+    feature_extractor = features.ResNet()
     datasets = FeatureDatasets(feature_extractor)
 
     # model = models.NNModel(
@@ -32,7 +32,7 @@ def setup_feature_evaluation():
     # )
 
     model = models.XGBModel(
-        model_path="./models/grid_search_resnet_custom_smote_xgb_2/best.pth"
+        model_path="./models/grid_search_resnet_smote_xgb_2/best.pth"
     )
     print("Running evaluation for", feature_extractor.name, model.name)
     return datasets, model
