@@ -25,6 +25,7 @@ def create_from_model(
     competition_loader,
     feature_name: str,
     confidence_threshold=None,
+    filepath=None,
 ) -> None:
     """
     Create a submission.
@@ -62,8 +63,12 @@ def create_from_model(
     print("Normalised:", ["{:.3f}".format(x / sum(counts)) for x in counts])
 
     # Write to csv file
-    filename = feature_name + "_" + model.name + "_" + create_timestamp_str() + ".csv"
-    _write_submission(ids, competition_labels, filename)
+    if filepath is None:
+        if not os.path.exists(SUBMISSION_FOLDER):
+            os.makedirs(SUBMISSION_FOLDER)
+        filename = feature_name + "_" + model.name + "_" + create_timestamp_str() + ".csv"
+        filepath = os.path.join(SUBMISSION_FOLDER, filename)
+    _write_submission(ids, competition_labels, filepath)
 
 
 def boost_existing(filename, competition_threshold=DEFAULT_CONFIDENCE_THRESHOLD):
@@ -92,7 +97,7 @@ def boost_existing(filename, competition_threshold=DEFAULT_CONFIDENCE_THRESHOLD)
     _write_submission(ids, competition_labels, filename)
 
 
-def _write_submission(ids, competition_labels, filename):
+def _write_submission(ids, competition_labels, filepath):
     """
     Write a submission to csv.
     :param ids: List of prediction ids.
@@ -110,9 +115,6 @@ def _write_submission(ids, competition_labels, filename):
         submission[submission.index.str.startswith(label_id)] = [label]
 
     # Write submission to csv.
-    if not os.path.exists(SUBMISSION_FOLDER):
-        os.makedirs(SUBMISSION_FOLDER)
-    filepath = os.path.join(SUBMISSION_FOLDER, filename)
     print("Writing submission to", filepath)
     submission.to_csv(filepath)
 

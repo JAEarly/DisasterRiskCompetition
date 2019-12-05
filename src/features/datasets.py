@@ -266,6 +266,11 @@ class FeatureDataset(Dataset):
         filename = self.filenames[index]
         return self._load_vector(filename), self.path2label[filename]
 
+    def getitem_filename(self, index):
+        filename = self.filenames[index]
+        file_id = os.path.basename(filename).split(".")[0]
+        return self._load_vector(filename), self.path2label[filename], file_id
+
 
 class FeatureDatasets(Datasets):
     """Implementation of Datasets back with a feature extractor."""
