@@ -5,20 +5,54 @@ from collections import Counter
 
 import os
 from abc import ABC
-from imblearn.over_sampling import SMOTE
+from imblearn.over_sampling import SMOTE, BorderlineSMOTE, SVMSMOTE, ADASYN
 
 from features import FeatureExtractor, FeatureDatasets, DatasetType
 from utils import create_dirs_if_not_found
 import torch
+from enum import Enum
+
+
+class SmoteType(Enum):
+
+    Normal = 1
+    Borderline = 2
+    Svm = 3
+    Adasyn = 4
+
+
+def smote_type_to_name(smote_type: SmoteType):
+    if smote_type == SmoteType.Normal:
+        return "smote"
+    if smote_type == SmoteType.Borderline:
+        return "smote_borderline"
+    if smote_type == SmoteType.Svm:
+        return "smote_svm"
+    if smote_type == SmoteType.Adasyn:
+        return "adasyn"
+    raise NotImplementedError("No name found for ", smote_type)
+
+
+def smote_type_to_method(smote_type: SmoteType):
+    if smote_type == SmoteType.Normal:
+        return SMOTE
+    if smote_type == SmoteType.Borderline:
+        return BorderlineSMOTE
+    if smote_type == SmoteType.Svm:
+        return SVMSMOTE
+    if smote_type == SmoteType.Adasyn:
+        return ADASYN
+    raise NotImplementedError("No method found for ", smote_type)
 
 
 class SmoteExtractor(FeatureExtractor, ABC):
     """Feature extractor using smote balancing."""
 
-    def __init__(self, base_feature_extractor: FeatureExtractor):
-        super().__init__(base_feature_extractor.name + "_smote")
+    def __init__(self, base_feature_extractor: FeatureExtractor, smote_type: SmoteType = SmoteType.Normal):
+        super().__init__(base_feature_extractor.name + "_" + smote_type_to_name(smote_type))
         self.base_feature_extractor = base_feature_extractor
-        self.feature_datasets = FeatureDatasets(self.base_feature_extractor)
+        self.feature_datasets = FeatureDatasets(self.base_feature_extractor, oversample_validation=False)
+        self.smote_type = smote_type
         labels = self.feature_datasets.get_dataset(
             DatasetType.Train
         ).path2label.values()
@@ -69,7 +103,7 @@ class SmoteExtractor(FeatureExtractor, ABC):
 
             # Run smote
             print("Running smote")
-            smt = SMOTE()
+            smt = smote_type_to_method(self.smote_type)()
             all_features, all_labels = smt.fit_resample(all_features, all_labels)
             print("SMOTE dataset distribution -", Counter([l.item() for l in all_labels]))
 

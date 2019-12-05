@@ -45,6 +45,7 @@ def run_dimensionality_reduction(
     else:
         print("Running " + str(reduction_model))
         reduced_features = reduction_model.fit_transform(xs, ys)
+    print(reduction_model.explained_variance_ratio_)
 
     print("Aggregating principal components")
     principal_df = pd.DataFrame(data=reduced_features, columns=["pc1", "pc2"])
@@ -113,10 +114,10 @@ def plot_dataset_comparison(feature_extractor):
 
 
 if __name__ == "__main__":
-    _feature_extractor = features.ResNet()
+    _feature_extractor = features.ResNetCustomSMOTE()
 
     # Class comparison
-    # plot_dataset(_feature_extractor, [DatasetType.Train], LinearDiscriminantAnalysis(n_components=2))
+    plot_dataset(_feature_extractor, [DatasetType.Train], LinearDiscriminantAnalysis(n_components=2))
 
     # Dataset comparison
-    plot_dataset_comparison(_feature_extractor)
+    # plot_dataset_comparison(_feature_extractor)

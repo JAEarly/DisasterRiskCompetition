@@ -81,6 +81,9 @@ def run_evaluation(datasets, model, verbose=True):
     results.append(test_acc)
     results.append(test_loss)
 
+    score = (val_loss + test_loss)/2
+    results.append(score)
+
     time.sleep(0.1)
     if verbose:
         print("")
@@ -98,9 +101,34 @@ def evaluate_all():
         print(("   {:.3f}   |" * len(results)).format(*results))
 
 
-if __name__ == "__main__":
-    _datasets, _model = setup_feature_evaluation()
-    # _datasets, _model = setup_image_evaluation()
-    run_evaluation(_datasets, _model)
+def evaluate_all_within_class():
+    base_dir = "./models/oversample/grid_search_resnet_custom_smote2_linearnn/"
+    all_dir = base_dir + "all/"
+    best_filepath = base_dir + "best.pth"
+    filepaths = [best_filepath]
+    for filename in sorted(os.listdir(all_dir)):
+        filepaths.append(all_dir + filename)
 
-    #evaluate_all()
+    feature_extractor = features.ResNetCustom()
+    datasets = FeatureDatasets(feature_extractor)
+
+    filename_len = len(filepaths[1].split("/")[-1]) + 1
+    print(" " * filename_len + "| Train Acc | Train LL  |  Val Acc  |   Val LL  |  Test Acc |  Test LL  |   Score   |")
+    for model_path in filepaths:
+        model = models.NNModel(
+            models.LinearNN,
+            feature_extractor.feature_size,
+            state_dict_path=model_path,
+            eval_mode=True,
+        )
+        results = run_evaluation(datasets, model, verbose=False)
+        print(("{:" + str(filename_len) + "s}").format(model_path.split("/")[-1]) + "|" + ("   {:.3f}   |" * len(results)).format(*results))
+
+
+if __name__ == "__main__":
+    # _datasets, _model = setup_feature_evaluation()
+    # _datasets, _model = setup_image_evaluation()
+    # run_evaluation(_datasets, _model)
+
+    # evaluate_all()
+    evaluate_all_within_class()

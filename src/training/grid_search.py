@@ -370,10 +370,10 @@ if __name__ == "__main__":
     # )
 
     grid_search = NNGridSearch(
-        nn_class=models.BiggerNN,
+        nn_class=models.LinearNN,
         feature_extractor=features.ResNetCustomSMOTE(),
         tag="resnet_custom_smote2_linearnn",
-        repeats=3,
+        repeats=2,
     )
     grid_search.run(
         epoch_range=[1, 2, 3],
