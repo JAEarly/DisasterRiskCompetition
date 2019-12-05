@@ -53,9 +53,9 @@ if __name__ == "__main__":
     _datasets = FeatureDatasets(_feature_extractor)
 
     _model = models.NNModel(
-        models.LinearNN,
+        models.BiggerNN,
         _feature_extractor.feature_size,
-        state_dict_path="./models/grid_search_resnet_custom_smote_linearnn/best.pth",
+        state_dict_path="./models/oversample/grid_search_resnet_custom_smote2_biggernn_3/best.pth",
         eval_mode=True,
     )
 
@@ -66,9 +66,7 @@ if __name__ == "__main__":
     test_dist, test_losses = get_predicted_distribution_and_per_class_error(
         _model, _datasets, DatasetType.Test
     )
-    comp_dist, _ = get_predicted_distribution_and_per_class_error(
-        _model, _datasets, DatasetType.Competition
-    )
+    comp_dist = [0.083, 0.520, 0.037, 0.350, 0.010]
 
     expected_losses = []
     for i in range(5):

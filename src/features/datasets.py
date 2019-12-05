@@ -45,9 +45,8 @@ class BalanceMethod(Enum):
 class Datasets(ABC):
     """Abstract base class for datasets."""
 
-    def __init__(self, batch_size=8, balance_method=BalanceMethod.NoSample, override_balance_methods=False):
+    def __init__(self, batch_size=8, balance_method=BalanceMethod.NoSample):
         self.batch_size = batch_size
-        self.override_balance_methods = override_balance_methods
 
         # Create datasets
         (
@@ -271,14 +270,14 @@ class FeatureDataset(Dataset):
 class FeatureDatasets(Datasets):
     """Implementation of Datasets back with a feature extractor."""
 
-    def __init__(self, feature_extractor, balance_method=BalanceMethod.NoSample, override_balance_methods=False):
+    def __init__(self, feature_extractor, balance_method=BalanceMethod.NoSample):
         # Ensure features are extracted
         self.feature_extractor = feature_extractor
         self.feature_extractor.extract(DatasetType.Train)
         self.feature_extractor.extract(DatasetType.Validation)
         self.feature_extractor.extract(DatasetType.Test)
         self.feature_extractor.extract(DatasetType.Competition)
-        super().__init__(balance_method=balance_method, override_balance_methods=override_balance_methods)
+        super().__init__(balance_method=balance_method)
 
     def create_datasets(self, balance_method):
         # Create feature datasets
@@ -290,12 +289,12 @@ class FeatureDatasets(Datasets):
         validation_dataset = FeatureDataset(
             self.feature_extractor.get_features_dir(DatasetType.Validation),
             self.feature_extractor.get_labels_filepath(DatasetType.Validation),
-            balance_method=balance_method if self.override_balance_methods else BalanceMethod.NoSample,
+            balance_method=BalanceMethod.OverSample,
         )
         test_dataset = FeatureDataset(
             self.feature_extractor.get_features_dir(DatasetType.Test),
             self.feature_extractor.get_labels_filepath(DatasetType.Test),
-            balance_method=balance_method if self.override_balance_methods else BalanceMethod.NoSample,
+            balance_method=BalanceMethod.NoSample,
         )
         competition_dataset = CompetitionFeatureDataset(
             self.feature_extractor

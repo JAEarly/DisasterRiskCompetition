@@ -115,10 +115,10 @@ class FeatureTrainer(Trainer):
     """Base implementation for feature based trainers."""
 
     def __init__(
-        self, feature_extractor: FeatureExtractor, balance_method=BalanceMethod.NoSample, override_balance_methods=False
+        self, feature_extractor: FeatureExtractor, balance_method=BalanceMethod.NoSample
     ):
         self.feature_dataset = FeatureDatasets(
-            feature_extractor, balance_method=balance_method, override_balance_methods=override_balance_methods
+            feature_extractor, balance_method=balance_method
         )
 
     def train(

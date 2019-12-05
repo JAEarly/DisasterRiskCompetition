@@ -183,7 +183,7 @@ def _setup_feature_submission():
     # )
 
     print("Running submission for", feature_extractor.name, model.name, "\n")
-    return model, datasets.get_loader(DatasetType.Competition), feature_extractor.name + "_smote"
+    return model, datasets.get_loader(DatasetType.Competition), feature_extractor.name
 
 
 def _setup_image_submission():

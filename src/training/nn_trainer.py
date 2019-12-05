@@ -29,7 +29,7 @@ class NNTrainer(FeatureTrainer):
         class_weight_method=ClassWeightMethod.Unweighted,
         override_balance_methods=False
     ):
-        super().__init__(feature_extractor, balance_method=balance_method, override_balance_methods=override_balance_methods)
+        super().__init__(feature_extractor, balance_method=balance_method)
         self.num_epochs = num_epochs
         self.class_weight_method = class_weight_method
 

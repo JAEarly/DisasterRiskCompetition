@@ -10,11 +10,8 @@ from models import XGBModel
 
 class ModelIterator:
     def __init__(
-        self, balance_method=BalanceMethod.NoSample, override_balance_methods=False
+        self
     ):
-        self.balance_method = balance_method
-        self.override_balance_methods = override_balance_methods
-
         self.feature_extractors = [
             features.AlexNet,
             features.AlexNetSMOTE,
@@ -85,8 +82,6 @@ class ModelIterator:
                 feature_extractor = model_data[3]()
                 datasets = datasets_type(
                     feature_extractor,
-                    self.balance_method,
-                    self.override_balance_methods,
                 )
                 extractor_name = feature_extractor.name
                 if issubclass(type(feature_extractor), SmoteExtractor):

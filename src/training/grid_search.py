@@ -244,7 +244,6 @@ class NNGridSearch(GridSearch):
             num_epochs=config["epochs"],
             balance_method=config["balance_method"],
             class_weight_method=config["class_weight_method"],
-            override_balance_methods=kwargs["override_balance_methods"]
         )
         model = NNModel(
             self.nn_class,
@@ -373,17 +372,16 @@ if __name__ == "__main__":
     grid_search = NNGridSearch(
         nn_class=models.BiggerNN,
         feature_extractor=features.ResNetCustomSMOTE(),
-        tag="resnet_custom_smote2_biggernn_3",
+        tag="resnet_custom_smote2_linearnn",
         repeats=3,
     )
     grid_search.run(
-        epoch_range=[2, 3],
+        epoch_range=[1, 2, 3],
         class_weight_methods=[
-            ClassWeightMethod.Unweighted,
+            ClassWeightMethod.Unweighted, ClassWeightMethod.SumBased, ClassWeightMethod.MaxBased
         ],
-        balance_methods=[BalanceMethod.NoSample],
+        balance_methods=[BalanceMethod.NoSample, BalanceMethod.OverSample],
         dropout_range=[0.0, 0.25, 0.5],
-        override_balance_methods=True,
     )
 
     # grid_search = XGBGridSearch(
