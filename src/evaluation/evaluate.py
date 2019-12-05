@@ -27,7 +27,7 @@ def setup_feature_evaluation():
     model = models.NNModel(
         models.BiggerNN,
         feature_extractor.feature_size,
-        state_dict_path="./models/oversample/grid_search_resnet_custom_smote2_linearnn/best.pth",
+        state_dict_path="./models/grid_search_resnet_custom_smote_biggernn/best.pth",
         eval_mode=True,
     )
 
@@ -126,9 +126,9 @@ def evaluate_all_within_class():
 
 
 if __name__ == "__main__":
-    # _datasets, _model = setup_feature_evaluation()
+    _datasets, _model = setup_feature_evaluation()
     # _datasets, _model = setup_image_evaluation()
-    # run_evaluation(_datasets, _model)
+    run_evaluation(_datasets, _model)
 
     # evaluate_all()
-    evaluate_all_within_class()
+    # evaluate_all_within_class()

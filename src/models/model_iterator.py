@@ -83,11 +83,8 @@ class ModelIterator:
                 datasets = datasets_type(
                     feature_extractor,
                 )
-                extractor_name = feature_extractor.name
-                if issubclass(type(feature_extractor), SmoteExtractor):
-                    extractor_name += "_smote"
 
-                path = "./models/" + training_method + "_" + extractor_name + "_"
+                path = "./models/" + training_method + "_" + feature_extractor.name + "_"
 
                 # NN models
                 if issubclass(model_class, nn.Module):
