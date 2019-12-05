@@ -9,6 +9,7 @@ from imblearn.over_sampling import SMOTE
 
 from features import FeatureExtractor, FeatureDatasets, DatasetType
 from utils import create_dirs_if_not_found
+import torch
 
 
 class SmoteExtractor(FeatureExtractor, ABC):
@@ -32,7 +33,7 @@ class SmoteExtractor(FeatureExtractor, ABC):
 
         # Check if extraction has already happened
         self.extraction_required = (
-            not os.path.exists(training_dir) or current_size != expected_size
+            not os.path.exists(training_dir) or current_size < expected_size
         )
 
     def extract(self, dataset_type: DatasetType) -> None:
@@ -48,27 +49,35 @@ class SmoteExtractor(FeatureExtractor, ABC):
         """
         if self.extraction_required:
             print("Running smote extraction for", self.name)
-            features, labels = self.feature_datasets.get_features_and_labels(
+            train_features, train_labels = self.feature_datasets.get_features_and_labels(
                 DatasetType.Train
             )
-
-            print(
-                "Original dataset distribution -", Counter([l.item() for l in labels])
+            val_features, val_labels = self.feature_datasets.get_features_and_labels(
+                DatasetType.Validation
             )
-            features = features.cpu().detach()
-            labels = labels.cpu().detach()
+            test_features, test_labels = self.feature_datasets.get_features_and_labels(
+                DatasetType.Test
+            )
+            all_features = torch.cat([train_features, val_features, test_features]).cpu().detach()
+            all_labels = torch.cat([train_labels, val_labels, test_labels]).cpu().detach()
+            print(
+                "Original training distribution -", Counter([l.item() for l in train_labels])
+            )
+            print(
+                "Original dataset distribution -", Counter([l.item() for l in all_labels])
+            )
 
             # Run smote
             print("Running smote")
             smt = SMOTE()
-            features, labels = smt.fit_sample(features, labels)
-            print("SMOTE dataset distribution -", Counter([l.item() for l in labels]))
+            all_features, all_labels = smt.fit_resample(all_features, all_labels)
+            print("SMOTE dataset distribution -", Counter([l.item() for l in all_labels]))
 
             print("Saving tensors")
             # Save feature tensors
             i = 0
             filenames = []
-            for feature in features:
+            for feature in all_features:
                 self._save_tensor(DatasetType.Train, feature, i)
                 filenames.append(i)
                 i += 1
@@ -78,7 +87,7 @@ class SmoteExtractor(FeatureExtractor, ABC):
             labels_filepath = self.get_labels_filepath(DatasetType.Train)
             with open(labels_filepath, "w+") as file:
                 csv_writer = csv.writer(file)
-                for filename, label in zip(filenames, labels):
+                for filename, label in zip(filenames, all_labels):
                     csv_writer.writerow([filename, label])
 
             print("Done")

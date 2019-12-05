@@ -41,7 +41,7 @@ def setup_feature_evaluation():
     model = models.NNModel(
         models.BiggerNN,
         feature_extractor.feature_size,
-        state_dict_path="./models/oversample/grid_search_resnet_custom_smote_biggernn_3/best.pth",
+        state_dict_path="./models/oversample/grid_search_resnet_custom_smote2_biggernn_3/best.pth",
         eval_mode=True,
     )
 
