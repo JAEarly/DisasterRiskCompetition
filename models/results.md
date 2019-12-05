@@ -2,7 +2,11 @@
 
 | Method             | Feature Extractor  | Train Acc | Train LL  |  Val Acc  |   Val LL  |  Test Acc |  Test LL  |  Bal Acc  |  Bal LL   |   Cmp LL   |
 | :----------------: | :----------------: | :-------: | :-------: | :-------: | :-------: | :-------: | :-------: | :-------: | :-------: | :--------: |
-| BiggerNN           | ResNetCustomSmote  |   0.844   |   0.403   |   0.754   |   0.623   |   0.730   |   0.654   |   0.768   | **0.580** |      -     |
+| BiggerNN           | ResNetCustomSmote2 |   0.847   |   0.390   |   0.728   |   0.671   |   0.722   |   0.699   |   0.793   | **0.529** |      -     |
+| BiggerNN (2)       | ResNetCustomSmote2 |   0.830   |   0.428   |   0.798   |   0.521   |   0.775   |   0.544   |   0.765   |   0.565   |      -     |
+| BiggerNN (3)       | ResNetCustomSmote2 |   0.862   |   0.354   |   0.798   |   0.486   |   0.786   |   0.505   |   0.786   |   0.528   |      -     |
+
+| BiggerNN           | ResNetCustomSmote  |   0.844   |   0.403   |   0.754   |   0.623   |   0.730   |   0.654   |   0.768   |   0.580   |      -     |
 | LinearNN           | ResNetCustomSmote  |   0.842   |   0.414   |   0.754   |   0.633   |   0.741   |   0.651   | **0.788** |   0.584   |      -     |
 | *LinearNN          | ResNetSmote        |   0.796   |   0.536   |   0.768   |   0.581   |   0.759   |   0.638   |   0.693   |   0.834   |      -     |
 | *XGB               | ResNetCustomSmote  |   0.945   |   0.162   |   0.832   |   0.456   |   0.819   |   0.479   |   0.717   |   0.846   |      -     |

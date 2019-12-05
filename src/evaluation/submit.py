@@ -172,9 +172,9 @@ def _setup_feature_submission():
     datasets = FeatureDatasets(feature_extractor)
 
     model = models.NNModel(
-        models.LinearNN,
+        models.BiggerNN,
         feature_extractor.feature_size,
-        state_dict_path="./models/kfold_cstm_resnet_custom_linearnn/best.pth",
+        state_dict_path="./models/oversample/grid_search_resnet_custom_smote2_biggernn_3/best.pth",
         eval_mode=True,
     )
 
@@ -183,7 +183,7 @@ def _setup_feature_submission():
     # )
 
     print("Running submission for", feature_extractor.name, model.name, "\n")
-    return model, datasets.get_loader(DatasetType.Competition), feature_extractor.name
+    return model, datasets.get_loader(DatasetType.Competition), feature_extractor.name + "_smote"
 
 
 def _setup_image_submission():
