@@ -16,7 +16,7 @@ class SmoteExtractor(FeatureExtractor, ABC):
     """Feature extractor using smote balancing."""
 
     def __init__(self, base_feature_extractor: FeatureExtractor):
-        super().__init__(base_feature_extractor.name)
+        super().__init__(base_feature_extractor.name + "_smote")
         self.base_feature_extractor = base_feature_extractor
         self.feature_datasets = FeatureDatasets(self.base_feature_extractor)
         labels = self.feature_datasets.get_dataset(
@@ -100,9 +100,9 @@ class SmoteExtractor(FeatureExtractor, ABC):
         """
         if dataset_type == DatasetType.Train:
             return os.path.join(
-                self.save_dir, self.name + "_smote", dataset_type.name.lower()
+                self.save_dir, self.name, dataset_type.name.lower()
             )
-        return super().get_features_dir(dataset_type)
+        return self.base_feature_extractor.get_features_dir(dataset_type)
 
     def get_labels_filepath(self, dataset_type: DatasetType) -> str:
         """
@@ -113,7 +113,7 @@ class SmoteExtractor(FeatureExtractor, ABC):
         if dataset_type == DatasetType.Train:
             return os.path.join(
                 self.save_dir,
-                self.name + "_smote",
+                self.name,
                 dataset_type.name.lower() + "_labels.pkl",
             )
-        return super().get_labels_filepath(dataset_type)
+        return self.base_feature_extractor.get_labels_filepath(dataset_type)
