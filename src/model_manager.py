@@ -39,7 +39,7 @@ class ModelManager:
 
     def upload_all(self, base_dir):
         for p in os.listdir(base_dir):
-            if not os.path.isfile(os.path.join(base_dir, p)) and "grid_search" in p:
+            if not os.path.isfile(os.path.join(base_dir, p)) and ("grid_search" in p or "kfold" in p):
                 model_path = os.path.join(base_dir, p, "best.pth")
                 if os.path.exists(model_path):
                     self.upload_model(model_path)

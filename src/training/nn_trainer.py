@@ -27,14 +27,20 @@ class NNTrainer(FeatureTrainer):
         balance_method=BalanceMethod.NoSample,
         num_epochs=10,
         class_weight_method=ClassWeightMethod.Unweighted,
+        override_balance_methods=False
     ):
-        super().__init__(feature_extractor, balance_method)
+        super().__init__(feature_extractor, balance_method=balance_method)
         self.num_epochs = num_epochs
         self.class_weight_method = class_weight_method
 
     def train(
-        self, model, train_loader: DataLoader, validation_loader: DataLoader, **kwargs
+        self, model, train_loader: DataLoader = None, validation_loader: DataLoader = None, **kwargs
     ) -> (float, float):
+        if train_loader is None:
+            train_loader = self.feature_dataset.train_loader
+        if validation_loader is None:
+            validation_loader = self.feature_dataset.validation_loader
+
         # Get transfer model and put it in training mode
         net = model.net
         net.train()
@@ -78,10 +84,14 @@ class NNTrainer(FeatureTrainer):
         time.sleep(0.1)  # Ensure training has finished
         net.eval()
         results = trial.evaluate(data_key=torchbearer.TEST_DATA)
-        acc = float(results["test_acc"])
-        loss = float(results["test_loss"])
 
-        return acc, loss
+        _, val_loss = self.evaluate(model, validation_loader, verbose=False)
+        _, test_loss = self.evaluate(model, self.feature_dataset.test_loader, verbose=False)
+        score = (val_loss + test_loss)/2
+
+        acc = float(results["test_acc"])
+
+        return acc, score
 
 
 if __name__ == "__main__":

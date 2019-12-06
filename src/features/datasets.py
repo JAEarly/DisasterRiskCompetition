@@ -20,6 +20,9 @@ from torchvision.datasets import ImageFolder
 from torchvision.transforms import transforms
 
 
+CUSTOM_BALANCE = [0.083, 0.520, 0.037, 0.350, 0.010]
+
+
 class DatasetType(Enum):
     """Enum for dataset types."""
 
@@ -36,6 +39,7 @@ class BalanceMethod(Enum):
     UnderSample = 1
     AvgSample = 2
     OverSample = 3
+    CustomSample = 4
 
 
 class Datasets(ABC):
@@ -161,7 +165,7 @@ class ImageDatasets(Datasets):
             self.validation_dir, transform=self.transform
         )
         test_dataset = ImageFolderWithFilenames(self.test_dir, transform=self.transform)
-        competition_dataset = CompetitionImageDataset(transform=transforms)
+        competition_dataset = CompetitionImageDataset(transform=self.transform)
 
         return train_dataset, validation_dataset, test_dataset, competition_dataset
 
@@ -176,45 +180,66 @@ class FeatureDataset(Dataset):
         self.data_dir = features_dir
         self.filenames = os.listdir(self.data_dir)
         self.path2label = self._load_labels(labels_path)
-        if balance_method == BalanceMethod.UnderSample:
+        if balance_method == BalanceMethod.NoSample:
+            pass
+        elif balance_method == BalanceMethod.UnderSample:
             self._undersample()
         elif balance_method == BalanceMethod.AvgSample:
             self._avgsample()
         elif balance_method == BalanceMethod.OverSample:
             self._oversample()
+        elif balance_method == BalanceMethod.CustomSample:
+            self._custom_sample()
+        else:
+            raise NotImplementedError("No balance method implemented for " + balance_method.name)
 
     def _undersample(self):
         data_dist = [0] * 5
         for label in self.path2label.values():
             data_dist[label] += 1
         min_class_size = min(data_dist)
-        self._sample_to_target(min_class_size)
+        self._sample_to_target_dist([min_class_size] * 5)
 
     def _avgsample(self):
         data_dist = [0] * 5
         for label in self.path2label.values():
             data_dist[label] += 1
         avg_class_size = int(sum(data_dist) / 5)
-        self._sample_to_target(avg_class_size)
+        self._sample_to_target_dist([avg_class_size] * 5)
 
     def _oversample(self):
         data_dist = [0] * 5
         for label in self.path2label.values():
             data_dist[label] += 1
         max_class_size = max(data_dist)
-        self._sample_to_target(max_class_size)
+        self._sample_to_target_dist([max_class_size] * 5)
 
-    def _sample_to_target(self, target):
+    def _custom_sample(self):
+        data_dist = [0] * 5
+        for label in self.path2label.values():
+            data_dist[label] += 1
+        max_class_size = max(data_dist)
+        target_dist = [0] * 5
+        for i in range(5):
+            target_dist[i] = int(CUSTOM_BALANCE[i] * max_class_size)
+        self._sample_to_target_dist(target_dist)
+
+    def _sample_to_target_dist(self, target_dist):
         data_dist = [0] * 5
         reduced_filenames = []
         reduced_labels = []
-        while len(reduced_filenames) < target * 5:
-            for filename in self.filenames:
-                label = self.path2label[filename]
-                if data_dist[label] < target:
-                    reduced_filenames.append(filename)
-                    reduced_labels.append(label)
-                    data_dist[label] += 1
+
+        for i in range(5):
+            while data_dist[i] < target_dist[i]:
+                for filename in self.filenames:
+                    label = self.path2label[filename]
+                    if label == i:
+                        reduced_filenames.append(filename)
+                        reduced_labels.append(label)
+                        data_dist[label] += 1
+                        if data_dist[i] == target_dist[i]:
+                            break
+
         self.filenames = reduced_filenames
         self.labels = reduced_labels
 
@@ -241,17 +266,23 @@ class FeatureDataset(Dataset):
         filename = self.filenames[index]
         return self._load_vector(filename), self.path2label[filename]
 
+    def getitem_filename(self, index):
+        filename = self.filenames[index]
+        file_id = os.path.basename(filename).split(".")[0]
+        return self._load_vector(filename), self.path2label[filename], file_id
+
 
 class FeatureDatasets(Datasets):
     """Implementation of Datasets back with a feature extractor."""
 
-    def __init__(self, feature_extractor, balance_method=BalanceMethod.NoSample):
+    def __init__(self, feature_extractor, balance_method=BalanceMethod.NoSample, oversample_validation=True):
         # Ensure features are extracted
         self.feature_extractor = feature_extractor
         self.feature_extractor.extract(DatasetType.Train)
         self.feature_extractor.extract(DatasetType.Validation)
         self.feature_extractor.extract(DatasetType.Test)
         self.feature_extractor.extract(DatasetType.Competition)
+        self.oversample_validation = oversample_validation
         super().__init__(balance_method=balance_method)
 
     def create_datasets(self, balance_method):
@@ -264,7 +295,7 @@ class FeatureDatasets(Datasets):
         validation_dataset = FeatureDataset(
             self.feature_extractor.get_features_dir(DatasetType.Validation),
             self.feature_extractor.get_labels_filepath(DatasetType.Validation),
-            balance_method=BalanceMethod.NoSample,
+            balance_method=BalanceMethod.OverSample if self.oversample_validation else BalanceMethod.NoSample,
         )
         test_dataset = FeatureDataset(
             self.feature_extractor.get_features_dir(DatasetType.Test),
@@ -327,12 +358,11 @@ class CompetitionImageDataset(ImageFolder):
                 ]
             )
         super().__init__(self.data_dir, transform=transform)
-        self.filenames = os.listdir(self.data_dir + "/all")
 
     def __getitem__(self, index):
-        filename = self.filenames[index]
-        file_id = filename[: filename.index(".png")]
         path, _ = self.samples[index]
+        file_name = os.path.basename(path)
+        file_id = file_name[: file_name.index(".png")]
         sample = self.loader(path)
         if self.transform is not None:
             sample = self.transform(sample)

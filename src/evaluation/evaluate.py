@@ -3,31 +3,39 @@
 import time
 
 from torchvision import models as tv_models
+import os
 
 import features
 import models
 import models.transfers as transfers
-from features import DatasetType, FeatureDatasets, ImageDatasets
+from features import (
+    DatasetType,
+    FeatureDatasets,
+    ImageDatasets,
+    BalanceMethod,
+    SmoteExtractor,
+)
 from training import FeatureTrainer, PretrainedNNTrainer, Trainer
+from models import ModelIterator
 
 
 def setup_feature_evaluation():
     # Don't use SMOTE feature extractors, just usual normal version
-    feature_extractor = features.VggNet()
-    features_datasets = FeatureDatasets(feature_extractor)
+    feature_extractor = features.ResNetCustom()
+    datasets = FeatureDatasets(feature_extractor)
 
-    model = models.NNModel(
-        models.LinearNN,
-        feature_extractor.feature_size,
-        state_dict_path="./models/grid_search_vggnet_linearnn/best.pth",
-        eval_mode=True,
-    )
-
-    # model = models.XGBModel(
-    #     model_path="./models/grid_search_resnet_custom_smote_xgb/best.pth"
+    # model = models.NNModel(
+    #     models.LinearNN,
+    #     feature_extractor.feature_size,
+    #     state_dict_path="./models/grid_search_resnet_custom_smote_adasyn_linearnn/best.pth",
+    #     eval_mode=True,
     # )
+
+    model = models.XGBModel(
+        model_path="./models/grid_search_resnet_custom_smote_xgb_4/best.pth"
+    )
     print("Running evaluation for", feature_extractor.name, model.name)
-    return features_datasets, model
+    return datasets, model
 
 
 def setup_image_evaluation():
@@ -42,37 +50,91 @@ def setup_image_evaluation():
     return image_datasets, model
 
 
-def run_evaluation(datasets, model):
-    print("Training Set Results")
+def run_evaluation(datasets, model, verbose=True):
+    results = []
+
+    if verbose:
+        print("Training Set Results")
     train_acc, train_loss = Trainer.evaluate(
-        model, datasets.get_loader(DatasetType.Train), verbose=True,
+        model, datasets.get_loader(DatasetType.Train), verbose=verbose,
     )
+    results.append(train_acc)
+    results.append(train_loss)
 
     time.sleep(0.1)
-    print("")
-    print("Validation Set Results")
+    if verbose:
+        print("")
+        print("Validation Set Results")
     val_acc, val_loss = Trainer.evaluate(
-        model, datasets.get_loader(DatasetType.Validation), verbose=True,
+        model, datasets.get_loader(DatasetType.Validation), verbose=verbose,
     )
+    results.append(val_acc)
+    results.append(val_loss)
 
     time.sleep(0.1)
-    print("")
-    print("Test Set Results")
+    if verbose:
+        print("")
+        print("Test Set Results")
     test_acc, test_loss = Trainer.evaluate(
-        model, datasets.get_loader(DatasetType.Test), verbose=True,
+        model, datasets.get_loader(DatasetType.Test), verbose=verbose,
     )
+    results.append(test_acc)
+    results.append(test_loss)
+
+    score = (val_loss + test_loss)/2
+    results.append(score)
 
     time.sleep(0.1)
-    print("")
-    print("Output for results.md")
-    print(
-        ("   {:.3f}   |" * 6).format(
-            train_acc, train_loss, val_acc, val_loss, test_acc, test_loss
-        )
-    )
+    if verbose:
+        print("")
+        print("Output for results.md")
+        print(("   {:.3f}   |" * len(results)).format(*results))
+
+    return results
+
+
+def evaluate_all():
+    print("Evaluating all")
+    for model, datasets, desc in ModelIterator():
+        print(desc)
+        results = run_evaluation(datasets, model, verbose=False)
+        print(("   {:.3f}   |" * len(results)).format(*results))
+
+
+def evaluate_all_within_class():
+    base_dir = "./models/grid_search_resnet_smote_custom_xgb_4/"
+    all_dir = base_dir + "all/"
+    best_filepath = base_dir + "best.pth"
+    filepaths = [best_filepath]
+    for filename in sorted(os.listdir(all_dir)):
+        filepaths.append(all_dir + filename)
+
+    feature_extractor = features.ResNetCustom()
+    datasets = FeatureDatasets(feature_extractor)
+
+    filename_len = len(filepaths[1].split("/")[-1]) + 1
+    print(" " * filename_len + "| Train Acc | Train LL  |  Val Acc  |   Val LL  |  Test Acc |  Test LL  |   Score   |")
+    for model_path in filepaths:
+        # model = models.NNModel(
+        #     models.LinearNN,
+        #     feature_extractor.feature_size,
+        #     state_dict_path=model_path,
+        #     eval_mode=True,
+        # )
+        if os.path.exists(model_path):
+            model = models.XGBModel(
+                model_path=model_path
+            )
+            results = run_evaluation(datasets, model, verbose=False)
+            print(("{:" + str(filename_len) + "s}").format(model_path.split("/")[-1]) + "|" + ("   {:.3f}   |" * len(results)).format(*results))
+        else:
+            print(("{:" + str(filename_len) + "s}").format(model_path.split("/")[-1]) + "| Missing")
 
 
 if __name__ == "__main__":
     _datasets, _model = setup_feature_evaluation()
     # _datasets, _model = setup_image_evaluation()
     run_evaluation(_datasets, _model)
+
+    # evaluate_all()
+    # evaluate_all_within_class()

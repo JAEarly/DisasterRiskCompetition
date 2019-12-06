@@ -70,6 +70,7 @@ class Trainer(ABC):
         else:
             y_probabilities = y_pred
 
+        # Create confusion matrix
         y_true_pd = pd.Series(y_true, name="Actual")
         y_pred_pd = pd.Series(y_pred_classes, name="Predicted")
         conf_mat = pd.crosstab(
@@ -79,18 +80,15 @@ class Trainer(ABC):
             colnames=["Predicted"],
             margins=True,
         )
-
         # Create normalised confusion matrix (normalised by expected class distribution).
-        norm_conf_mat = conf_mat.copy(deep=True)
-        expected_class_counts = [
-            y_true.detach().cpu().numpy().tolist().count(x) for x in range(5)
-        ]
-        for i in range(5):
-            # Normalise each row by it's expected count
-            norm_conf_mat.iloc[i] /= expected_class_counts[i]
-            # Normalise the total counts by expected count
-            norm_conf_mat.iloc[5, i] /= expected_class_counts[i]
-        norm_conf_mat = norm_conf_mat.round(decimals=3)
+        norm_conf_mat = pd.crosstab(
+            y_true_pd,
+            y_pred_pd,
+            rownames=["Actual"],
+            colnames=["Predicted"],
+            margins=True,
+            normalize='index'
+        )
 
         # Print accuracy and log loss
         acc = accuracy_score(y_true, y_pred_classes)
@@ -124,9 +122,14 @@ class FeatureTrainer(Trainer):
         )
 
     def train(
-        self, model, train_loader: DataLoader, validation_loader: DataLoader, **kwargs
+        self, model, train_loader: DataLoader = None, validation_loader: DataLoader = None, **kwargs
     ) -> (float, float):
         print("Loading features")
+        if train_loader is None:
+            train_loader = self.feature_dataset.train_loader
+        if validation_loader is None:
+            validation_loader = self.feature_dataset.validation_loader
+            
         x_train, y_train = self.feature_dataset.get_features_and_labels_from_dataloader(
             train_loader
         )
@@ -143,4 +146,8 @@ class FeatureTrainer(Trainer):
         model.fit(x_train, y_train, **kwargs)
 
         val_acc, val_loss = self.evaluate(model, validation_loader,)
-        return val_acc, val_loss
+
+        _, test_loss = self.evaluate(model, self.feature_dataset.test_loader, verbose=False)
+        score = (val_loss + test_loss) / 2
+
+        return val_acc, score

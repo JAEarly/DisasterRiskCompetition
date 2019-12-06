@@ -7,6 +7,7 @@ from torchvision import models
 
 import models.transfers as transfers
 from features import FeatureExtractor, SmoteExtractor, IdentityLayer, DatasetType
+from features.smote_extractor import smote_type_to_name, SmoteType
 
 DEFAULT_CUSTOM_PATH = "./models/grid_search_resnet_custom/best.pth"
 
@@ -77,11 +78,11 @@ class ResNetCustom(FeatureExtractor):
 class ResNetCustomSMOTE(SmoteExtractor):
     """ResNet feature extractor using a custom trained model with SMOTE."""
 
-    def __init__(self, model_path=DEFAULT_CUSTOM_PATH):
+    def __init__(self, model_path=DEFAULT_CUSTOM_PATH, smote_type: SmoteType = SmoteType.Normal):
         self.model_path = model_path
         if not os.path.exists(model_path):
             raise FileNotFoundError(model_path)
-        super().__init__(ResNetCustom(model_path))
+        super().__init__(ResNetCustom(model_path), smote_type=smote_type)
 
     def setup_model(self) -> (nn.Module, int):
         resnet = setup_resnet_custom(self.model_path)
@@ -110,7 +111,8 @@ if __name__ == "__main__":
     feature_extractor.extract(DatasetType.Test)
     feature_extractor.extract(DatasetType.Competition)
 
-    print("Creating ResNet SMOTE extractor")
-    feature_extractor = ResNetCustomSMOTE()
-    print("Extracting features")
-    feature_extractor.extract(DatasetType.Train)
+    for _smote_type in SmoteType:
+        print("Creating ResNet custom", smote_type_to_name(_smote_type), "extractor")
+        feature_extractor = ResNetCustomSMOTE(smote_type=_smote_type)
+        print("Extracting features")
+        feature_extractor.extract(DatasetType.Train)
