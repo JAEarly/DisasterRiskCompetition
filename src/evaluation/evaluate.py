@@ -21,13 +21,13 @@ from models import ModelIterator
 
 def setup_feature_evaluation():
     # Don't use SMOTE feature extractors, just usual normal version
-    feature_extractor = features.ResNetCustom()
+    feature_extractor = features.ResNet()
     datasets = FeatureDatasets(feature_extractor)
 
     model = models.NNModel(
         models.LinearNN,
         feature_extractor.feature_size,
-        state_dict_path="./models/verified/grid_search_resnet_custom_linearnn/best.pth",
+        state_dict_path="./models/verified/grid_search_resnet_linearnn_2/best.pth",
         eval_mode=True,
     )
 

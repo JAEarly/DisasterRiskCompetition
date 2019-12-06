@@ -372,23 +372,23 @@ if __name__ == "__main__":
 
     grid_search = NNGridSearch(
         nn_class=models.LinearNN,
-        feature_extractor=features.ResNetCustom(),
-        tag="resnet_custom_linearnn",
+        feature_extractor=features.ResNet(),
+        tag="resnet_linearnn_3",
         repeats=3,
     )
     grid_search.run(
-        epoch_range=[5, 7, 10],
+        epoch_range=[20, 25],
         class_weight_methods=[
             ClassWeightMethod.Unweighted,
         ],
         balance_methods=[BalanceMethod.NoSample],
-        dropout_range=[0.0, 0.25, 0.5],
+        dropout_range=[0.0, 0.25],
     )
 
     grid_search = NNGridSearch(
         nn_class=models.LinearNN,
-        feature_extractor=features.ResNet(),
-        tag="resnet_linearnn",
+        feature_extractor=features.ResNetSMOTE(),
+        tag="resnet_smote_linearnn",
         repeats=3,
     )
     grid_search.run(

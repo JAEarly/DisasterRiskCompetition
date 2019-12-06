@@ -93,6 +93,8 @@ class SmoteExtractor(FeatureExtractor, ABC):
             # Run smote
             print("Running smote")
             smt = smote_type_to_method(self.smote_type)()
+            train_features = train_features.cpu().detach().numpy()
+            train_labels = train_labels.cpu().detach().numpy()
             train_features, train_labels = smt.fit_resample(train_features, train_labels)
             print("SMOTE dataset distribution -", Counter([l.item() for l in train_labels]))
 
@@ -114,6 +116,7 @@ class SmoteExtractor(FeatureExtractor, ABC):
                     csv_writer.writerow([filename, label])
 
             print("Done")
+            self.extraction_required = False
 
     def get_features_dir(self, dataset_type: DatasetType) -> str:
         """
