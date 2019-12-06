@@ -43,7 +43,7 @@ def setup_image_evaluation():
     model = models.PretrainedNNModel(
         tv_models.resnet152,
         transfers.final_layer_alteration_resnet,
-        state_dict_path="./models/grid_search_resnet_custom/best.pth",
+        state_dict_path="./models/verified/grid_search_resnet_custom/best.pth",
         eval_mode=True,
     )
     print("Running evaluation for", model.name)
@@ -81,9 +81,6 @@ def run_evaluation(datasets, model, verbose=True):
     results.append(test_acc)
     results.append(test_loss)
 
-    score = (val_loss + test_loss)/2
-    results.append(score)
-
     time.sleep(0.1)
     if verbose:
         print("")
@@ -113,7 +110,7 @@ def evaluate_all_within_class():
     datasets = FeatureDatasets(feature_extractor)
 
     filename_len = len(filepaths[1].split("/")[-1]) + 1
-    print(" " * filename_len + "| Train Acc | Train LL  |  Val Acc  |   Val LL  |  Test Acc |  Test LL  |   Score   |")
+    print(" " * filename_len + "| Train Acc | Train LL  |  Val Acc  |   Val LL  |  Test Acc |  Test LL  |")
     for model_path in filepaths:
         # model = models.NNModel(
         #     models.LinearNN,
@@ -132,8 +129,8 @@ def evaluate_all_within_class():
 
 
 if __name__ == "__main__":
-    _datasets, _model = setup_feature_evaluation()
-    # _datasets, _model = setup_image_evaluation()
+    # _datasets, _model = setup_feature_evaluation()
+    _datasets, _model = setup_image_evaluation()
     run_evaluation(_datasets, _model)
 
     # evaluate_all()

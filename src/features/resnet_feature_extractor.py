@@ -9,7 +9,7 @@ import models.transfers as transfers
 from features import FeatureExtractor, SmoteExtractor, IdentityLayer, DatasetType
 from features.smote_extractor import smote_type_to_name, SmoteType
 
-DEFAULT_CUSTOM_PATH = "./models/grid_search_resnet_custom/best.pth"
+DEFAULT_CUSTOM_PATH = "./models/verified/grid_search_resnet_custom/best.pth"
 
 
 def setup_resnet():
