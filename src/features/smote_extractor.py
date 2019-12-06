@@ -89,11 +89,11 @@ class SmoteExtractor(FeatureExtractor, ABC):
             val_features, val_labels = self.feature_datasets.get_features_and_labels(
                 DatasetType.Validation
             )
-            test_features, test_labels = self.feature_datasets.get_features_and_labels(
-                DatasetType.Test
-            )
-            all_features = torch.cat([train_features, val_features, test_features]).cpu().detach()
-            all_labels = torch.cat([train_labels, val_labels, test_labels]).cpu().detach()
+            # test_features, test_labels = self.feature_datasets.get_features_and_labels(
+            #     DatasetType.Test
+            # )
+            all_features = torch.cat([train_features, val_features]).cpu().detach()
+            all_labels = torch.cat([train_labels, val_labels]).cpu().detach()
             print(
                 "Original training distribution -", Counter([l.item() for l in train_labels])
             )
@@ -104,6 +104,7 @@ class SmoteExtractor(FeatureExtractor, ABC):
             # Run smote
             print("Running smote")
             smt = smote_type_to_method(self.smote_type)()
+            # TODO reduce to only training set length?
             all_features, all_labels = smt.fit_resample(all_features, all_labels)
             print("SMOTE dataset distribution -", Counter([l.item() for l in all_labels]))
 

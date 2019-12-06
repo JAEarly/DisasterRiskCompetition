@@ -385,11 +385,38 @@ if __name__ == "__main__":
     #     dropout_range=[0.0, 0.25],
     # )
 
+    # grid_search = XGBGridSearch(
+    #     feature_extractor=features.AlexNetSMOTE(),
+    #     tag="alexnet_smote_xgb_3",
+    #     repeats=1,
+    # )
+    # grid_search.run(
+    #     num_rounds=[10, 20, 30, 40],
+    # )
+    #
+    # grid_search = XGBGridSearch(
+    #     feature_extractor=features.AlexNetCustomSMOTE(),
+    #     tag="alexnet_custom_smote_xgb_3",
+    #     repeats=1,
+    # )
+    # grid_search.run(
+    #     num_rounds=[10, 20, 30, 40],
+    # )
+    #
+    # grid_search = XGBGridSearch(
+    #     feature_extractor=features.ResNetSMOTE(),
+    #     tag="resnet_smote_xgb_3",
+    #     repeats=1,
+    # )
+    # grid_search.run(
+    #     num_rounds=[10, 20, 30, 40],
+    # )
+
     grid_search = XGBGridSearch(
-        feature_extractor=features.AlexNetSMOTE(),
-        tag="alexnet_smote_xgb_2",
+        feature_extractor=features.ResNetCustomSMOTE(),
+        tag="resnet_smote_custom_xgb_4",
         repeats=1,
     )
     grid_search.run(
-        num_rounds=[10, 20, 30, 40],
+        num_rounds=[45, 50, 55, 60],
     )
