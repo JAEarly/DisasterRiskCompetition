@@ -29,7 +29,7 @@ from utils import (
     DualLogger,
 )
 
-ROOT_DIR = "./models"
+ROOT_DIR = "./models/verified"
 
 
 class GridSearch(ABC):
@@ -356,19 +356,19 @@ class CNNGridSearch(GridSearch):
 
 
 if __name__ == "__main__":
-    # grid_search = CNNGridSearch(
-    #     tv_models.vgg19_bn,
-    #     transfers.final_layer_alteration_vggnet,
-    #     "images",
-    #     tag="vggnet_custom",
-    #     repeats=1,
-    # )
-    # grid_search.run(
-    #     epoch_range=[5, 7, 10],
-    #     class_weight_methods=[
-    #         ClassWeightMethod.Unweighted,
-    #     ],
-    # )
+    grid_search = CNNGridSearch(
+        tv_models.resnet152,
+        transfers.final_layer_alteration_resnet,
+        "images",
+        tag="resnet_custom",
+        repeats=1,
+    )
+    grid_search.run(
+        epoch_range=[1, 3, 5],
+        class_weight_methods=[
+            ClassWeightMethod.Unweighted,
+        ],
+    )
 
     # grid_search = NNGridSearch(
     #     nn_class=models.LinearNN,
@@ -386,37 +386,10 @@ if __name__ == "__main__":
     # )
 
     # grid_search = XGBGridSearch(
-    #     feature_extractor=features.AlexNetSMOTE(),
-    #     tag="alexnet_smote_xgb_3",
+    #     feature_extractor=features.ResNetCustomSMOTE(),
+    #     tag="resnet_smote_custom_xgb_4",
     #     repeats=1,
     # )
     # grid_search.run(
-    #     num_rounds=[10, 20, 30, 40],
+    #     num_rounds=[45, 50, 55, 60],
     # )
-    #
-    # grid_search = XGBGridSearch(
-    #     feature_extractor=features.AlexNetCustomSMOTE(),
-    #     tag="alexnet_custom_smote_xgb_3",
-    #     repeats=1,
-    # )
-    # grid_search.run(
-    #     num_rounds=[10, 20, 30, 40],
-    # )
-    #
-    # grid_search = XGBGridSearch(
-    #     feature_extractor=features.ResNetSMOTE(),
-    #     tag="resnet_smote_xgb_3",
-    #     repeats=1,
-    # )
-    # grid_search.run(
-    #     num_rounds=[10, 20, 30, 40],
-    # )
-
-    grid_search = XGBGridSearch(
-        feature_extractor=features.ResNetCustomSMOTE(),
-        tag="resnet_smote_custom_xgb_4",
-        repeats=1,
-    )
-    grid_search.run(
-        num_rounds=[45, 50, 55, 60],
-    )
