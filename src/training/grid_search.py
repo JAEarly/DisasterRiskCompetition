@@ -377,6 +377,36 @@ if __name__ == "__main__":
         repeats=3,
     )
     grid_search.run(
+        epoch_range=[5, 7, 10],
+        class_weight_methods=[
+            ClassWeightMethod.Unweighted,
+        ],
+        balance_methods=[BalanceMethod.NoSample],
+        dropout_range=[0.0, 0.25, 0.5],
+    )
+
+    grid_search = NNGridSearch(
+        nn_class=models.LinearNN,
+        feature_extractor=features.ResNet(),
+        tag="resnet_linearnn",
+        repeats=3,
+    )
+    grid_search.run(
+        epoch_range=[1, 3, 5],
+        class_weight_methods=[
+            ClassWeightMethod.Unweighted,
+        ],
+        balance_methods=[BalanceMethod.NoSample],
+        dropout_range=[0.0, 0.25],
+    )
+
+    grid_search = NNGridSearch(
+        nn_class=models.LinearNN,
+        feature_extractor=features.ResNetCustomSMOTE(),
+        tag="resnet_custom_smote_linearnn",
+        repeats=3,
+    )
+    grid_search.run(
         epoch_range=[1, 3, 5],
         class_weight_methods=[
             ClassWeightMethod.Unweighted,
