@@ -117,7 +117,7 @@ def plot_dataset_comparison(feature_extractor):
 
 
 if __name__ == "__main__":
-    for i in [50, 100]:
+    for i in [10, 50, 100]:
         _feature_extractor = features.ResNetCustomReduced(
             num_components=i
         )

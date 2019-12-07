@@ -1,16 +1,16 @@
 import csv
 import pickle
+from collections import Counter
 
 import os
+import torch
+from abc import ABC, abstractmethod
+from imblearn.combine import SMOTEENN
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
 from features import FeatureExtractor, FeatureDatasets, DatasetType
 from utils import create_dirs_if_not_found
-import torch
-from abc import ABC, abstractmethod
-from imblearn.over_sampling import SMOTE
-from collections import Counter
 
 
 class ReducedExtractor(FeatureExtractor, ABC):
@@ -150,8 +150,8 @@ class ReducedSmoteExtractor(ReducedExtractor):
         )
 
         # Run smote
-        print("Running smote")
-        smt = SMOTE()
+        print("Running smoteenn")
+        smt = SMOTEENN()
         self.smote_train_features, self.smote_train_labels = smt.fit_resample(train_features, train_labels)
         print("SMOTE dataset distribution -", Counter([l.item() for l in self.smote_train_labels]))
 
@@ -159,7 +159,7 @@ class ReducedSmoteExtractor(ReducedExtractor):
         print("Scaling data")
         training_features = StandardScaler().fit_transform(self.smote_train_features)
         print("Running " + str(reduction_model))
-        reduction_model.fit(self.smote_train_features)
+        reduction_model.fit(training_features)
         return reduction_model
 
     def extract_for_dataset(self, dataset_type: DatasetType):

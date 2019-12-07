@@ -381,24 +381,24 @@ if __name__ == "__main__":
     #     ],
     # )
 
-    # grid_search = NNGridSearch(
-    #     nn_class=models.LinearNN,
-    #     feature_extractor=features.ResNetCustomReducedSmote(10),
-    #     tag="resnet_custom_reduced_smote_10_linearnn",
-    #     repeats=3,
-    # )
-    # grid_search.run(
-    #     epoch_range=[1, 3, 5],
-    #     class_weight_methods=[ClassWeightMethod.Unweighted],
-    #     balance_methods=[BalanceMethod.NoSample],
-    #     dropout_range=[0.0, 0.25, 0.5],
-    # )
-
-    grid_search = XGBGridSearch(
-        feature_extractor=features.ResNetCustomReduced(100),
-        tag="resnet_custom_reduced_100_xgb",
-        repeats=1,
+    grid_search = NNGridSearch(
+        nn_class=models.LinearNN,
+        feature_extractor=features.ResNetCustomReducedSmote(10),
+        tag="resnet_custom_reduced_smote_10_linearnn_3",
+        repeats=3,
     )
     grid_search.run(
-        num_rounds=[10, 20, 30, 40],
+        epoch_range=[1, 3, 5, 10],
+        class_weight_methods=[ClassWeightMethod.Unweighted],
+        balance_methods=[BalanceMethod.NoSample],
+        dropout_range=[0.0, 0.25, 0.5],
     )
+
+    # grid_search = XGBGridSearch(
+    #     feature_extractor=features.ResNetCustomReducedSmote(10),
+    #     tag="resnet_custom_reduced_smote_10_xgb_2",
+    #     repeats=1,
+    # )
+    # grid_search.run(
+    #     num_rounds=[5, 10, 20, 30, 40],
+    # )
