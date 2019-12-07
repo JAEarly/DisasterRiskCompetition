@@ -22,9 +22,9 @@ from models import ModelIterator
 def setup_feature_evaluation():
     # Don't use SMOTE feature extractors, just usual normal version
     feature_extractor = features.ResNetCustom(
-        # model_path="./models/augmented/grid_search_resnet_custom/best.pth",
-        # save_dir="./models/features/augmented/",
-        # train_dir="./data/augmented/train",
+        model_path="./models/augmented/grid_search_resnet_custom/best.pth",
+        save_dir="./models/features/augmented/",
+        train_dir="./data/augmented/train",
     )
     datasets = FeatureDatasets(feature_extractor)
 

@@ -7,6 +7,7 @@ from mpl_toolkits.mplot3d import (
     Axes3D,
 )  # Import must remain for projection='3d' to work
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 import torch
 import features
@@ -114,10 +115,14 @@ def plot_dataset_comparison(feature_extractor):
 
 
 if __name__ == "__main__":
-    _feature_extractor = features.ResNetCustomSMOTE()
+    _feature_extractor = features.ResNetCustomSMOTE(
+        # model_path="./models/augmented/grid_search_resnet_custom/best.pth",
+        # save_dir="./models/features/augmented/",
+        # train_dir="./data/augmented/train",
+    )
 
     # Class comparison
-    plot_dataset(_feature_extractor, [DatasetType.Train], LinearDiscriminantAnalysis(n_components=2))
+    # plot_dataset(_feature_extractor, [DatasetType.Train], PCA(n_components=2))
 
     # Dataset comparison
-    # plot_dataset_comparison(_feature_extractor)
+    plot_dataset_comparison(_feature_extractor)

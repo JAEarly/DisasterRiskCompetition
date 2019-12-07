@@ -387,14 +387,14 @@ if __name__ == "__main__":
             save_dir="./models/features/augmented/",
             train_dir="./data/augmented/train",
         ),
-        tag="resnet_linearnn",
+        tag="resnet_custom_linearnn_2",
         repeats=3,
     )
     grid_search.run(
-        epoch_range=[1, 3, 5],
+        epoch_range=[4, 5, 6],
         class_weight_methods=[ClassWeightMethod.Unweighted],
         balance_methods=[BalanceMethod.NoSample],
-        dropout_range=[0.0, 0.25, 0.5],
+        dropout_range=[0.2, 0.3],
     )
 
     # grid_search = XGBGridSearch(
