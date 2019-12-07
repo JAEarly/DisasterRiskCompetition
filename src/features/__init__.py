@@ -7,7 +7,7 @@ from .datasets import (
 )
 from .feature_extractor import FeatureExtractor, IdentityLayer
 from .smote_extractor import SmoteExtractor, SmoteType
-from .reduced_extractor import ReducedExtractor
+from .reduced_extractor import ReducedBasicExtractor
 from .alexnet_feature_extractor import (
     AlexNet,
     AlexNetSMOTE,

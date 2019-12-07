@@ -11,7 +11,7 @@ from features import (
     SmoteExtractor,
     IdentityLayer,
     DatasetType,
-    ReducedExtractor,
+    ReducedBasicExtractor,
 )
 from features.smote_extractor import smote_type_to_name, SmoteType
 
@@ -115,7 +115,7 @@ class ResNetCustomSMOTE(SmoteExtractor):
         return resnet, 2048
 
 
-class ResNetCustomReduced(ReducedExtractor):
+class ResNetCustomReduced(ReducedBasicExtractor):
     def __init__(
         self,
         num_components,

@@ -2,6 +2,7 @@
 
 import matplotlib.pyplot as plt
 import pandas as pd
+
 # noinspection PyUnresolvedReferences
 from mpl_toolkits.mplot3d import (
     Axes3D,
@@ -15,10 +16,7 @@ from features import DatasetType, FeatureDatasets
 
 
 def run_dimensionality_reduction(
-    feature_extractor,
-    dataset_types,
-    reduction_model,
-    already_fit=False,
+    feature_extractor, dataset_types, reduction_model, already_fit=False,
 ):
     print("Getting features")
     feature_datasets = FeatureDatasets(feature_extractor)
@@ -62,67 +60,78 @@ def visualise_reduction(dataframe, targets, fe_name) -> None:
         indices_to_keep = dataframe["target"] == target
         # Percentage to points to render
         reduce_to = 0.3
-        reduction_step = int(1/reduce_to)
+        reduction_step = int(1 / reduce_to)
         axis.scatter(
             dataframe.loc[indices_to_keep, "pc1"][::reduction_step],
             dataframe.loc[indices_to_keep, "pc2"][::reduction_step],
             marker="x",
             label=str(target),
-            alpha=0.4
+            alpha=0.4,
         )
-    axis.legend(loc='best')
+    axis.legend(loc="best")
     axis.set_title(fe_name)
     plt.show()
 
 
 def plot_dataset(feature_extractor, dataset_type, reduction_model):
-    final_df = run_dimensionality_reduction(feature_extractor, dataset_type, reduction_model)
+    final_df = run_dimensionality_reduction(
+        feature_extractor, dataset_type, reduction_model
+    )
     visualise_reduction(final_df, [0, 1, 2, 3, 4], feature_extractor.name)
 
 
 def plot_dataset_comparison(feature_extractor):
     lda_model = LinearDiscriminantAnalysis(n_components=2)
 
-    print('Fitting LDA model on labelled data')
+    print("Fitting LDA model on labelled data")
     labelled_df = run_dimensionality_reduction(
         feature_extractor, DatasetType.Train, lda_model,
     )
     labelled_df["target"] = "train"
 
-    print('')
-    print('Reducing validation data')
+    print("")
+    print("Reducing validation data")
     val_df = run_dimensionality_reduction(
         feature_extractor, DatasetType.Validation, lda_model, already_fit=True
     )
     val_df["target"] = "val"
 
-    print('')
-    print('Reducing testing data')
+    print("")
+    print("Reducing testing data")
     test_df = run_dimensionality_reduction(
         feature_extractor, DatasetType.Test, lda_model, already_fit=True
     )
     test_df["target"] = "test"
 
-    print('')
-    print('Reducing competition data')
+    print("")
+    print("Reducing competition data")
     comp_df = run_dimensionality_reduction(
         feature_extractor, DatasetType.Competition, lda_model, already_fit=True
     )
     comp_df["target"] = "comp"
 
     final_df = pd.concat([labelled_df, comp_df])
-    visualise_reduction(final_df, ["train", "val", "test", "comp"], feature_extractor.name)
+    visualise_reduction(
+        final_df, ["train", "val", "test", "comp"], feature_extractor.name
+    )
 
 
 if __name__ == "__main__":
-    _feature_extractor = features.ResNetCustomSMOTE(
-        # model_path="./models/augmented/grid_search_resnet_custom/best.pth",
-        # save_dir="./models/features/augmented/",
-        # train_dir="./data/augmented/train",
-    )
+    for i in [2, 5, 10]:
+        _feature_extractor = features.ResNetCustomReduced(
+            num_components=i
+            # model_path="./models/augmented/grid_search_resnet_custom/best.pth",
+            # save_dir="./models/features/augmented/",
+            # train_dir="./data/augmented/train",
+        )
+        plot_dataset(
+            _feature_extractor,
+            [DatasetType.Train],
+            LinearDiscriminantAnalysis(n_components=2),
+        )
 
     # Class comparison
     # plot_dataset(_feature_extractor, [DatasetType.Train], PCA(n_components=2))
 
     # Dataset comparison
-    plot_dataset_comparison(_feature_extractor)
+    # plot_dataset_comparison(_feature_extractor)
