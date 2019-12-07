@@ -383,22 +383,22 @@ if __name__ == "__main__":
 
     grid_search = NNGridSearch(
         nn_class=models.LinearNN,
-        feature_extractor=features.ResNetCustomReduced(10),
-        tag="resnet_custom_reduced_10_linearnn_2",
-        repeats=3,
+        feature_extractor=features.ResNetCustomReduced(2),
+        tag="resnet_custom_reduced_2_linearnn",
+        repeats=1,
     )
     grid_search.run(
-        epoch_range=[20, 25],
+        epoch_range=[1, 5, 10],
         class_weight_methods=[ClassWeightMethod.Unweighted],
         balance_methods=[BalanceMethod.NoSample],
         dropout_range=[0.0, 0.25, 0.5],
     )
 
     # grid_search = XGBGridSearch(
-    #     feature_extractor=features.ResNetCustomSMOTE(),
-    #     tag="resnet_custom_smote_xgb",
+    #     feature_extractor=features.ResNetCustomReduced(10),
+    #     tag="resnet_custom_reduced_10_xgb_2",
     #     repeats=1,
     # )
     # grid_search.run(
-    #     num_rounds=[30],
+    #     num_rounds=[15, 20, 25, 30],
     # )
