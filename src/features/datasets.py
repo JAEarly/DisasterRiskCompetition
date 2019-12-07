@@ -137,11 +137,10 @@ class ImageFolderWithFilenames(torch_datasets.ImageFolder):
 class ImageDatasets(Datasets):
     """Implementation of Datasets backed with images."""
 
-    train_dir = "./data/processed/train"
     validation_dir = "./data/processed/validation"
     test_dir = "./data/processed/test"
 
-    def __init__(self, transform: transforms.Compose = None):
+    def __init__(self, transform: transforms.Compose = None, train_dir="./data/processed/train"):
         self.transform = transform
         if self.transform is None:
             self.transform = transforms.Compose(
@@ -154,6 +153,7 @@ class ImageDatasets(Datasets):
                     ),
                 ]
             )
+        self.train_dir = train_dir
         super().__init__()
 
     def create_datasets(self, balance_method: BalanceMethod):

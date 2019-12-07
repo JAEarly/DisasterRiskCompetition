@@ -312,10 +312,11 @@ class XGBGridSearch(GridSearch):
 
 
 class CNNGridSearch(GridSearch):
-    def __init__(self, model_class, model_alteration_function, feature_name, **kwargs):
+    def __init__(self, model_class, model_alteration_function, feature_name, train_dir="./data/processed/train", **kwargs):
         super().__init__(feature_name, **kwargs)
         self.model_class = model_class
         self.model_alteration_function = model_alteration_function
+        self.train_dir = train_dir
 
     def _create_all_configs(self, hyper_parameter_ranges):
         # Extract hyper parameter ranges
@@ -349,6 +350,7 @@ class CNNGridSearch(GridSearch):
         trainer = PretrainedNNTrainer(
             num_epochs=config["epochs"],
             class_weight_method=config["class_weight_method"],
+            train_dir=self.train_dir,
         )
         model = PretrainedNNModel(self.model_class, self.model_alteration_function)
         val_acc, val_loss = trainer.train(model)
@@ -356,64 +358,50 @@ class CNNGridSearch(GridSearch):
 
 
 if __name__ == "__main__":
-    # grid_search = CNNGridSearch(
-    #     tv_models.resnet152,
-    #     transfers.final_layer_alteration_resnet,
-    #     "images",
-    #     tag="resnet_custom",
-    #     repeats=1,
+    grid_search = CNNGridSearch(
+        tv_models.resnet152,
+        transfers.final_layer_alteration_resnet,
+        "images",
+        tag="resnet_custom",
+        repeats=1,
+        train_dir="./data/augmented/train"
+    )
+    grid_search.run(
+        epoch_range=[1, 3, 5],
+        class_weight_methods=[
+            ClassWeightMethod.Unweighted,
+        ],
+    )
+
+    # grid_search = NNGridSearch(
+    #     nn_class=models.LinearNN,
+    #     feature_extractor=features.ResNetSMOTE(),
+    #     tag="resnet_smote_linearnn_2",
+    #     repeats=3,
     # )
     # grid_search.run(
-    #     epoch_range=[1, 3, 5],
+    #     epoch_range=[10, 20, 30],
     #     class_weight_methods=[
     #         ClassWeightMethod.Unweighted,
     #     ],
+    #     balance_methods=[BalanceMethod.NoSample],
+    #     dropout_range=[0.0, 0.25],
     # )
 
-    grid_search = NNGridSearch(
-        nn_class=models.LinearNN,
-        feature_extractor=features.ResNet(),
-        tag="resnet_linearnn_4",
-        repeats=3,
-    )
-    grid_search.run(
-        epoch_range=[30],
-        class_weight_methods=[
-            ClassWeightMethod.Unweighted,
-        ],
-        balance_methods=[BalanceMethod.NoSample],
-        dropout_range=[0.0, 0.25],
-    )
-
-    grid_search = NNGridSearch(
-        nn_class=models.LinearNN,
-        feature_extractor=features.ResNetSMOTE(),
-        tag="resnet_smote_linearnn_2",
-        repeats=3,
-    )
-    grid_search.run(
-        epoch_range=[10, 20, 30],
-        class_weight_methods=[
-            ClassWeightMethod.Unweighted,
-        ],
-        balance_methods=[BalanceMethod.NoSample],
-        dropout_range=[0.0, 0.25],
-    )
-
-    grid_search = NNGridSearch(
-        nn_class=models.LinearNN,
-        feature_extractor=features.ResNetCustomSMOTE(),
-        tag="resnet_custom_smote_linearnn_2",
-        repeats=3,
-    )
-    grid_search.run(
-        epoch_range=[10, 20, 30],
-        class_weight_methods=[
-            ClassWeightMethod.Unweighted,
-        ],
-        balance_methods=[BalanceMethod.NoSample],
-        dropout_range=[0.0, 0.25, 0.5],
-    )
+    # grid_search = NNGridSearch(
+    #     nn_class=models.LinearNN,
+    #     feature_extractor=features.ResNetCustomSMOTE(),
+    #     tag="resnet_custom_smote_linearnn_2",
+    #     repeats=3,
+    # )
+    # grid_search.run(
+    #     epoch_range=[10, 20, 30],
+    #     class_weight_methods=[
+    #         ClassWeightMethod.Unweighted,
+    #     ],
+    #     balance_methods=[BalanceMethod.NoSample],
+    #     dropout_range=[0.0, 0.25, 0.5],
+    # )
 
     # grid_search = XGBGridSearch(
     #     feature_extractor=features.ResNetCustomSMOTE(),

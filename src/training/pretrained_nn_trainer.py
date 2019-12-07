@@ -19,9 +19,9 @@ class PretrainedNNTrainer(ImageTrainer):
     loss = nn.CrossEntropyLoss
 
     def __init__(
-        self, num_epochs=10, class_weight_method=ClassWeightMethod.Unweighted,
+        self, num_epochs=10, class_weight_method=ClassWeightMethod.Unweighted, train_dir="./data/processed/train"
     ):
-        super().__init__()
+        super().__init__(train_dir=train_dir)
         self.num_epochs = num_epochs
         self.class_weight_method = class_weight_method
 
