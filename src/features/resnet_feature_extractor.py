@@ -6,7 +6,7 @@ from torch import nn
 from torchvision import models
 
 import models.transfers as transfers
-from features import FeatureExtractor, SmoteExtractor, IdentityLayer, DatasetType
+from features import FeatureExtractor, SmoteExtractor, IdentityLayer, DatasetType, ReducedExtractor
 from features.smote_extractor import smote_type_to_name, SmoteType
 
 DEFAULT_CUSTOM_PATH = "./models/verified/grid_search_resnet_custom/best.pth"
@@ -89,30 +89,47 @@ class ResNetCustomSMOTE(SmoteExtractor):
         return resnet, 2048
 
 
+class ResNetCustomReduced(ReducedExtractor):
+
+    def __init__(self, num_components, model_path=DEFAULT_CUSTOM_PATH, save_dir="./models/features/", train_dir="./data/processed/train"):
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(model_path)
+        feature_extractor = ResNetCustom(model_path=model_path, save_dir=save_dir, train_dir=train_dir)
+        super().__init__(feature_extractor, num_components, save_dir=save_dir)
+
+
 if __name__ == "__main__":
-    print("Creating ResNet extractor")
-    feature_extractor = ResNet()
-    print("Extracting features")
-    feature_extractor.extract(DatasetType.Train)
-    feature_extractor.extract(DatasetType.Validation)
-    feature_extractor.extract(DatasetType.Test)
-    feature_extractor.extract(DatasetType.Competition)
-
-    print("Creating ResNet SMOTE extractor")
-    feature_extractor = ResNetSMOTE()
-    print("Extracting features")
-    feature_extractor.extract(DatasetType.Train)
+    # print("Creating ResNet extractor")
+    # feature_extractor = ResNet()
+    # print("Extracting features")
+    # feature_extractor.extract(DatasetType.Train)
+    # feature_extractor.extract(DatasetType.Validation)
+    # feature_extractor.extract(DatasetType.Test)
+    # feature_extractor.extract(DatasetType.Competition)
     #
-    print("Creating ResNet custom extractor")
-    feature_extractor = ResNetCustom()
-    print("Extracting features")
-    feature_extractor.extract(DatasetType.Train)
-    feature_extractor.extract(DatasetType.Validation)
-    feature_extractor.extract(DatasetType.Test)
-    feature_extractor.extract(DatasetType.Competition)
+    # print("Creating ResNet SMOTE extractor")
+    # feature_extractor = ResNetSMOTE()
+    # print("Extracting features")
+    # feature_extractor.extract(DatasetType.Train)
+    # #
+    # print("Creating ResNet custom extractor")
+    # feature_extractor = ResNetCustom()
+    # print("Extracting features")
+    # feature_extractor.extract(DatasetType.Train)
+    # feature_extractor.extract(DatasetType.Validation)
+    # feature_extractor.extract(DatasetType.Test)
+    # feature_extractor.extract(DatasetType.Competition)
+    #
+    # for _smote_type in SmoteType:
+    #     print("Creating ResNet custom", smote_type_to_name(_smote_type), "extractor")
+    #     feature_extractor = ResNetCustomSMOTE(smote_type=_smote_type)
+    #     print("Extracting features")
+    #     feature_extractor.extract(DatasetType.Train)
 
-    for _smote_type in SmoteType:
-        print("Creating ResNet custom", smote_type_to_name(_smote_type), "extractor")
-        feature_extractor = ResNetCustomSMOTE(smote_type=_smote_type)
-        print("Extracting features")
-        feature_extractor.extract(DatasetType.Train)
+    print("Creating ResNet custom reduced extractor")
+    _feature_extractor = ResNetCustomReduced(10)
+    print("Extracting features")
+    _feature_extractor.extract(DatasetType.Train)
+    _feature_extractor.extract(DatasetType.Validation)
+    _feature_extractor.extract(DatasetType.Test)
+    _feature_extractor.extract(DatasetType.Competition)
