@@ -9,6 +9,8 @@ from features import FeatureExtractor, FeatureDatasets, DatasetType
 from utils import create_dirs_if_not_found
 import torch
 from abc import ABC, abstractmethod
+from imblearn.over_sampling import SMOTE
+from collections import Counter
 
 
 class ReducedExtractor(FeatureExtractor, ABC):
@@ -87,6 +89,7 @@ class ReducedExtractor(FeatureExtractor, ABC):
             labels = labels.cpu().detach().numpy()
         features = features.cpu().detach()
         print("Running reduction")
+        # TODO standard scalar here? Save to model as well?
         reduced_features = self.extractor_model.transform(features)
         return reduced_features, labels
 
@@ -118,3 +121,50 @@ class ReducedBasicExtractor(ReducedExtractor):
         print("Running " + str(reduction_model))
         reduction_model.fit_transform(training_features)
         return reduction_model
+
+
+class ReducedSmoteExtractor(ReducedExtractor):
+
+    def __init__(
+        self,
+        base_feature_extractor,
+        num_components,
+    ):
+        super().__init__(
+            base_feature_extractor.name + "_reduced_smote_" + str(num_components),
+            base_feature_extractor,
+            num_components
+        )
+        self.smote_train_features = None
+        self.smote_train_labels = None
+
+    def create_reduction_model(self):
+        print("Getting training features")
+        train_features, train_labels = (
+            self.feature_datasets.get_features_and_labels(DatasetType.Train)
+        )
+        train_features = train_features.cpu().detach().numpy()
+        train_labels = train_labels.cpu().detach().numpy()
+
+        print(
+            "Original training distribution -", Counter([l.item() for l in train_labels])
+        )
+
+        # Run smote
+        print("Running smote")
+        smt = SMOTE()
+        self.smote_train_features, self.smote_train_labels = smt.fit_resample(train_features, train_labels)
+        print("SMOTE dataset distribution -", Counter([l.item() for l in self.smote_train_labels]))
+
+        reduction_model = PCA(n_components=self.num_components)
+        print("Scaling data")
+        train_features = StandardScaler().fit_transform(self.smote_train_features)
+        print("Running " + str(reduction_model))
+        reduction_model.fit_transform(train_features)
+        return reduction_model
+
+    def extract_for_dataset(self, dataset_type: DatasetType):
+        if dataset_type == DatasetType.Train:
+            return self.smote_train_features, self.smote_train_labels
+        else:
+            return super().extract_for_dataset(dataset_type)
