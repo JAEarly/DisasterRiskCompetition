@@ -118,10 +118,17 @@ class ResNetCustomSMOTE(SmoteExtractor):
 class ResNetCustomReduced(ReducedExtractor):
     def __init__(
         self,
-        feature_extractor,
         num_components,
+        model_path=DEFAULT_CUSTOM_PATH,
+        save_dir="./models/features/",
+        train_dir="./data/processed/train",
     ):
-        super().__init__(feature_extractor, num_components)
+        base_feature_extractor = ResNetCustom(
+            model_path=model_path,
+            save_dir=save_dir,
+            train_dir=train_dir,
+        )
+        super().__init__(base_feature_extractor, num_components)
 
 
 if __name__ == "__main__":
@@ -153,7 +160,7 @@ if __name__ == "__main__":
     #     feature_extractor.extract(DatasetType.Train)
 
     print("Creating ResNet custom reduced extractor")
-    _feature_extractor = ResNetCustomReduced(ResNetCustom(), 10)
+    _feature_extractor = ResNetCustomReduced(10)
     print("Extracting features")
     _feature_extractor.extract(DatasetType.Train)
     _feature_extractor.extract(DatasetType.Validation)

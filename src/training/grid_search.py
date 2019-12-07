@@ -29,7 +29,7 @@ from utils import (
     DualLogger,
 )
 
-ROOT_DIR = "./models/augmented"
+ROOT_DIR = "./models/verified"
 
 
 class GridSearch(ABC):
@@ -252,6 +252,7 @@ class NNGridSearch(GridSearch):
             dropout=config["dropout"],
         )
         val_acc, val_loss = trainer.train(model)
+        trainer.evaluate(model, trainer.feature_dataset.validation_loader)
         return val_acc, val_loss, model
 
 
@@ -382,19 +383,15 @@ if __name__ == "__main__":
 
     grid_search = NNGridSearch(
         nn_class=models.LinearNN,
-        feature_extractor=features.ResNetCustom(
-            model_path="./models/augmented/grid_search_resnet_custom/best.pth",
-            save_dir="./models/features/augmented/",
-            train_dir="./data/augmented/train",
-        ),
-        tag="resnet_custom_linearnn_2",
+        feature_extractor=features.ResNetCustomReduced(10),
+        tag="resnet_custom_reduced_10_linearnn_2",
         repeats=3,
     )
     grid_search.run(
-        epoch_range=[4, 5, 6],
+        epoch_range=[15, 20],
         class_weight_methods=[ClassWeightMethod.Unweighted],
         balance_methods=[BalanceMethod.NoSample],
-        dropout_range=[0.2, 0.3],
+        dropout_range=[0.0, 0.25, 0.5],
     )
 
     # grid_search = XGBGridSearch(

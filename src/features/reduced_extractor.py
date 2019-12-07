@@ -7,6 +7,8 @@ from sklearn.preprocessing import StandardScaler
 
 from features import FeatureExtractor, FeatureDatasets, DatasetType
 from utils import create_dirs_if_not_found
+import torch
+import numpy as np
 
 
 class ReducedExtractor(FeatureExtractor):
@@ -71,6 +73,8 @@ class ReducedExtractor(FeatureExtractor):
             i = 0
             filenames = []
             for reduced_feature in reduced_features:
+                reduced_feature = torch.tensor(reduced_feature)
+                reduced_feature = reduced_feature.float()
                 self._save_tensor(dataset_type, reduced_feature, i)
                 filenames.append(i)
                 i += 1
