@@ -47,8 +47,8 @@ def smote_type_to_method(smote_type: SmoteType):
 class SmoteExtractor(FeatureExtractor, ABC):
     """Feature extractor using smote balancing."""
 
-    def __init__(self, base_feature_extractor: FeatureExtractor, smote_type: SmoteType = SmoteType.Normal):
-        super().__init__(base_feature_extractor.name + "_" + smote_type_to_name(smote_type))
+    def __init__(self, base_feature_extractor: FeatureExtractor, smote_type: SmoteType = SmoteType.Normal, save_dir="./models/features/", train_dir="./data/processed/train"):
+        super().__init__(base_feature_extractor.name + "_" + smote_type_to_name(smote_type), save_dir=save_dir, train_dir=train_dir)
         self.base_feature_extractor = base_feature_extractor
         self.feature_datasets = FeatureDatasets(self.base_feature_extractor)
         self.smote_type = smote_type

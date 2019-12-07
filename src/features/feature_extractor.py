@@ -21,12 +21,11 @@ from utils import create_dirs_if_not_found
 class FeatureExtractor(ABC):
     """Base class for feature extractor."""
 
-    save_dir = "./models/features/"
-
-    def __init__(self, name):
+    def __init__(self, name, save_dir="./models/features/", train_dir="./data/processed/train"):
         self.name = name
+        self.save_dir = save_dir
         self.extractor_model, self.feature_size = self.setup_model()
-        self.image_datasets = ImageDatasets(self.get_transform())
+        self.image_datasets = ImageDatasets(self.get_transform(), train_dir=train_dir)
 
     @abstractmethod
     def setup_model(self) -> (nn.Module, int):
