@@ -24,16 +24,16 @@ def setup_feature_evaluation():
     feature_extractor = features.ResNetCustom()
     datasets = FeatureDatasets(feature_extractor)
 
-    model = models.NNModel(
-        models.LinearNN,
-        feature_extractor.feature_size,
-        state_dict_path="./models/verified/grid_search_resnet_custom_smote_linearnn_2/best.pth",
-        eval_mode=True,
-    )
-
-    # model = models.XGBModel(
-    #     model_path="./models/grid_search_resnet_custom_smote_xgb_4/best.pth"
+    # model = models.NNModel(
+    #     models.LinearNN,
+    #     feature_extractor.feature_size,
+    #     state_dict_path="./models/verified/grid_search_resnet_custom_smote_linearnn_2/best.pth",
+    #     eval_mode=True,
     # )
+
+    model = models.XGBModel(
+        model_path="./models/verified/grid_search_resnet_custom_xgb_2/best.pth"
+    )
     print("Running evaluation for", feature_extractor.name, model.name)
     return datasets, model
 

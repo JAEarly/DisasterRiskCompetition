@@ -374,28 +374,13 @@ if __name__ == "__main__":
     # )
 
     # grid_search = NNGridSearch(
-    #     nn_class=models.LinearNN,
-    #     feature_extractor=features.ResNetSMOTE(),
-    #     tag="resnet_smote_linearnn_2",
+    #     nn_class=models.BiggerNN,
+    #     feature_extractor=features.ResNetCustom(),
+    #     tag="resnet_biggernn",
     #     repeats=3,
     # )
     # grid_search.run(
-    #     epoch_range=[10, 20, 30],
-    #     class_weight_methods=[
-    #         ClassWeightMethod.Unweighted,
-    #     ],
-    #     balance_methods=[BalanceMethod.NoSample],
-    #     dropout_range=[0.0, 0.25],
-    # )
-
-    # grid_search = NNGridSearch(
-    #     nn_class=models.LinearNN,
-    #     feature_extractor=features.ResNetCustomSMOTE(),
-    #     tag="resnet_custom_smote_linearnn_2",
-    #     repeats=3,
-    # )
-    # grid_search.run(
-    #     epoch_range=[10, 20, 30],
+    #     epoch_range=[1, 5, 10],
     #     class_weight_methods=[
     #         ClassWeightMethod.Unweighted,
     #     ],
@@ -405,9 +390,9 @@ if __name__ == "__main__":
 
     grid_search = XGBGridSearch(
         feature_extractor=features.ResNetCustom(),
-        tag="resnet_custom_xgb",
-        repeats=2,
+        tag="resnet_custom_xgb_2",
+        repeats=1,
     )
     grid_search.run(
-        num_rounds=[5, 10, 15, 20],
+        num_rounds=[14, 15, 16],
     )
