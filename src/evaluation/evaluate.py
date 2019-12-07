@@ -21,19 +21,19 @@ from models import ModelIterator
 
 def setup_feature_evaluation():
     # Don't use SMOTE feature extractors, just usual normal version
-    feature_extractor = features.ResNetCustomReduced(10)
+    feature_extractor = features.ResNetCustomReducedSmote(100)
     datasets = FeatureDatasets(feature_extractor)
 
-    model = models.NNModel(
-        models.BiggerNN,
-        feature_extractor.feature_size,
-        state_dict_path="./models/verified/grid_search_resnet_custom_reduced_10_biggernn/best.pth",
-        eval_mode=True,
-    )
-
-    # model = models.XGBModel(
-    #     model_path="./models/verified/grid_search_resnet_custom_reduced_10_xgb_2/best.pth"
+    # model = models.NNModel(
+    #     models.BiggerNN,
+    #     feature_extractor.feature_size,
+    #     state_dict_path="./models/verified/grid_search_resnet_custom_reduced_5_biggernn/best.pth",
+    #     eval_mode=True,
     # )
+
+    model = models.XGBModel(
+        model_path="./models/verified/grid_search_resnet_custom_reduced_smote_100_xgb/best.pth"
+    )
     print("Running evaluation for", feature_extractor.name, model.name)
     return datasets, model
 

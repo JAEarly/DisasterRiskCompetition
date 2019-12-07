@@ -395,8 +395,8 @@ if __name__ == "__main__":
     # )
 
     grid_search = XGBGridSearch(
-        feature_extractor=features.ResNetCustomReducedSmote(10),
-        tag="resnet_custom_reduced_smote_10_xgb",
+        feature_extractor=features.ResNetCustomReduced(100),
+        tag="resnet_custom_reduced_100_xgb",
         repeats=1,
     )
     grid_search.run(
