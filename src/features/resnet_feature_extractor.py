@@ -6,7 +6,13 @@ from torch import nn
 from torchvision import models
 
 import models.transfers as transfers
-from features import FeatureExtractor, SmoteExtractor, IdentityLayer, DatasetType, ReducedExtractor
+from features import (
+    FeatureExtractor,
+    SmoteExtractor,
+    IdentityLayer,
+    DatasetType,
+    ReducedExtractor,
+)
 from features.smote_extractor import smote_type_to_name, SmoteType
 
 DEFAULT_CUSTOM_PATH = "./models/verified/grid_search_resnet_custom/best.pth"
@@ -34,7 +40,9 @@ def setup_resnet_custom(model_path):
 class ResNet(FeatureExtractor):
     """ResNet feature extractor."""
 
-    def __init__(self, save_dir="./models/features/", train_dir="./data/processed/train"):
+    def __init__(
+        self, save_dir="./models/features/", train_dir="./data/processed/train"
+    ):
         super().__init__("resnet", save_dir=save_dir, train_dir=train_dir)
 
     def setup_model(self) -> (nn.Module, int):
@@ -49,7 +57,9 @@ class ResNet(FeatureExtractor):
 class ResNetSMOTE(SmoteExtractor):
     """ResNet SMOTE feature extractor."""
 
-    def __init__(self, save_dir="./models/features/", train_dir="./data/processed/train"):
+    def __init__(
+        self, save_dir="./models/features/", train_dir="./data/processed/train"
+    ):
         super().__init__(ResNet(), save_dir=save_dir, train_dir=train_dir)
 
     def setup_model(self) -> (nn.Module, int):
@@ -64,7 +74,12 @@ class ResNetSMOTE(SmoteExtractor):
 class ResNetCustom(FeatureExtractor):
     """ResNet feature extractor using a custom trained model."""
 
-    def __init__(self, model_path=DEFAULT_CUSTOM_PATH, save_dir="./models/features/", train_dir="./data/processed/train"):
+    def __init__(
+        self,
+        model_path=DEFAULT_CUSTOM_PATH,
+        save_dir="./models/features/",
+        train_dir="./data/processed/train",
+    ):
         self.model_path = model_path
         if not os.path.exists(model_path):
             raise FileNotFoundError(model_path)
@@ -78,11 +93,22 @@ class ResNetCustom(FeatureExtractor):
 class ResNetCustomSMOTE(SmoteExtractor):
     """ResNet feature extractor using a custom trained model with SMOTE."""
 
-    def __init__(self, model_path=DEFAULT_CUSTOM_PATH, smote_type: SmoteType = SmoteType.Normal, save_dir="./models/features/", train_dir="./data/processed/train"):
+    def __init__(
+        self,
+        model_path=DEFAULT_CUSTOM_PATH,
+        smote_type: SmoteType = SmoteType.Normal,
+        save_dir="./models/features/",
+        train_dir="./data/processed/train",
+    ):
         self.model_path = model_path
         if not os.path.exists(model_path):
             raise FileNotFoundError(model_path)
-        super().__init__(ResNetCustom(model_path), smote_type=smote_type, save_dir=save_dir, train_dir=train_dir)
+        super().__init__(
+            ResNetCustom(model_path),
+            smote_type=smote_type,
+            save_dir=save_dir,
+            train_dir=train_dir,
+        )
 
     def setup_model(self) -> (nn.Module, int):
         resnet = setup_resnet_custom(self.model_path)
@@ -90,12 +116,12 @@ class ResNetCustomSMOTE(SmoteExtractor):
 
 
 class ResNetCustomReduced(ReducedExtractor):
-
-    def __init__(self, num_components, model_path=DEFAULT_CUSTOM_PATH, save_dir="./models/features/", train_dir="./data/processed/train"):
-        if not os.path.exists(model_path):
-            raise FileNotFoundError(model_path)
-        feature_extractor = ResNetCustom(model_path=model_path, save_dir=save_dir, train_dir=train_dir)
-        super().__init__(feature_extractor, num_components, save_dir=save_dir)
+    def __init__(
+        self,
+        feature_extractor,
+        num_components,
+    ):
+        super().__init__(feature_extractor, num_components)
 
 
 if __name__ == "__main__":
@@ -127,7 +153,7 @@ if __name__ == "__main__":
     #     feature_extractor.extract(DatasetType.Train)
 
     print("Creating ResNet custom reduced extractor")
-    _feature_extractor = ResNetCustomReduced(10)
+    _feature_extractor = ResNetCustomReduced(ResNetCustom(), 10)
     print("Extracting features")
     _feature_extractor.extract(DatasetType.Train)
     _feature_extractor.extract(DatasetType.Validation)

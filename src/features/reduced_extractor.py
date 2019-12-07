@@ -1,25 +1,27 @@
-"""Extension of feature extraction that uses smote balancing."""
-
 import csv
+import pickle
 
 import os
-from abc import ABC
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
 from features import FeatureExtractor, FeatureDatasets, DatasetType
 from utils import create_dirs_if_not_found
-import pickle
 
 
-class ReducedExtractor:
-
-    def __init__(self, feature_extractor, num_components, save_dir="./models/features/"):
-        self.name = feature_extractor.name + "_reduced_" + str(num_components)
-        self.save_dir = save_dir
-        self.feature_datasets = FeatureDatasets(feature_extractor)
+class ReducedExtractor(FeatureExtractor):
+    def __init__(
+        self,
+        base_feature_extractor,
+        num_components,
+    ):
+        self.feature_datasets = FeatureDatasets(base_feature_extractor)
         self.num_components = num_components
-        self.reduction_model = self.setup_model()
+        super().__init__(
+            base_feature_extractor.name + "_reduced_" + str(num_components),
+            save_dir=base_feature_extractor.save_dir,
+            train_dir=base_feature_extractor.train_dir,
+        )
 
     def setup_model(self):
         model_save_path = self.get_model_save_path()
@@ -30,7 +32,10 @@ class ReducedExtractor:
         else:
             print("Setting up reduction model")
             print("Getting training features")
-            training_features = self.feature_datasets.get_features(DatasetType.Train).cpu().detach()
+            create_dirs_if_not_found(os.path.join(self.save_dir, self.name))
+            training_features = (
+                self.feature_datasets.get_features(DatasetType.Train).cpu().detach()
+            )
             reduction_model = PCA(n_components=self.num_components)
             print("Scaling data")
             training_features = StandardScaler().fit_transform(training_features)
@@ -39,7 +44,7 @@ class ReducedExtractor:
             print("Saving reduction model")
             with open(model_save_path, "wb") as file:
                 pickle.dump(reduction_model, file)
-        return reduction_model
+        return reduction_model, self.num_components
 
     def extract(self, dataset_type: DatasetType):
         features_dir = self.get_features_dir(dataset_type)
@@ -59,14 +64,14 @@ class ReducedExtractor:
                 labels = labels.cpu().detach().numpy()
             features = features.cpu().detach()
             print("Running reduction")
-            reduced_features = self.reduction_model.transform(features)
+            reduced_features = self.extractor_model.transform(features)
 
             print("Saving tensors")
             # Save feature tensors
             i = 0
             filenames = []
             for reduced_feature in reduced_features:
-                self.save_tensor(dataset_type, reduced_feature, i)
+                self._save_tensor(dataset_type, reduced_feature, i)
                 filenames.append(i)
                 i += 1
 
@@ -81,17 +86,3 @@ class ReducedExtractor:
 
     def get_model_save_path(self):
         return os.path.join(self.save_dir, self.name, "reduction_model.pkl")
-
-    def get_features_dir(self, dataset_type: DatasetType) -> str:
-        return os.path.join(self.save_dir, self.name, dataset_type.name.lower())
-
-    def get_labels_filepath(self, dataset_type: DatasetType) -> str:
-        return os.path.join(
-            self.save_dir, self.name, dataset_type.name.lower() + "_labels.csv"
-        )
-
-    def save_tensor(self, dataset_type, tensor, file_id) -> None:
-        feature_dir = self.get_features_dir(dataset_type)
-        path = os.path.join(feature_dir, str(file_id) + ".pkl")
-        with open(path, "wb") as file:
-            pickle.dump(tensor, file)
