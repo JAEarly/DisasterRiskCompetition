@@ -29,7 +29,7 @@ from utils import (
     DualLogger,
 )
 
-ROOT_DIR = "./models/verified"
+ROOT_DIR = "./models/augmented"
 
 
 class GridSearch(ABC):
@@ -312,7 +312,14 @@ class XGBGridSearch(GridSearch):
 
 
 class CNNGridSearch(GridSearch):
-    def __init__(self, model_class, model_alteration_function, feature_name, train_dir="./data/processed/train", **kwargs):
+    def __init__(
+        self,
+        model_class,
+        model_alteration_function,
+        feature_name,
+        train_dir="./data/processed/train",
+        **kwargs
+    ):
         super().__init__(feature_name, **kwargs)
         self.model_class = model_class
         self.model_alteration_function = model_alteration_function
@@ -374,25 +381,27 @@ if __name__ == "__main__":
     # )
 
     grid_search = NNGridSearch(
-        nn_class=models.BiggerNN,
-        feature_extractor=features.ResNetCustom(),
-        tag="resnet_biggernn",
+        nn_class=models.LinearNN,
+        feature_extractor=features.ResNetCustom(
+            model_path="./models/augmented/grid_search_resnet_custom/best.pth",
+            save_dir="./models/features/augmented/",
+            train_dir="./data/augmented/train",
+        ),
+        tag="resnet_linearnn",
         repeats=3,
     )
     grid_search.run(
-        epoch_range=[1, 5, 10],
-        class_weight_methods=[
-            ClassWeightMethod.Unweighted,
-        ],
+        epoch_range=[1, 3, 5],
+        class_weight_methods=[ClassWeightMethod.Unweighted],
         balance_methods=[BalanceMethod.NoSample],
         dropout_range=[0.0, 0.25, 0.5],
     )
 
     # grid_search = XGBGridSearch(
-    #     feature_extractor=features.ResNetSMOTE(),
-    #     tag="resnet_smote_xgb_2",
+    #     feature_extractor=features.ResNetCustomSMOTE(),
+    #     tag="resnet_custom_smote_xgb",
     #     repeats=1,
     # )
     # grid_search.run(
-    #     num_rounds=[20, 25, 30],
+    #     num_rounds=[30],
     # )

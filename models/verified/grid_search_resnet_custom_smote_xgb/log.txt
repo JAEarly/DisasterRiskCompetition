@@ -1,0 +1,62 @@
+             Etas: [0.3]
+           Gammas: [0]
+           Depths: [5]
+Min Child Weights: [1]
+          Lambdas: [1]
+           Rounds: [30]
+
+-- Configuration 1/1 --
+eta - 0.3
+gamma - 0
+depth - 5
+c_weight - 1
+reg_lambda - 1
+num_rounds - 30
+Repeat 1/1
+Loading features
+Fitting model
+Creating DMatrix
+Using validation dataset for eval
+Training
+[0]	ValidationSet-mlogloss:1.22146
+[1]	ValidationSet-mlogloss:1.02651
+[2]	ValidationSet-mlogloss:0.901926
+[3]	ValidationSet-mlogloss:0.817989
+[4]	ValidationSet-mlogloss:0.760566
+[5]	ValidationSet-mlogloss:0.722192
+[6]	ValidationSet-mlogloss:0.6912
+[7]	ValidationSet-mlogloss:0.67012
+[8]	ValidationSet-mlogloss:0.654695
+[9]	ValidationSet-mlogloss:0.641945
+[10]	ValidationSet-mlogloss:0.63398
+[11]	ValidationSet-mlogloss:0.62801
+[12]	ValidationSet-mlogloss:0.624941
+[13]	ValidationSet-mlogloss:0.622973
+[14]	ValidationSet-mlogloss:0.620192
+[15]	ValidationSet-mlogloss:0.618622
+[16]	ValidationSet-mlogloss:0.61546
+[17]	ValidationSet-mlogloss:0.615971
+[18]	ValidationSet-mlogloss:0.614041
+[19]	ValidationSet-mlogloss:0.612718
+[20]	ValidationSet-mlogloss:0.61504
+[21]	ValidationSet-mlogloss:0.616123
+[22]	ValidationSet-mlogloss:0.616294
+[23]	ValidationSet-mlogloss:0.617844
+[24]	ValidationSet-mlogloss:0.619608
+[25]	ValidationSet-mlogloss:0.620577
+[26]	ValidationSet-mlogloss:0.620421
+[27]	ValidationSet-mlogloss:0.620896
+[28]	ValidationSet-mlogloss:0.623433
+[29]	ValidationSet-mlogloss:0.623274
+Best Loss: 0.6232742194458873
+ Best Acc: 0.7809139784946236
+ Avg Loss: 0.6232742194458873
+  Avg Acc: 0.7809139784946236
+
+--- Final Results ---
++-----+-------+-------+----------------------------------------------------------------------------------------------------------+-------------------------------------------------+
+| Pos | Loss  |  Acc  |                                                  Params                                                  |                    Filename                     |
++=====+=======+=======+==========================================================================================================+=================================================+
+|  1  | 0.623 | 0.781 | {'eta': 0.3, 'gamma': 0, 'depth': 5, 'c_weight': 1, 'reg_lambda': 1, 'num_rounds': 30, 'pass_val': True} | resnet_custom_smote_xgb_2019-12-07_04:08:07.pth |
++-----+-------+-------+----------------------------------------------------------------------------------------------------------+-------------------------------------------------+
+Uploading models/verified/grid_search_resnet_custom_smote_xgb/best.pth
