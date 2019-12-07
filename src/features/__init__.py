@@ -7,7 +7,7 @@ from .datasets import (
 )
 from .feature_extractor import FeatureExtractor, IdentityLayer
 from .smote_extractor import SmoteExtractor, SmoteType
-from .reduced_extractor import ReducedBasicExtractor
+from .reduced_extractor import ReducedBasicExtractor, ReducedSmoteExtractor
 from .alexnet_feature_extractor import (
     AlexNet,
     AlexNetSMOTE,
@@ -20,5 +20,6 @@ from .resnet_feature_extractor import (
     ResNetCustom,
     ResNetCustomSMOTE,
     ResNetCustomReduced,
+    ResNetCustomReducedSmote
 )
 from .vgg_feature_extractor import VggNet

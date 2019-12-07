@@ -1,0 +1,192 @@
+             Etas: [0.3]
+           Gammas: [0]
+           Depths: [5]
+Min Child Weights: [1]
+          Lambdas: [1]
+           Rounds: [10, 20, 30, 40]
+
+-- Configuration 1/4 --
+eta - 0.3
+gamma - 0
+depth - 5
+c_weight - 1
+reg_lambda - 1
+num_rounds - 10
+Repeat 1/1
+Loading features
+Fitting model
+Creating DMatrix
+Using validation dataset for eval
+Training
+[0]	ValidationSet-mlogloss:1.25111
+[1]	ValidationSet-mlogloss:1.06923
+[2]	ValidationSet-mlogloss:0.956215
+[3]	ValidationSet-mlogloss:0.879362
+[4]	ValidationSet-mlogloss:0.826339
+[5]	ValidationSet-mlogloss:0.785613
+[6]	ValidationSet-mlogloss:0.755866
+[7]	ValidationSet-mlogloss:0.734369
+[8]	ValidationSet-mlogloss:0.719539
+[9]	ValidationSet-mlogloss:0.708003
+Best Loss: 0.7080026842047891
+ Best Acc: 0.7345430107526881
+ Avg Loss: 0.7080026842047891
+  Avg Acc: 0.7345430107526881
+
+-- Configuration 2/4 --
+eta - 0.3
+gamma - 0
+depth - 5
+c_weight - 1
+reg_lambda - 1
+num_rounds - 20
+Repeat 1/1
+Loading features
+Fitting model
+Creating DMatrix
+Using validation dataset for eval
+Training
+[0]	ValidationSet-mlogloss:1.25111
+[1]	ValidationSet-mlogloss:1.06923
+[2]	ValidationSet-mlogloss:0.956215
+[3]	ValidationSet-mlogloss:0.879362
+[4]	ValidationSet-mlogloss:0.826339
+[5]	ValidationSet-mlogloss:0.785613
+[6]	ValidationSet-mlogloss:0.755866
+[7]	ValidationSet-mlogloss:0.734369
+[8]	ValidationSet-mlogloss:0.719539
+[9]	ValidationSet-mlogloss:0.708003
+[10]	ValidationSet-mlogloss:0.699801
+[11]	ValidationSet-mlogloss:0.694753
+[12]	ValidationSet-mlogloss:0.687696
+[13]	ValidationSet-mlogloss:0.684084
+[14]	ValidationSet-mlogloss:0.681879
+[15]	ValidationSet-mlogloss:0.681239
+[16]	ValidationSet-mlogloss:0.679167
+[17]	ValidationSet-mlogloss:0.675655
+[18]	ValidationSet-mlogloss:0.675137
+[19]	ValidationSet-mlogloss:0.674798
+Best Loss: 0.6747985016319886
+ Best Acc: 0.7547043010752689
+ Avg Loss: 0.6747985016319886
+  Avg Acc: 0.7547043010752689
+
+-- Configuration 3/4 --
+eta - 0.3
+gamma - 0
+depth - 5
+c_weight - 1
+reg_lambda - 1
+num_rounds - 30
+Repeat 1/1
+Loading features
+Fitting model
+Creating DMatrix
+Using validation dataset for eval
+Training
+[0]	ValidationSet-mlogloss:1.25111
+[1]	ValidationSet-mlogloss:1.06923
+[2]	ValidationSet-mlogloss:0.956215
+[3]	ValidationSet-mlogloss:0.879362
+[4]	ValidationSet-mlogloss:0.826339
+[5]	ValidationSet-mlogloss:0.785613
+[6]	ValidationSet-mlogloss:0.755866
+[7]	ValidationSet-mlogloss:0.734369
+[8]	ValidationSet-mlogloss:0.719539
+[9]	ValidationSet-mlogloss:0.708003
+[10]	ValidationSet-mlogloss:0.699801
+[11]	ValidationSet-mlogloss:0.694753
+[12]	ValidationSet-mlogloss:0.687696
+[13]	ValidationSet-mlogloss:0.684084
+[14]	ValidationSet-mlogloss:0.681879
+[15]	ValidationSet-mlogloss:0.681239
+[16]	ValidationSet-mlogloss:0.679167
+[17]	ValidationSet-mlogloss:0.675655
+[18]	ValidationSet-mlogloss:0.675137
+[19]	ValidationSet-mlogloss:0.674798
+[20]	ValidationSet-mlogloss:0.67332
+[21]	ValidationSet-mlogloss:0.673002
+[22]	ValidationSet-mlogloss:0.672565
+[23]	ValidationSet-mlogloss:0.670634
+[24]	ValidationSet-mlogloss:0.670492
+[25]	ValidationSet-mlogloss:0.671403
+[26]	ValidationSet-mlogloss:0.671858
+[27]	ValidationSet-mlogloss:0.671496
+[28]	ValidationSet-mlogloss:0.671256
+[29]	ValidationSet-mlogloss:0.671502
+Best Loss: 0.6715014790174155
+ Best Acc: 0.7506720430107527
+ Avg Loss: 0.6715014790174155
+  Avg Acc: 0.7506720430107527
+
+-- Configuration 4/4 --
+eta - 0.3
+gamma - 0
+depth - 5
+c_weight - 1
+reg_lambda - 1
+num_rounds - 40
+Repeat 1/1
+Loading features
+Fitting model
+Creating DMatrix
+Using validation dataset for eval
+Training
+[0]	ValidationSet-mlogloss:1.25111
+[1]	ValidationSet-mlogloss:1.06923
+[2]	ValidationSet-mlogloss:0.956215
+[3]	ValidationSet-mlogloss:0.879362
+[4]	ValidationSet-mlogloss:0.826339
+[5]	ValidationSet-mlogloss:0.785613
+[6]	ValidationSet-mlogloss:0.755866
+[7]	ValidationSet-mlogloss:0.734369
+[8]	ValidationSet-mlogloss:0.719539
+[9]	ValidationSet-mlogloss:0.708003
+[10]	ValidationSet-mlogloss:0.699801
+[11]	ValidationSet-mlogloss:0.694753
+[12]	ValidationSet-mlogloss:0.687696
+[13]	ValidationSet-mlogloss:0.684084
+[14]	ValidationSet-mlogloss:0.681879
+[15]	ValidationSet-mlogloss:0.681239
+[16]	ValidationSet-mlogloss:0.679167
+[17]	ValidationSet-mlogloss:0.675655
+[18]	ValidationSet-mlogloss:0.675137
+[19]	ValidationSet-mlogloss:0.674798
+[20]	ValidationSet-mlogloss:0.67332
+[21]	ValidationSet-mlogloss:0.673002
+[22]	ValidationSet-mlogloss:0.672565
+[23]	ValidationSet-mlogloss:0.670634
+[24]	ValidationSet-mlogloss:0.670492
+[25]	ValidationSet-mlogloss:0.671403
+[26]	ValidationSet-mlogloss:0.671858
+[27]	ValidationSet-mlogloss:0.671496
+[28]	ValidationSet-mlogloss:0.671256
+[29]	ValidationSet-mlogloss:0.671502
+[30]	ValidationSet-mlogloss:0.670485
+[31]	ValidationSet-mlogloss:0.671527
+[32]	ValidationSet-mlogloss:0.672934
+[33]	ValidationSet-mlogloss:0.673586
+[34]	ValidationSet-mlogloss:0.673925
+[35]	ValidationSet-mlogloss:0.674134
+[36]	ValidationSet-mlogloss:0.674435
+[37]	ValidationSet-mlogloss:0.674194
+[38]	ValidationSet-mlogloss:0.674055
+[39]	ValidationSet-mlogloss:0.67372
+Best Loss: 0.6737202457879903
+ Best Acc: 0.7473118279569892
+ Avg Loss: 0.6737202457879903
+  Avg Acc: 0.7473118279569892
+
+--- Final Results ---
++-----+-------+-------+----------------------------------------------------------------------------------------------------------+------------------------------------------------------------+
+| Pos | Loss  |  Acc  |                                                  Params                                                  |                          Filename                          |
++=====+=======+=======+==========================================================================================================+============================================================+
+|  1  | 0.672 | 0.751 | {'eta': 0.3, 'gamma': 0, 'depth': 5, 'c_weight': 1, 'reg_lambda': 1, 'num_rounds': 30, 'pass_val': True} | resnet_custom_reduced_smote_10_xgb_2019-12-07_21:30:46.pth |
++-----+-------+-------+----------------------------------------------------------------------------------------------------------+------------------------------------------------------------+
+|  2  | 0.674 | 0.747 | {'eta': 0.3, 'gamma': 0, 'depth': 5, 'c_weight': 1, 'reg_lambda': 1, 'num_rounds': 40, 'pass_val': True} | resnet_custom_reduced_smote_10_xgb_2019-12-07_21:30:53.pth |
++-----+-------+-------+----------------------------------------------------------------------------------------------------------+------------------------------------------------------------+
+|  3  | 0.675 | 0.755 | {'eta': 0.3, 'gamma': 0, 'depth': 5, 'c_weight': 1, 'reg_lambda': 1, 'num_rounds': 20, 'pass_val': True} | resnet_custom_reduced_smote_10_xgb_2019-12-07_21:30:41.pth |
++-----+-------+-------+----------------------------------------------------------------------------------------------------------+------------------------------------------------------------+
+|  4  | 0.708 | 0.735 | {'eta': 0.3, 'gamma': 0, 'depth': 5, 'c_weight': 1, 'reg_lambda': 1, 'num_rounds': 10, 'pass_val': True} | resnet_custom_reduced_smote_10_xgb_2019-12-07_21:30:35.pth |
++-----+-------+-------+----------------------------------------------------------------------------------------------------------+------------------------------------------------------------+
+Uploading models/verified/grid_search_resnet_custom_reduced_smote_10_xgb/best.pth

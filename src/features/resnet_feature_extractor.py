@@ -12,6 +12,7 @@ from features import (
     IdentityLayer,
     DatasetType,
     ReducedBasicExtractor,
+    ReducedSmoteExtractor
 )
 from features.smote_extractor import smote_type_to_name, SmoteType
 
@@ -131,6 +132,22 @@ class ResNetCustomReduced(ReducedBasicExtractor):
         super().__init__(base_feature_extractor, num_components)
 
 
+class ResNetCustomReducedSmote(ReducedSmoteExtractor):
+    def __init__(
+        self,
+        num_components,
+        model_path=DEFAULT_CUSTOM_PATH,
+        save_dir="./models/features/",
+        train_dir="./data/processed/train",
+    ):
+        base_feature_extractor = ResNetCustom(
+            model_path=model_path,
+            save_dir=save_dir,
+            train_dir=train_dir,
+        )
+        super().__init__(base_feature_extractor, num_components)
+
+
 if __name__ == "__main__":
     # print("Creating ResNet extractor")
     # feature_extractor = ResNet()
@@ -159,8 +176,16 @@ if __name__ == "__main__":
     #     print("Extracting features")
     #     feature_extractor.extract(DatasetType.Train)
 
-    print("Creating ResNet custom reduced extractor")
-    _feature_extractor = ResNetCustomReduced(10)
+    # print("Creating ResNet custom reduced extractor")
+    # _feature_extractor = ResNetCustomReduced(10)
+    # print("Extracting features")
+    # _feature_extractor.extract(DatasetType.Train)
+    # _feature_extractor.extract(DatasetType.Validation)
+    # _feature_extractor.extract(DatasetType.Test)
+    # _feature_extractor.extract(DatasetType.Competition)
+
+    print("Creating ResNet custom reduced smote extractor")
+    _feature_extractor = ResNetCustomReducedSmote(10)
     print("Extracting features")
     _feature_extractor.extract(DatasetType.Train)
     _feature_extractor.extract(DatasetType.Validation)

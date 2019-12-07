@@ -51,7 +51,7 @@ class ReducedExtractor(FeatureExtractor, ABC):
     def extract(self, dataset_type: DatasetType):
         features_dir = self.get_features_dir(dataset_type)
         features_dataset = self.feature_datasets.get_dataset(dataset_type)
-        if not os.path.exists(features_dir) or len(os.listdir(features_dir)) != len(
+        if not os.path.exists(features_dir) or len(os.listdir(features_dir)) < len(
             features_dataset
         ):
             print("Extracting", dataset_type, "for", self.name)
@@ -89,7 +89,6 @@ class ReducedExtractor(FeatureExtractor, ABC):
             labels = labels.cpu().detach().numpy()
         features = features.cpu().detach()
         print("Running reduction")
-        # TODO standard scalar here? Save to model as well?
         reduced_features = self.extractor_model.transform(features)
         return reduced_features, labels
 
@@ -130,13 +129,13 @@ class ReducedSmoteExtractor(ReducedExtractor):
         base_feature_extractor,
         num_components,
     ):
+        self.smote_train_features = None
+        self.smote_train_labels = None
         super().__init__(
             base_feature_extractor.name + "_reduced_smote_" + str(num_components),
             base_feature_extractor,
             num_components
         )
-        self.smote_train_features = None
-        self.smote_train_labels = None
 
     def create_reduction_model(self):
         print("Getting training features")
@@ -158,13 +157,14 @@ class ReducedSmoteExtractor(ReducedExtractor):
 
         reduction_model = PCA(n_components=self.num_components)
         print("Scaling data")
-        train_features = StandardScaler().fit_transform(self.smote_train_features)
+        training_features = StandardScaler().fit_transform(self.smote_train_features)
         print("Running " + str(reduction_model))
-        reduction_model.fit_transform(train_features)
+        reduction_model.fit(self.smote_train_features)
         return reduction_model
 
     def extract_for_dataset(self, dataset_type: DatasetType):
         if dataset_type == DatasetType.Train:
-            return self.smote_train_features, self.smote_train_labels
+            reduced_features = self.extractor_model.transform(self.smote_train_features)
+            return reduced_features, self.smote_train_labels
         else:
             return super().extract_for_dataset(dataset_type)

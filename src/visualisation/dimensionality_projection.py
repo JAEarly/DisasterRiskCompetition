@@ -117,12 +117,18 @@ def plot_dataset_comparison(feature_extractor):
 
 
 if __name__ == "__main__":
-    for i in [2, 5, 10]:
+    for i in [2, 5, 10, 15]:
         _feature_extractor = features.ResNetCustomReduced(
             num_components=i
-            # model_path="./models/augmented/grid_search_resnet_custom/best.pth",
-            # save_dir="./models/features/augmented/",
-            # train_dir="./data/augmented/train",
+        )
+        plot_dataset(
+            _feature_extractor,
+            [DatasetType.Train],
+            LinearDiscriminantAnalysis(n_components=2),
+        )
+
+        _feature_extractor = features.ResNetCustomReducedSmote(
+            num_components=i
         )
         plot_dataset(
             _feature_extractor,
