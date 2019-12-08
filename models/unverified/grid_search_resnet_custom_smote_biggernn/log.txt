@@ -1,0 +1,46 @@
+         Epoch Range: [1, 2]
+     Balance Methods: ['OverSample']
+Class Weight Methods: ['Unweighted']
+       Dropout Range: [0.6]
+
+-- Configuration 1/2 --
+epochs - 1
+balance_method - BalanceMethod.OverSample
+class_weight_method - ClassWeightMethod.Unweighted
+dropout - 0.6
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.6520659923553467
+ Best Acc: 0.744091808795929
+ Avg Loss: 0.6751022338867188
+  Avg Acc: 0.7411658565203348
+
+-- Configuration 2/2 --
+epochs - 2
+balance_method - BalanceMethod.OverSample
+class_weight_method - ClassWeightMethod.Unweighted
+dropout - 0.6
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.692522406578064
+ Best Acc: 0.7374746203422546
+ Avg Loss: 0.7041372855504354
+  Avg Acc: 0.7343236207962036
+
+--- Final Results ---
++-----+-------+-------+------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
+| Pos | Loss  |  Acc  |                                                                  Params                                                                  |                    Filename                    |
++=====+=======+=======+==========================================================================================================================================+================================================+
+|  1  | 0.652 | 0.744 | {'epochs': 1, 'balance_method': <BalanceMethod.OverSample: 3>, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>, 'dropout': 0.6} | resnet_custom_biggernn_2019-12-05_02:03:33.pth |
++-----+-------+-------+------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
+|  2  | 0.693 | 0.737 | {'epochs': 2, 'balance_method': <BalanceMethod.OverSample: 3>, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>, 'dropout': 0.6} | resnet_custom_biggernn_2019-12-05_02:06:46.pth |
++-----+-------+-------+------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
+Uploading models/oversample/grid_search_resnet_custom_smote_biggernn_3/best.pth

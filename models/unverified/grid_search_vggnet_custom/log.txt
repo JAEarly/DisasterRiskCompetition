@@ -1,0 +1,76 @@
+         Epoch Range: [1, 3]
+Class Weight Methods: ['Unweighted']
+
+-- Configuration 1/2 --
+epochs - 1
+class_weight_method - ClassWeightMethod.Unweighted
+Repeat 1/1
+Training using cuda:0
+Best Loss: 0.5320142507553101
+ Best Acc: 0.8133864998817444
+ Avg Loss: 0.5320142507553101
+  Avg Acc: 0.8133864998817444
+
+-- Configuration 2/2 --
+epochs - 3
+class_weight_method - ClassWeightMethod.Unweighted
+Repeat 1/1
+Training using cuda:0
+Best Loss: 0.4714289903640747
+ Best Acc: 0.8404254913330078
+ Avg Loss: 0.4714289903640747
+  Avg Acc: 0.8404254913330078
+
+--- Final Results ---
++-----+-------+-------+-------------------------------------------------------------------------+-----------------------------------------+
+| Pos | Loss  |  Acc  |                                 Params                                  |                Filename                 |
++=====+=======+=======+=========================================================================+=========================================+
+|  1  | 0.471 | 0.840 | {'epochs': 3, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>} | images_vgg19_bn_2019-12-02_17:24:42.pth |
++-----+-------+-------+-------------------------------------------------------------------------+-----------------------------------------+
+|  2  | 0.532 | 0.813 | {'epochs': 1, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>} | images_vgg19_bn_2019-12-02_16:15:25.pth |
++-----+-------+-------+-------------------------------------------------------------------------+-----------------------------------------+
+Uploading models/grid_search_vggnet_custom/best.pth
+         Epoch Range: [5, 7, 10]
+Class Weight Methods: ['Unweighted']
+
+-- Configuration 1/3 --
+epochs - 5
+class_weight_method - ClassWeightMethod.Unweighted
+Repeat 1/1
+Training using cuda:0
+Best Loss: 0.44212764501571655
+ Best Acc: 0.8417552709579468
+ Avg Loss: 0.44212764501571655
+  Avg Acc: 0.8417552709579468
+
+-- Configuration 2/3 --
+epochs - 7
+class_weight_method - ClassWeightMethod.Unweighted
+Repeat 1/1
+Training using cuda:0
+Best Loss: 0.4561326503753662
+ Best Acc: 0.8377659320831299
+ Avg Loss: 0.4561326503753662
+  Avg Acc: 0.8377659320831299
+
+-- Configuration 3/3 --
+epochs - 10
+class_weight_method - ClassWeightMethod.Unweighted
+Repeat 1/1
+Training using cuda:0
+Best Loss: 0.5558117628097534
+ Best Acc: 0.8244680762290955
+ Avg Loss: 0.5558117628097534
+  Avg Acc: 0.8244680762290955
+
+--- Final Results ---
++-----+-------+-------+--------------------------------------------------------------------------+-----------------------------------------+
+| Pos | Loss  |  Acc  |                                  Params                                  |                Filename                 |
++=====+=======+=======+==========================================================================+=========================================+
+|  1  | 0.442 | 0.842 | {'epochs': 5, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>}  | images_vgg19_bn_2019-12-02_22:42:12.pth |
++-----+-------+-------+--------------------------------------------------------------------------+-----------------------------------------+
+|  2  | 0.456 | 0.838 | {'epochs': 7, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>}  | images_vgg19_bn_2019-12-03_01:25:03.pth |
++-----+-------+-------+--------------------------------------------------------------------------+-----------------------------------------+
+|  3  | 0.556 | 0.824 | {'epochs': 10, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>} | images_vgg19_bn_2019-12-03_05:30:20.pth |
++-----+-------+-------+--------------------------------------------------------------------------+-----------------------------------------+
+Uploading models/grid_search_vggnet_custom/best.pth

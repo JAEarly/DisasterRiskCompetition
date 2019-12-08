@@ -8,28 +8,28 @@ import os
 from abc import ABC, abstractmethod
 from shutil import copyfile
 from texttable import Texttable
-from torchvision import models as torch_models
-from model_manager import ModelManager
+from torchvision import models as tv_models
+from features import SmoteType
 
-import models.cnn_model as cnn_models
+import features
 from features import BalanceMethod, FeatureExtractor
+from model_manager import ModelManager
+from models import transfers
+import models
 from models import (
-    FeatureTrainer,
     NNModel,
     Model,
     XGBModel,
-    ClassWeightMethod,
     PretrainedNNModel,
 )
-from models.cnn_model import PretrainedNNTrainer
-from models.nn_model import NNTrainer
+from training import FeatureTrainer, ClassWeightMethod, PretrainedNNTrainer, NNTrainer
 from utils import (
     create_timestamp_str,
     create_dirs_if_not_found,
     DualLogger,
 )
 
-ROOT_DIR = "./models"
+ROOT_DIR = "./models/verified"
 
 
 class GridSearch(ABC):
@@ -45,7 +45,7 @@ class GridSearch(ABC):
         self.repeats = repeats
 
         create_dirs_if_not_found(self.save_dir)
-        print("Running", self.grid_search_tag + self.feature_name)
+        print("Running", self.grid_search_tag)
 
     def run(self, **kwargs) -> None:
         """
@@ -78,7 +78,7 @@ class GridSearch(ABC):
             trained_models = []
             for r in range(self.repeats):
                 print("Repeat " + str(r + 1) + "/" + str(self.repeats))
-                acc, loss, model = self._train_model(config)
+                acc, loss, model = self._train_model(config, **kwargs)
                 accs.append(acc)
                 losses.append(loss)
                 trained_models.append(model)
@@ -178,7 +178,7 @@ class GridSearch(ABC):
         """
 
     @abstractmethod
-    def _train_model(self, config) -> (float, float, Model):
+    def _train_model(self, config, **kwargs) -> (float, float, Model):
         """
         Train and evaluate a model.
         :param config: Configuration of hyper parameters.
@@ -189,8 +189,10 @@ class GridSearch(ABC):
 class NNGridSearch(GridSearch):
     """Grid search for NN models."""
 
-    def __init__(self, nn_class, feature_extractor: FeatureExtractor, **kwargs):
-        super().__init__(feature_extractor.name, **kwargs)
+    def __init__(
+        self, nn_class, feature_extractor: FeatureExtractor, tag=None, repeats=3
+    ):
+        super().__init__(feature_extractor.name, tag=tag, repeats=repeats)
         self.feature_extractor = feature_extractor
         self.nn_class = nn_class
 
@@ -237,7 +239,7 @@ class NNGridSearch(GridSearch):
 
         return dict_configs
 
-    def _train_model(self, config):
+    def _train_model(self, config, **kwargs):
         trainer = NNTrainer(
             self.feature_extractor,
             num_epochs=config["epochs"],
@@ -250,21 +252,23 @@ class NNGridSearch(GridSearch):
             dropout=config["dropout"],
         )
         val_acc, val_loss = trainer.train(model)
+        trainer.evaluate(model, trainer.feature_dataset.validation_loader)
         return val_acc, val_loss, model
 
 
 class XGBGridSearch(GridSearch):
-    def __init__(self, feature_extractor, **kwargs):
-        super().__init__(feature_extractor.name, **kwargs)
+    def __init__(self, feature_extractor, tag=None, repeats=3):
+        super().__init__(feature_extractor.name, tag=tag, repeats=repeats)
         self.feature_extractor = feature_extractor
 
     def _create_all_configs(self, hyper_parameter_ranges):
         # Extract hyper parameter ranges
         etas = self._extract_range(hyper_parameter_ranges, "etas", [0.3])
         gammas = self._extract_range(hyper_parameter_ranges, "gammas", [0])
-        depths = self._extract_range(hyper_parameter_ranges, "depths", [6])
+        depths = self._extract_range(hyper_parameter_ranges, "depths", [5])
         c_weights = self._extract_range(hyper_parameter_ranges, "c_weights", [1])
         lambdas = self._extract_range(hyper_parameter_ranges, "lambdas", [1])
+        rounds = self._extract_range(hyper_parameter_ranges, "num_rounds", [3])
 
         # Output parameter values
         print("             Etas:", etas)
@@ -272,15 +276,17 @@ class XGBGridSearch(GridSearch):
         print("           Depths:", depths)
         print("Min Child Weights:", c_weights)
         print("          Lambdas:", lambdas)
+        print("           Rounds:", rounds)
 
         # Create configs
         all_configs = (
-            (eta, gamma, depth, c_weight, reg_lambda)
+            (eta, gamma, depth, c_weight, reg_lambda, num_rounds)
             for eta in etas
             for gamma in gammas
             for depth in depths
             for c_weight in c_weights
             for reg_lambda in lambdas
+            for num_rounds in rounds
         )
 
         dict_configs = []
@@ -292,23 +298,33 @@ class XGBGridSearch(GridSearch):
                     "depth": config[2],
                     "c_weight": config[3],
                     "reg_lambda": config[4],
+                    "num_rounds": config[5],
                 }
             )
 
         return dict_configs
 
-    def _train_model(self, config) -> (float, float, Model):
+    def _train_model(self, config, **kwargs) -> (float, float, Model):
         trainer = FeatureTrainer(self.feature_extractor)
         model = XGBModel()
+        config["pass_val"] = True
         val_acc, val_loss = trainer.train(model, **config)
         return val_acc, val_loss, model
 
 
 class CNNGridSearch(GridSearch):
-    def __init__(self, model_class, model_alteration_function, feature_name, **kwargs):
+    def __init__(
+        self,
+        model_class,
+        model_alteration_function,
+        feature_name,
+        train_dir="./data/processed/train",
+        **kwargs
+    ):
         super().__init__(feature_name, **kwargs)
         self.model_class = model_class
         self.model_alteration_function = model_alteration_function
+        self.train_dir = train_dir
 
     def _create_all_configs(self, hyper_parameter_ranges):
         # Extract hyper parameter ranges
@@ -338,10 +354,11 @@ class CNNGridSearch(GridSearch):
 
         return dict_configs
 
-    def _train_model(self, config) -> (float, float, Model):
+    def _train_model(self, config, **kwargs) -> (float, float, Model):
         trainer = PretrainedNNTrainer(
             num_epochs=config["epochs"],
             class_weight_method=config["class_weight_method"],
+            train_dir=self.train_dir,
         )
         model = PretrainedNNModel(self.model_class, self.model_alteration_function)
         val_acc, val_loss = trainer.train(model)
@@ -349,17 +366,39 @@ class CNNGridSearch(GridSearch):
 
 
 if __name__ == "__main__":
-    grid_search = CNNGridSearch(
-        torch_models.resnet152,
-        cnn_models.final_layer_alteration_resnet,
-        "images",
-        tag="resnet_cnn",
-        repeats=1,
+    # grid_search = CNNGridSearch(
+    #     tv_models.resnet152,
+    #     transfers.final_layer_alteration_resnet,
+    #     "images",
+    #     tag="resnet_custom",
+    #     repeats=1,
+    #     train_dir="./data/augmented/train"
+    # )
+    # grid_search.run(
+    #     epoch_range=[1, 2],
+    #     class_weight_methods=[
+    #         ClassWeightMethod.Unweighted,
+    #     ],
+    # )
+
+    grid_search = NNGridSearch(
+        nn_class=models.LinearNN,
+        feature_extractor=features.ResNetCustomReducedSmote(10),
+        tag="resnet_custom_reduced_smote_10_linearnn_3",
+        repeats=3,
     )
     grid_search.run(
         epoch_range=[1, 3, 5, 10],
-        class_weight_methods=[
-            ClassWeightMethod.Unweighted,
-            ClassWeightMethod.SumBased,
-        ],
+        class_weight_methods=[ClassWeightMethod.Unweighted],
+        balance_methods=[BalanceMethod.NoSample],
+        dropout_range=[0.0, 0.25, 0.5],
     )
+
+    # grid_search = XGBGridSearch(
+    #     feature_extractor=features.ResNetCustomReducedSmote(10),
+    #     tag="resnet_custom_reduced_smote_10_xgb_2",
+    #     repeats=1,
+    # )
+    # grid_search.run(
+    #     num_rounds=[5, 10, 20, 30, 40],
+    # )

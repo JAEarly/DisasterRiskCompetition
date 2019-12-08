@@ -1,0 +1,38 @@
+
+Repeat 1/10
+Training using cuda:0
+
+Repeat 2/10
+Training using cuda:0
+
+Repeat 3/10
+Training using cuda:0
+
+Repeat 4/10
+Training using cuda:0
+
+Repeat 5/10
+Training using cuda:0
+
+Repeat 6/10
+Training using cuda:0
+
+Repeat 7/10
+Training using cuda:0
+
+Repeat 8/10
+Training using cuda:0
+
+Repeat 9/10
+Training using cuda:0
+
+Repeat 10/10
+Training using cuda:0
+
+ Best Acc: 0.8670650124549866
+Best Loss: 0.3443279266357422
+  Avg Acc: 0.851979112625122
+ Avg Loss: 0.38539576530456543
+  Std Acc: 0.01023343288376186
+ Std Loss: 0.024810582775770248
+Uploading models/kfold/kfold_resnet_custom_biggernn_3/best.pth

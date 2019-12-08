@@ -1,0 +1,52 @@
+             Etas: [0.3]
+           Gammas: [0]
+           Depths: [5]
+Min Child Weights: [1]
+          Lambdas: [1]
+           Rounds: [20]
+
+-- Configuration 1/1 --
+eta - 0.3
+gamma - 0
+depth - 5
+c_weight - 1
+reg_lambda - 1
+num_rounds - 20
+Repeat 1/1
+Loading features
+Fitting model
+Creating DMatrix
+Using validation dataset for eval
+Training
+[0]	ValidationSet-mlogloss:1.11396
+[1]	ValidationSet-mlogloss:0.876859
+[2]	ValidationSet-mlogloss:0.727882
+[3]	ValidationSet-mlogloss:0.630301
+[4]	ValidationSet-mlogloss:0.563811
+[5]	ValidationSet-mlogloss:0.516946
+[6]	ValidationSet-mlogloss:0.484898
+[7]	ValidationSet-mlogloss:0.460537
+[8]	ValidationSet-mlogloss:0.444732
+[9]	ValidationSet-mlogloss:0.431506
+[10]	ValidationSet-mlogloss:0.422498
+[11]	ValidationSet-mlogloss:0.416762
+[12]	ValidationSet-mlogloss:0.411241
+[13]	ValidationSet-mlogloss:0.407465
+[14]	ValidationSet-mlogloss:0.405594
+[15]	ValidationSet-mlogloss:0.403986
+[16]	ValidationSet-mlogloss:0.403501
+[17]	ValidationSet-mlogloss:0.403006
+[18]	ValidationSet-mlogloss:0.402796
+[19]	ValidationSet-mlogloss:0.402772
+Best Loss: 0.40277185000952725
+ Best Acc: 0.8599290780141844
+ Avg Loss: 0.40277185000952725
+  Avg Acc: 0.8599290780141844
+
+--- Final Results ---
++-----+-------+-------+----------------------------------------------------------------------------------------------------------+-------------------------------------------+
+| Pos | Loss  |  Acc  |                                                  Params                                                  |                 Filename                  |
++=====+=======+=======+==========================================================================================================+===========================================+
+|  1  | 0.403 | 0.860 | {'eta': 0.3, 'gamma': 0, 'depth': 5, 'c_weight': 1, 'reg_lambda': 1, 'num_rounds': 20, 'pass_val': True} | resnet_custom_xgb_2019-11-29_02:24:57.pth |
++-----+-------+-------+----------------------------------------------------------------------------------------------------------+-------------------------------------------+
+Uploading models/grid_search_resnet_custom_xgb_2/best.pth
