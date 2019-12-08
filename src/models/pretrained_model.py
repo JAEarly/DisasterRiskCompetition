@@ -39,3 +39,9 @@ class PretrainedNNModel(Model):
 
     def save(self, path):
         torch.save(self.net.state_dict(), path)
+
+    @staticmethod
+    def create_from_transfer(pretrained_net_class, final_layer_alteration, original_model_path, original_num_classes, new_number_classes):
+        model = PretrainedNNModel(pretrained_net_class, final_layer_alteration, state_dict_path=original_model_path, num_classes=original_num_classes)
+        final_layer_alteration(model.net, new_number_classes)
+        return model

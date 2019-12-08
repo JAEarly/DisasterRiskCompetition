@@ -374,10 +374,11 @@ if __name__ == "__main__":
         "images",
         tag="resnet_custom",
         repeats=1,
-        root_dir="./data/processed_old/"
+        root_dir="./data/processed_old/",
+        num_classes=3
     )
     grid_search.run(
-        epoch_range=[1, 2, 3],
+        epoch_range=[1, 2, 3, 4, 5],
         class_weight_methods=[
             ClassWeightMethod.Unweighted,
         ],
