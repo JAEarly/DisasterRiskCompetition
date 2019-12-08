@@ -21,19 +21,20 @@ from models import ModelIterator
 
 def setup_feature_evaluation():
     # Don't use SMOTE feature extractors, just usual normal version
-    feature_extractor = features.ResNetCustomReducedSmote(100)
+    feature_extractor = features.ResNetCustom()
     datasets = FeatureDatasets(feature_extractor)
 
     # model = models.NNModel(
-    #     models.BiggerNN,
+    #     models.LinearNN,
     #     feature_extractor.feature_size,
-    #     state_dict_path="./models/verified/grid_search_resnet_custom_reduced_5_biggernn/best.pth",
+    #     state_dict_path="./models/kfold/kfold_resnet_custom_linearnn/best.pth",
     #     eval_mode=True,
     # )
 
     model = models.XGBModel(
-        model_path="./models/verified/grid_search_resnet_custom_reduced_smote_100_xgb/best.pth"
+        model_path="./models/kfold/kfold_resnet_custom_xgb/best.pth"
     )
+
     print("Running evaluation for", feature_extractor.name, model.name)
     return datasets, model
 
@@ -99,7 +100,7 @@ def evaluate_all():
 
 
 def evaluate_all_within_class():
-    base_dir = "./models/grid_search_resnet_smote_custom_xgb_4/"
+    base_dir = "./models/kfold/kfold_resnet_custom_xgb/"
     all_dir = base_dir + "all/"
     best_filepath = base_dir + "best.pth"
     filepaths = [best_filepath]
@@ -109,16 +110,16 @@ def evaluate_all_within_class():
     feature_extractor = features.ResNetCustom()
     datasets = FeatureDatasets(feature_extractor)
 
-    filename_len = len(filepaths[1].split("/")[-1]) + 1
+    filename_len = max(len(filepaths[1].split("/")[-1]) + 1, len("best.pth "))
     print(" " * filename_len + "| Train Acc | Train LL  |  Val Acc  |   Val LL  |  Test Acc |  Test LL  |")
     for model_path in filepaths:
-        # model = models.NNModel(
-        #     models.LinearNN,
-        #     feature_extractor.feature_size,
-        #     state_dict_path=model_path,
-        #     eval_mode=True,
-        # )
         if os.path.exists(model_path):
+            # model = models.NNModel(
+            #     models.BiggerNN,
+            #     feature_extractor.feature_size,
+            #     state_dict_path=model_path,
+            #     eval_mode=True,
+            # )
             model = models.XGBModel(
                 model_path=model_path
             )
@@ -129,9 +130,9 @@ def evaluate_all_within_class():
 
 
 if __name__ == "__main__":
-    _datasets, _model = setup_feature_evaluation()
+    # _datasets, _model = setup_feature_evaluation()
     # _datasets, _model = setup_image_evaluation()
-    run_evaluation(_datasets, _model)
+    # run_evaluation(_datasets, _model)
 
     # evaluate_all()
-    # evaluate_all_within_class()
+    evaluate_all_within_class()
