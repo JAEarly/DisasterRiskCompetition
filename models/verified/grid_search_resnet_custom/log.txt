@@ -1,0 +1,44 @@
+         Epoch Range: [1, 3, 5]
+Class Weight Methods: ['Unweighted']
+
+-- Configuration 1/3 --
+epochs - 1
+class_weight_method - ClassWeightMethod.Unweighted
+Repeat 1/1
+Training using cuda:0
+Best Loss: 0.6409825086593628
+ Best Acc: 0.7506720423698425
+ Avg Loss: 0.6409825086593628
+  Avg Acc: 0.7506720423698425
+
+-- Configuration 2/3 --
+epochs - 3
+class_weight_method - ClassWeightMethod.Unweighted
+Repeat 1/1
+Training using cuda:0
+Best Loss: 0.5898866057395935
+ Best Acc: 0.7701612710952759
+ Avg Loss: 0.5898866057395935
+  Avg Acc: 0.7701612710952759
+
+-- Configuration 3/3 --
+epochs - 5
+class_weight_method - ClassWeightMethod.Unweighted
+Repeat 1/1
+Training using cuda:0
+Best Loss: 0.6094079613685608
+ Best Acc: 0.7829301357269287
+ Avg Loss: 0.6094079613685608
+  Avg Acc: 0.7829301357269287
+
+--- Final Results ---
++-----+-------+-------+-------------------------------------------------------------------------+------------------------------------------+
+| Pos | Loss  |  Acc  |                                 Params                                  |                 Filename                 |
++=====+=======+=======+=========================================================================+==========================================+
+|  1  | 0.590 | 0.770 | {'epochs': 3, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>} | images_resnet152_2019-12-06_17:16:03.pth |
++-----+-------+-------+-------------------------------------------------------------------------+------------------------------------------+
+|  2  | 0.609 | 0.783 | {'epochs': 5, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>} | images_resnet152_2019-12-06_18:37:23.pth |
++-----+-------+-------+-------------------------------------------------------------------------+------------------------------------------+
+|  3  | 0.641 | 0.751 | {'epochs': 1, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>} | images_resnet152_2019-12-06_16:26:57.pth |
++-----+-------+-------+-------------------------------------------------------------------------+------------------------------------------+
+Uploading models/verified/grid_search_resnet_custom/best.pth

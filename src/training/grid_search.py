@@ -29,7 +29,7 @@ from utils import (
     DualLogger,
 )
 
-ROOT_DIR = "./models"
+ROOT_DIR = "./models/verified"
 
 
 class GridSearch(ABC):
@@ -252,6 +252,7 @@ class NNGridSearch(GridSearch):
             dropout=config["dropout"],
         )
         val_acc, val_loss = trainer.train(model)
+        trainer.evaluate(model, trainer.feature_dataset.validation_loader)
         return val_acc, val_loss, model
 
 
@@ -312,10 +313,18 @@ class XGBGridSearch(GridSearch):
 
 
 class CNNGridSearch(GridSearch):
-    def __init__(self, model_class, model_alteration_function, feature_name, **kwargs):
+    def __init__(
+        self,
+        model_class,
+        model_alteration_function,
+        feature_name,
+        train_dir="./data/processed/train",
+        **kwargs
+    ):
         super().__init__(feature_name, **kwargs)
         self.model_class = model_class
         self.model_alteration_function = model_alteration_function
+        self.train_dir = train_dir
 
     def _create_all_configs(self, hyper_parameter_ranges):
         # Extract hyper parameter ranges
@@ -349,6 +358,7 @@ class CNNGridSearch(GridSearch):
         trainer = PretrainedNNTrainer(
             num_epochs=config["epochs"],
             class_weight_method=config["class_weight_method"],
+            train_dir=self.train_dir,
         )
         model = PretrainedNNModel(self.model_class, self.model_alteration_function)
         val_acc, val_loss = trainer.train(model)
@@ -357,66 +367,38 @@ class CNNGridSearch(GridSearch):
 
 if __name__ == "__main__":
     # grid_search = CNNGridSearch(
-    #     tv_models.vgg19_bn,
-    #     transfers.final_layer_alteration_vggnet,
+    #     tv_models.resnet152,
+    #     transfers.final_layer_alteration_resnet,
     #     "images",
-    #     tag="vggnet_custom",
+    #     tag="resnet_custom",
     #     repeats=1,
+    #     train_dir="./data/augmented/train"
     # )
     # grid_search.run(
-    #     epoch_range=[5, 7, 10],
+    #     epoch_range=[1, 2],
     #     class_weight_methods=[
     #         ClassWeightMethod.Unweighted,
     #     ],
     # )
 
-    # grid_search = NNGridSearch(
-    #     nn_class=models.LinearNN,
-    #     feature_extractor=features.ResNetCustomSMOTE(smote_type=SmoteType.Adasyn),
-    #     tag="resnet_custom_smote_adasyn_linearnn",
-    #     repeats=2,
-    # )
-    # grid_search.run(
-    #     epoch_range=[1, 3, 5],
-    #     class_weight_methods=[
-    #         ClassWeightMethod.Unweighted,
-    #     ],
-    #     balance_methods=[BalanceMethod.NoSample],
-    #     dropout_range=[0.0, 0.25],
-    # )
-
-    # grid_search = XGBGridSearch(
-    #     feature_extractor=features.AlexNetSMOTE(),
-    #     tag="alexnet_smote_xgb_3",
-    #     repeats=1,
-    # )
-    # grid_search.run(
-    #     num_rounds=[10, 20, 30, 40],
-    # )
-    #
-    # grid_search = XGBGridSearch(
-    #     feature_extractor=features.AlexNetCustomSMOTE(),
-    #     tag="alexnet_custom_smote_xgb_3",
-    #     repeats=1,
-    # )
-    # grid_search.run(
-    #     num_rounds=[10, 20, 30, 40],
-    # )
-    #
-    # grid_search = XGBGridSearch(
-    #     feature_extractor=features.ResNetSMOTE(),
-    #     tag="resnet_smote_xgb_3",
-    #     repeats=1,
-    # )
-    # grid_search.run(
-    #     num_rounds=[10, 20, 30, 40],
-    # )
-
-    grid_search = XGBGridSearch(
-        feature_extractor=features.ResNetCustomSMOTE(),
-        tag="resnet_smote_custom_xgb_4",
-        repeats=1,
+    grid_search = NNGridSearch(
+        nn_class=models.LinearNN,
+        feature_extractor=features.ResNetCustomReducedSmote(10),
+        tag="resnet_custom_reduced_smote_10_linearnn_3",
+        repeats=3,
     )
     grid_search.run(
-        num_rounds=[45, 50, 55, 60],
+        epoch_range=[1, 3, 5, 10],
+        class_weight_methods=[ClassWeightMethod.Unweighted],
+        balance_methods=[BalanceMethod.NoSample],
+        dropout_range=[0.0, 0.25, 0.5],
     )
+
+    # grid_search = XGBGridSearch(
+    #     feature_extractor=features.ResNetCustomReducedSmote(10),
+    #     tag="resnet_custom_reduced_smote_10_xgb_2",
+    #     repeats=1,
+    # )
+    # grid_search.run(
+    #     num_rounds=[5, 10, 20, 30, 40],
+    # )

@@ -39,7 +39,7 @@ def extract_images() -> None:
 class ImageExtractor(ABC):
     """Base class for image extraction."""
 
-    def __init__(self, tiff_path, geojson_path, output_path):
+    def __init__(self, tiff_path, geojson_path, output_path, verified_only=True):
         self.tiff_path = os.path.join(INPUT_DIR, tiff_path)
         self.geojson_path = os.path.join(INPUT_DIR, geojson_path)
         self.output_path = os.path.join(OUTPUT_DIR, output_path)
@@ -56,30 +56,36 @@ class ImageExtractor(ABC):
         if self.extraction_required:
             # Read GeoJson file
             geo_json_dataframe = gpd.read_file(self.geojson_path)
+            if verified_only and 'verified' in geo_json_dataframe.columns:
+                geo_json_dataframe = geo_json_dataframe.loc[geo_json_dataframe['verified'] == True]
 
-            # Create and populate new column for projected geometries
-            with rasterio.open(self.tiff_path) as tiff:
-                tiff_crs = tiff.crs.data
-                geo_json_dataframe["projected_geometry"] = geo_json_dataframe[
-                    "geometry"
-                ].to_crs(tiff_crs)
-
-            # Setup roof geometry dataframe
-            self.roof_geometries_dataframe = self.create_roof_geometry_dataframe(
-                geo_json_dataframe
-            )
-
-            # Create output dirs if they don't exist
-            self.setup_output_dirs()
-
-            # Check if files are already extracted
-            num_roofs = len(self.roof_geometries_dataframe.index)
-            num_existing = sum(
-                [len(files) for r, d, files in os.walk(self.output_path)]
-            )
-            if num_existing == num_roofs:
+            if len(geo_json_dataframe) == 0:
+                print('No verified images found, skipping')
                 self.extraction_required = False
-                print("Already found images")
+            else:
+                # Create and populate new column for projected geometries
+                with rasterio.open(self.tiff_path) as tiff:
+                    tiff_crs = tiff.crs.data
+                    geo_json_dataframe["projected_geometry"] = geo_json_dataframe[
+                        "geometry"
+                    ].to_crs(tiff_crs)
+
+                # Setup roof geometry dataframe
+                self.roof_geometries_dataframe = self.create_roof_geometry_dataframe(
+                    geo_json_dataframe
+                )
+
+                # Create output dirs if they don't exist
+                self.setup_output_dirs()
+
+                # Check if files are already extracted
+                num_roofs = len(self.roof_geometries_dataframe.index)
+                num_existing = sum(
+                    [len(files) for r, d, files in os.walk(self.output_path)]
+                )
+                if num_existing == num_roofs:
+                    self.extraction_required = False
+                    print("Already found images")
 
     @abstractmethod
     def create_roof_geometry_dataframe(

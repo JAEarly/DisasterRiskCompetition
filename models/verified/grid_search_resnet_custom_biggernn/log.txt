@@ -1,0 +1,172 @@
+         Epoch Range: [1, 5, 10]
+     Balance Methods: ['NoSample']
+Class Weight Methods: ['Unweighted']
+       Dropout Range: [0.0, 0.25, 0.5]
+
+-- Configuration 1/9 --
+epochs - 1
+balance_method - BalanceMethod.NoSample
+class_weight_method - ClassWeightMethod.Unweighted
+dropout - 0.0
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.5609899163246155
+ Best Acc: 0.801075279712677
+ Avg Loss: 0.5652687946955363
+  Avg Acc: 0.7995071808497111
+
+-- Configuration 2/9 --
+epochs - 1
+balance_method - BalanceMethod.NoSample
+class_weight_method - ClassWeightMethod.Unweighted
+dropout - 0.25
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.5583785772323608
+ Best Acc: 0.7930107712745667
+ Avg Loss: 0.5615355372428894
+  Avg Acc: 0.7943548560142517
+
+-- Configuration 3/9 --
+epochs - 1
+balance_method - BalanceMethod.NoSample
+class_weight_method - ClassWeightMethod.Unweighted
+dropout - 0.5
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.5687852501869202
+ Best Acc: 0.7963709831237793
+ Avg Loss: 0.5721175670623779
+  Avg Acc: 0.7930107712745667
+
+-- Configuration 4/9 --
+epochs - 5
+balance_method - BalanceMethod.NoSample
+class_weight_method - ClassWeightMethod.Unweighted
+dropout - 0.0
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.5455020666122437
+ Best Acc: 0.7997311949729919
+ Avg Loss: 0.555727998415629
+  Avg Acc: 0.7983871102333069
+
+-- Configuration 5/9 --
+epochs - 5
+balance_method - BalanceMethod.NoSample
+class_weight_method - ClassWeightMethod.Unweighted
+dropout - 0.25
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.5461570024490356
+ Best Acc: 0.7963709831237793
+ Avg Loss: 0.5576420227686564
+  Avg Acc: 0.7983871102333069
+
+-- Configuration 6/9 --
+epochs - 5
+balance_method - BalanceMethod.NoSample
+class_weight_method - ClassWeightMethod.Unweighted
+dropout - 0.5
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.5493042469024658
+ Best Acc: 0.7970430254936218
+ Avg Loss: 0.5543613036473592
+  Avg Acc: 0.7970430254936218
+
+-- Configuration 7/9 --
+epochs - 10
+balance_method - BalanceMethod.NoSample
+class_weight_method - ClassWeightMethod.Unweighted
+dropout - 0.0
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.553385853767395
+ Best Acc: 0.8091397881507874
+ Avg Loss: 0.56983615954717
+  Avg Acc: 0.8012992938359579
+
+-- Configuration 8/9 --
+epochs - 10
+balance_method - BalanceMethod.NoSample
+class_weight_method - ClassWeightMethod.Unweighted
+dropout - 0.25
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.5376825928688049
+ Best Acc: 0.8051075339317322
+ Avg Loss: 0.5551151633262634
+  Avg Acc: 0.801075279712677
+
+-- Configuration 9/9 --
+epochs - 10
+balance_method - BalanceMethod.NoSample
+class_weight_method - ClassWeightMethod.Unweighted
+dropout - 0.5
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.5547309517860413
+ Best Acc: 0.7950268983840942
+ Avg Loss: 0.5584042469660441
+  Avg Acc: 0.796819011370341
+
+--- Final Results ---
++-----+-------+-------+------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
+| Pos | Loss  |  Acc  |                                                                  Params                                                                  |                    Filename                    |
++=====+=======+=======+==========================================================================================================================================+================================================+
+|  1  | 0.538 | 0.805 | {'epochs': 10, 'balance_method': <BalanceMethod.NoSample: 0>, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>, 'dropout': 0.25} | resnet_custom_biggernn_2019-12-07_04:19:53.pth |
++-----+-------+-------+------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
+|  2  | 0.546 | 0.800 |  {'epochs': 5, 'balance_method': <BalanceMethod.NoSample: 0>, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>, 'dropout': 0.0}  | resnet_custom_biggernn_2019-12-07_03:58:30.pth |
++-----+-------+-------+------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
+|  3  | 0.546 | 0.796 | {'epochs': 5, 'balance_method': <BalanceMethod.NoSample: 0>, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>, 'dropout': 0.25}  | resnet_custom_biggernn_2019-12-07_04:03:39.pth |
++-----+-------+-------+------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
+|  4  | 0.549 | 0.797 |  {'epochs': 5, 'balance_method': <BalanceMethod.NoSample: 0>, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>, 'dropout': 0.5}  | resnet_custom_biggernn_2019-12-07_04:07:47.pth |
++-----+-------+-------+------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
+|  5  | 0.553 | 0.809 | {'epochs': 10, 'balance_method': <BalanceMethod.NoSample: 0>, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>, 'dropout': 0.0}  | resnet_custom_biggernn_2019-12-07_04:15:17.pth |
++-----+-------+-------+------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
+|  6  | 0.555 | 0.795 | {'epochs': 10, 'balance_method': <BalanceMethod.NoSample: 0>, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>, 'dropout': 0.5}  | resnet_custom_biggernn_2019-12-07_04:24:35.pth |
++-----+-------+-------+------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
+|  7  | 0.558 | 0.793 | {'epochs': 1, 'balance_method': <BalanceMethod.NoSample: 0>, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>, 'dropout': 0.25}  | resnet_custom_biggernn_2019-12-07_03:53:31.pth |
++-----+-------+-------+------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
+|  8  | 0.561 | 0.801 |  {'epochs': 1, 'balance_method': <BalanceMethod.NoSample: 0>, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>, 'dropout': 0.0}  | resnet_custom_biggernn_2019-12-07_03:52:38.pth |
++-----+-------+-------+------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
+|  9  | 0.569 | 0.796 |  {'epochs': 1, 'balance_method': <BalanceMethod.NoSample: 0>, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>, 'dropout': 0.5}  | resnet_custom_biggernn_2019-12-07_03:54:24.pth |
++-----+-------+-------+------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
+Uploading models/verified/grid_search_resnet_biggernn/best.pth

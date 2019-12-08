@@ -107,8 +107,8 @@ class Trainer(ABC):
 class ImageTrainer(Trainer, ABC):
     """Base implementation for image based trainers."""
 
-    def __init__(self):
-        self.image_datasets = ImageDatasets()
+    def __init__(self, train_dir="./data/processed/train"):
+        self.image_datasets = ImageDatasets(train_dir=train_dir)
 
 
 class FeatureTrainer(Trainer):
@@ -147,7 +147,4 @@ class FeatureTrainer(Trainer):
 
         val_acc, val_loss = self.evaluate(model, validation_loader,)
 
-        _, test_loss = self.evaluate(model, self.feature_dataset.test_loader, verbose=False)
-        score = (val_loss + test_loss) / 2
-
-        return val_acc, score
+        return val_acc, val_loss

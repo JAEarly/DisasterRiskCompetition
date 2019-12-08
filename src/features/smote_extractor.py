@@ -2,6 +2,7 @@
 
 import csv
 from collections import Counter
+from enum import Enum
 
 import os
 from abc import ABC
@@ -9,8 +10,6 @@ from imblearn.over_sampling import SMOTE, BorderlineSMOTE, SVMSMOTE, ADASYN
 
 from features import FeatureExtractor, FeatureDatasets, DatasetType
 from utils import create_dirs_if_not_found
-import torch
-from enum import Enum
 
 
 class SmoteType(Enum):
@@ -48,10 +47,10 @@ def smote_type_to_method(smote_type: SmoteType):
 class SmoteExtractor(FeatureExtractor, ABC):
     """Feature extractor using smote balancing."""
 
-    def __init__(self, base_feature_extractor: FeatureExtractor, smote_type: SmoteType = SmoteType.Normal):
-        super().__init__(base_feature_extractor.name + "_" + smote_type_to_name(smote_type))
+    def __init__(self, base_feature_extractor: FeatureExtractor, smote_type: SmoteType = SmoteType.Normal, save_dir="./models/features/", train_dir="./data/processed/train"):
+        super().__init__(base_feature_extractor.name + "_" + smote_type_to_name(smote_type), save_dir=save_dir, train_dir=train_dir)
         self.base_feature_extractor = base_feature_extractor
-        self.feature_datasets = FeatureDatasets(self.base_feature_extractor, oversample_validation=False)
+        self.feature_datasets = FeatureDatasets(self.base_feature_extractor)
         self.smote_type = smote_type
         labels = self.feature_datasets.get_dataset(
             DatasetType.Train
@@ -86,33 +85,24 @@ class SmoteExtractor(FeatureExtractor, ABC):
             train_features, train_labels = self.feature_datasets.get_features_and_labels(
                 DatasetType.Train
             )
-            val_features, val_labels = self.feature_datasets.get_features_and_labels(
-                DatasetType.Validation
-            )
-            # test_features, test_labels = self.feature_datasets.get_features_and_labels(
-            #     DatasetType.Test
-            # )
-            all_features = torch.cat([train_features, val_features]).cpu().detach()
-            all_labels = torch.cat([train_labels, val_labels]).cpu().detach()
+
             print(
                 "Original training distribution -", Counter([l.item() for l in train_labels])
-            )
-            print(
-                "Original dataset distribution -", Counter([l.item() for l in all_labels])
             )
 
             # Run smote
             print("Running smote")
             smt = smote_type_to_method(self.smote_type)()
-            # TODO reduce to only training set length?
-            all_features, all_labels = smt.fit_resample(all_features, all_labels)
-            print("SMOTE dataset distribution -", Counter([l.item() for l in all_labels]))
+            train_features = train_features.cpu().detach().numpy()
+            train_labels = train_labels.cpu().detach().numpy()
+            train_features, train_labels = smt.fit_resample(train_features, train_labels)
+            print("SMOTE dataset distribution -", Counter([l.item() for l in train_labels]))
 
             print("Saving tensors")
             # Save feature tensors
             i = 0
             filenames = []
-            for feature in all_features:
+            for feature in train_features:
                 self._save_tensor(DatasetType.Train, feature, i)
                 filenames.append(i)
                 i += 1
@@ -122,10 +112,11 @@ class SmoteExtractor(FeatureExtractor, ABC):
             labels_filepath = self.get_labels_filepath(DatasetType.Train)
             with open(labels_filepath, "w+") as file:
                 csv_writer = csv.writer(file)
-                for filename, label in zip(filenames, all_labels):
+                for filename, label in zip(filenames, train_labels):
                     csv_writer.writerow([filename, label])
 
             print("Done")
+            self.extraction_required = False
 
     def get_features_dir(self, dataset_type: DatasetType) -> str:
         """

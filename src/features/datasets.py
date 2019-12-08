@@ -137,11 +137,10 @@ class ImageFolderWithFilenames(torch_datasets.ImageFolder):
 class ImageDatasets(Datasets):
     """Implementation of Datasets backed with images."""
 
-    train_dir = "./data/processed/train"
     validation_dir = "./data/processed/validation"
     test_dir = "./data/processed/test"
 
-    def __init__(self, transform: transforms.Compose = None):
+    def __init__(self, transform: transforms.Compose = None, train_dir="./data/processed/train"):
         self.transform = transform
         if self.transform is None:
             self.transform = transforms.Compose(
@@ -154,6 +153,7 @@ class ImageDatasets(Datasets):
                     ),
                 ]
             )
+        self.train_dir = train_dir
         super().__init__()
 
     def create_datasets(self, balance_method: BalanceMethod):
@@ -275,14 +275,13 @@ class FeatureDataset(Dataset):
 class FeatureDatasets(Datasets):
     """Implementation of Datasets back with a feature extractor."""
 
-    def __init__(self, feature_extractor, balance_method=BalanceMethod.NoSample, oversample_validation=True):
+    def __init__(self, feature_extractor, balance_method=BalanceMethod.NoSample):
         # Ensure features are extracted
         self.feature_extractor = feature_extractor
         self.feature_extractor.extract(DatasetType.Train)
         self.feature_extractor.extract(DatasetType.Validation)
         self.feature_extractor.extract(DatasetType.Test)
         self.feature_extractor.extract(DatasetType.Competition)
-        self.oversample_validation = oversample_validation
         super().__init__(balance_method=balance_method)
 
     def create_datasets(self, balance_method):
@@ -295,7 +294,7 @@ class FeatureDatasets(Datasets):
         validation_dataset = FeatureDataset(
             self.feature_extractor.get_features_dir(DatasetType.Validation),
             self.feature_extractor.get_labels_filepath(DatasetType.Validation),
-            balance_method=BalanceMethod.OverSample if self.oversample_validation else BalanceMethod.NoSample,
+            balance_method=BalanceMethod.NoSample,
         )
         test_dataset = FeatureDataset(
             self.feature_extractor.get_features_dir(DatasetType.Test),

@@ -27,13 +27,14 @@ def setup_feature_evaluation():
     # model = models.NNModel(
     #     models.LinearNN,
     #     feature_extractor.feature_size,
-    #     state_dict_path="./models/grid_search_resnet_custom_smote_adasyn_linearnn/best.pth",
+    #     state_dict_path="./models/kfold/kfold_resnet_custom_linearnn/best.pth",
     #     eval_mode=True,
     # )
 
     model = models.XGBModel(
-        model_path="./models/grid_search_resnet_custom_smote_xgb_4/best.pth"
+        model_path="./models/kfold/kfold_resnet_custom_xgb/best.pth"
     )
+
     print("Running evaluation for", feature_extractor.name, model.name)
     return datasets, model
 
@@ -43,7 +44,7 @@ def setup_image_evaluation():
     model = models.PretrainedNNModel(
         tv_models.resnet152,
         transfers.final_layer_alteration_resnet,
-        state_dict_path="./models/grid_search_resnet_custom/best.pth",
+        state_dict_path="./models/augmented/grid_search_resnet_custom/best.pth",
         eval_mode=True,
     )
     print("Running evaluation for", model.name)
@@ -81,9 +82,6 @@ def run_evaluation(datasets, model, verbose=True):
     results.append(test_acc)
     results.append(test_loss)
 
-    score = (val_loss + test_loss)/2
-    results.append(score)
-
     time.sleep(0.1)
     if verbose:
         print("")
@@ -102,7 +100,7 @@ def evaluate_all():
 
 
 def evaluate_all_within_class():
-    base_dir = "./models/grid_search_resnet_smote_custom_xgb_4/"
+    base_dir = "./models/kfold/kfold_resnet_custom_xgb/"
     all_dir = base_dir + "all/"
     best_filepath = base_dir + "best.pth"
     filepaths = [best_filepath]
@@ -112,16 +110,16 @@ def evaluate_all_within_class():
     feature_extractor = features.ResNetCustom()
     datasets = FeatureDatasets(feature_extractor)
 
-    filename_len = len(filepaths[1].split("/")[-1]) + 1
-    print(" " * filename_len + "| Train Acc | Train LL  |  Val Acc  |   Val LL  |  Test Acc |  Test LL  |   Score   |")
+    filename_len = max(len(filepaths[1].split("/")[-1]) + 1, len("best.pth "))
+    print(" " * filename_len + "| Train Acc | Train LL  |  Val Acc  |   Val LL  |  Test Acc |  Test LL  |")
     for model_path in filepaths:
-        # model = models.NNModel(
-        #     models.LinearNN,
-        #     feature_extractor.feature_size,
-        #     state_dict_path=model_path,
-        #     eval_mode=True,
-        # )
         if os.path.exists(model_path):
+            # model = models.NNModel(
+            #     models.BiggerNN,
+            #     feature_extractor.feature_size,
+            #     state_dict_path=model_path,
+            #     eval_mode=True,
+            # )
             model = models.XGBModel(
                 model_path=model_path
             )
@@ -132,9 +130,9 @@ def evaluate_all_within_class():
 
 
 if __name__ == "__main__":
-    _datasets, _model = setup_feature_evaluation()
+    # _datasets, _model = setup_feature_evaluation()
     # _datasets, _model = setup_image_evaluation()
-    run_evaluation(_datasets, _model)
+    # run_evaluation(_datasets, _model)
 
     # evaluate_all()
-    # evaluate_all_within_class()
+    evaluate_all_within_class()
