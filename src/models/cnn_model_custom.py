@@ -70,6 +70,7 @@ class ConvNet(nn.Module):
 
 
 class BiggerConvNet(nn.Module):
+    """5 convolutional layers and 3 fully connected layers"""
     def __init__(self, num_outputs):  # Is input channel 3 due to RBG?
         super(BiggerConvNet, self).__init__()
         self.layer1 = nn.Sequential(
@@ -115,7 +116,6 @@ class BiggerConvNet(nn.Module):
 
 
 class CNNModel(Model):
-
     def __init__(
         self,
         state_dict_path=None,
