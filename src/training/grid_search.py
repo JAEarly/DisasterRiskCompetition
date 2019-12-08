@@ -29,7 +29,7 @@ from utils import (
     DualLogger,
 )
 
-ROOT_DIR = "./models/verified"
+ROOT_DIR = "./models/old_data"
 
 
 class GridSearch(ABC):
@@ -318,13 +318,15 @@ class CNNGridSearch(GridSearch):
         model_class,
         model_alteration_function,
         feature_name,
-        train_dir="./data/processed/train",
+        root_dir="./data/processed/",
+        num_classes=5,
         **kwargs
     ):
         super().__init__(feature_name, **kwargs)
         self.model_class = model_class
         self.model_alteration_function = model_alteration_function
-        self.train_dir = train_dir
+        self.root_dir = root_dir
+        self.num_classes = num_classes
 
     def _create_all_configs(self, hyper_parameter_ranges):
         # Extract hyper parameter ranges
@@ -358,41 +360,41 @@ class CNNGridSearch(GridSearch):
         trainer = PretrainedNNTrainer(
             num_epochs=config["epochs"],
             class_weight_method=config["class_weight_method"],
-            train_dir=self.train_dir,
+            root_dir=self.root_dir,
         )
-        model = PretrainedNNModel(self.model_class, self.model_alteration_function)
+        model = PretrainedNNModel(self.model_class, self.model_alteration_function, num_classes=self.num_classes)
         val_acc, val_loss = trainer.train(model)
         return val_acc, val_loss, model
 
 
 if __name__ == "__main__":
-    # grid_search = CNNGridSearch(
-    #     tv_models.resnet152,
-    #     transfers.final_layer_alteration_resnet,
-    #     "images",
-    #     tag="resnet_custom",
-    #     repeats=1,
-    #     train_dir="./data/augmented/train"
-    # )
-    # grid_search.run(
-    #     epoch_range=[1, 2],
-    #     class_weight_methods=[
-    #         ClassWeightMethod.Unweighted,
-    #     ],
-    # )
-
-    grid_search = NNGridSearch(
-        nn_class=models.LinearNN,
-        feature_extractor=features.ResNetCustomReducedSmote(10),
-        tag="resnet_custom_reduced_smote_10_linearnn_3",
-        repeats=3,
+    grid_search = CNNGridSearch(
+        tv_models.resnet152,
+        transfers.final_layer_alteration_resnet,
+        "images",
+        tag="resnet_custom",
+        repeats=1,
+        root_dir="./data/processed_old/"
     )
     grid_search.run(
-        epoch_range=[1, 3, 5, 10],
-        class_weight_methods=[ClassWeightMethod.Unweighted],
-        balance_methods=[BalanceMethod.NoSample],
-        dropout_range=[0.0, 0.25, 0.5],
+        epoch_range=[1, 2, 3],
+        class_weight_methods=[
+            ClassWeightMethod.Unweighted,
+        ],
     )
+
+    # grid_search = NNGridSearch(
+    #     nn_class=models.LinearNN,
+    #     feature_extractor=features.ResNetCustomReducedSmote(10),
+    #     tag="resnet_custom_reduced_smote_10_linearnn_3",
+    #     repeats=3,
+    # )
+    # grid_search.run(
+    #     epoch_range=[1, 3, 5, 10],
+    #     class_weight_methods=[ClassWeightMethod.Unweighted],
+    #     balance_methods=[BalanceMethod.NoSample],
+    #     dropout_range=[0.0, 0.25, 0.5],
+    # )
 
     # grid_search = XGBGridSearch(
     #     feature_extractor=features.ResNetCustomReducedSmote(10),
