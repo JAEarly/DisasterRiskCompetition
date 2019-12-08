@@ -37,6 +37,31 @@ class BiggerNN(nn.Module):
         return x
 
 
+class BiggerConvNet(nn.Module):
+    """Convolutional Neural Network adapted from
+    link: @https://adventuresinmachinelearning.com/convolutional-neural-networks-tutorial-in-pytorch/
+    Input images are 224x224 colour rbg (3 channel)
+    """
+    def __init__(self):  # Is input channel 3 due to RBG?
+        super(BiggerConvNet, self).__init__()
+        self.layer1 = nn.Sequential(
+            nn.Conv2d(3, 32, kernel_size=5, stride=1, padding=2),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2))  # output will be 32 channels of 112x112 images
+        self.layer2 = nn.Sequential(
+            nn.Conv2d(32, 64, kernel_size=5, stride=1, padding=2),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2))  # 64 Channels of 56X56
+        self.layer3 = nn.Sequential(
+            nn.Conv2d(64, 128, kernel_size=5, stride=1, padding=2),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2)  # 128 channels of 28x28
+        )
+        self.drop_out = nn.Dropout()
+        self.fc1 = nn.Linear(28 * 28 * 128, 1000)
+        self.fc2 = nn.Linear(1000, 5)
+
+
 class AlexNetClassifierNN(nn.Module):
     """AlexNet classifier layer NN implementation."""
 

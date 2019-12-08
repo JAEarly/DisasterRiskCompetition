@@ -1,5 +1,3 @@
-"""Conv neural network solution."""
-
 import time
 
 import numpy as np
@@ -10,28 +8,9 @@ from torch import optim
 from torchbearer import Trial
 from torchvision import models as torch_models
 
-from models import Model, ClassWeightMethod, ImageTrainer
-from utils import class_distribution
+from src.models import Model, ClassWeightMethod, ImageTrainer
+from src.utils import class_distribution
 import torch.nn.functional as F
-
-
-class SimpleCNN(torch.nn.Module):
-
-    def __init__(self, num_outputs):
-        super(SimpleCNN, self).__init__()
-        self.conv1 = torch.nn.Conv2d(3, 18, kernel_size=3, stride=1, padding=1)
-        self.pool = torch.nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
-        self.fc1 = torch.nn.Linear(18 * 112 * 112, 64)
-        self.fc2 = torch.nn.Linear(64, num_outputs)
-
-    def forward(self, x):
-        x = F.relu(self.conv1(x))
-        x = self.pool(x)
-        #print(x.shape)
-        x = x.view(-1, 18 * 112 * 112)
-        x = F.relu(self.fc1(x))
-        x = self.fc2(x)
-        return x
 
 
 class ConvNet(nn.Module):
@@ -39,7 +18,7 @@ class ConvNet(nn.Module):
     link: @https://adventuresinmachinelearning.com/convolutional-neural-networks-tutorial-in-pytorch/
     Input images are 224x224 colour rbg (3 channel)
     """
-    def __init__(self, num_outputs):  # Is input channel 3 due to RBG?
+    def __init__(self):  # Is input channel 3 due to RBG?
         super(ConvNet, self).__init__()
         self.layer1 = nn.Sequential(
             nn.Conv2d(3, 32, kernel_size=5, stride=1, padding=2),
@@ -56,7 +35,7 @@ class ConvNet(nn.Module):
         )
         self.drop_out = nn.Dropout()
         self.fc1 = nn.Linear(28 * 28 * 128, 1000)
-        self.fc2 = nn.Linear(1000, num_outputs)
+        self.fc2 = nn.Linear(1000, 5)
 
     def forward(self, x):
         out = self.layer1(x)
@@ -66,54 +45,10 @@ class ConvNet(nn.Module):
         out = self.drop_out(out)
         out = self.fc1(out)
         out = self.fc2(out)
-        return out
-
-
-class BiggerConvNet(nn.Module):
-    def __init__(self, num_outputs):  # Is input channel 3 due to RBG?
-        super(BiggerConvNet, self).__init__()
-        self.layer1 = nn.Sequential(
-            nn.Conv2d(3, 16, kernel_size=5, stride=1, padding=2),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))  # output will be 16 channels of 112x112 images
-        self.layer2 = nn.Sequential(
-            nn.Conv2d(16, 32, kernel_size=5, stride=1, padding=2),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))  # 32 Channels of 56X56
-        self.layer3 = nn.Sequential(
-            nn.Conv2d(32, 64, kernel_size=5, stride=1, padding=2),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2)  # 64 channels of 28x28
-        )
-        self.layer4 = nn.Sequential(
-            nn.Conv2d(64, 128, kernel_size=5, stride=1, padding=2),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2)  # 128 channels of 14x14
-        )
-        self.layer5 = nn.Sequential(
-            nn.Conv2d(128, 256, kernel_size=5, stride=1, padding=2),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2)  # 256 channels of 7x7
-        )
-        self.drop_out = nn.Dropout()
-        self.fc1 = nn.Linear(7 * 7 * 265, 1000)
-        self.fc2 = nn.Linear(1000, 1000)
-        self.fc3 = nn.Linear(1000, num_outputs)
-
-    def forward(self, x):
-        out = self.layer1(x)
-        out = self.layer2(out)
-        out = self.layer3(out)
-        out = out.reshape(out.size(0), -1)
-        out = self.drop_out(out)
-        out = self.fc1(out)
-        out = self.fc2(out)
-        out = self.fc3(out)
         return out
 
 
 class CNNModel(Model):
-
     def __init__(
         self,
         state_dict_path=None,
@@ -122,7 +57,7 @@ class CNNModel(Model):
         super().__init__(str("customcnn").lower())
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
         # Create network and apply final layer alteration to match correct number of classes
-        self.net = SimpleCNN(self.num_classes)
+        self.net = ConvNet(self.num_classes)
         self.net = self.net.to(self.device)
         # Load network state if provided
         if state_dict_path is not None:
@@ -204,8 +139,76 @@ class CNNTrainer(ImageTrainer):
 
         return acc, loss
 
-
 if __name__ == "__main__":
     _model = CNNModel()
     _trainer = CNNTrainer(num_epochs=1)
     _trainer.train(_model)
+
+
+# transform = transforms.Compose(
+#     [transforms.ToTensor(),
+#      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+#
+# trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
+#                                         download=True, transform=transform)
+# trainloader = torch.utils.data.DataLoader(trainset, batch_size=4,
+#                                           shuffle=True, num_workers=2)
+#
+# testset = torchvision.datasets.CIFAR10(root='./data', train=False,
+#                                        download=True, transform=transform)
+# testloader = torch.utils.data.DataLoader(testset, batch_size=4,
+#                                          shuffle=False, num_workers=2)
+#
+# classes = ('plane', 'car', 'bird', 'cat',
+#            'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+#
+# class ConvNet(nn.Module):
+#     def __init__(self):
+#         super(ConvNet, self).__init__()
+#         self.conv1 = nn.Conv2d(3, 6, 5)
+#         self.pool = nn.MaxPool2d(2, 2)
+#         self.conv2 = nn.Conv2d(6, 16, 5)
+#         self.fc1 = nn.Linear(16 * 5 * 5, 120)
+#         self.fc2 = nn.Linear(120, 84)
+#         self.fc3 = nn.Linear(84, 10)
+#
+#     def forward(self, x):
+#         x = self.pool(F.relu(self.conv1(x)))
+#         x = self.pool(F.relu(self.conv2(x)))
+#         x = x.view(-1, 16 * 5 * 5)
+#         x = F.relu(self.fc1(x))
+#         x = F.relu(self.fc2(x))
+#         x = self.fc3(x)
+#         return x
+#
+#
+# net = ConvNet()
+#
+# criterion = nn.CrossEntropyLoss()
+# optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+#
+# # Train the network
+# for epoch in range(2):  # loop over the dataset multiple times
+#
+#     running_loss = 0.0
+#     for i, data in enumerate(trainloader, 0):
+#         # get the inputs; data is a list of [inputs, labels]
+#         inputs, labels = data
+#
+#         # zero the parameter gradients
+#         optimizer.zero_grad()
+#
+#         # forward + backward + optimize
+#         outputs = net(inputs)
+#         loss = criterion(outputs, labels)
+#         loss.backward()
+#         optimizer.step()
+#
+#         # print statistics
+#         running_loss += loss.item()
+#         if i % 2000 == 1999:    # print every 2000 mini-batches
+#             print('[%d, %5d] loss: %.3f' %
+#                   (epoch + 1, i + 1, running_loss / 2000))
+#             running_loss = 0.0
+#
+# print('Finished Training')
