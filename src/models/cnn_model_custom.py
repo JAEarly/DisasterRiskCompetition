@@ -8,7 +8,6 @@ import torchbearer
 from torch import nn
 from torch import optim
 from torchbearer import Trial
-from torchvision import models as torch_models
 
 from models import Model, ClassWeightMethod, ImageTrainer
 from utils import class_distribution
@@ -113,6 +112,52 @@ class BiggerConvNet(nn.Module):
         out = self.fc2(out)
         out = self.fc3(out)
         return out
+
+
+class VGGNet(nn.Module):
+    """VGG16"""
+    def __init__(self, num_outputs):
+        super(VGGNet, self).__init__()
+        self.layer1 = nn.Sequential(
+            nn.Conv2d(3, 64, kernel_size=5, stride=1, padding=2),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2))  # output will be 16 channels of 112x112 images
+        self.layer2 = nn.Sequential(
+            nn.Conv2d(64, 128, kernel_size=5, stride=1, padding=2),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2))  # 32 Channels of 56X56
+        self.layer3 = nn.Sequential(
+            nn.Conv2d(128, 256, kernel_size=5, stride=1, padding=2),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2)  # 64 channels of 28x28
+        )
+        self.layer4 = nn.Sequential(
+            nn.Conv2d(256, 512, kernel_size=5, stride=1, padding=2),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2)  # 128 channels of 14x14
+        )
+        self.layer5 = nn.Sequential(
+            nn.MaxPool2d(kernel_size=2, stride=2)  # 256 channels of 7x7
+        )
+        self.drop_out = nn.Dropout()
+        self.fc1 = nn.Linear(7 * 7 * 512, 4096)
+        self.fc2 = nn.Linear(4096, 1000)
+        self.fc3 = nn.Softmax(num_outputs)
+
+    def forward(self, x):
+        out = self.layer1(x)
+        out = self.layer2(out)
+        out = self.layer3(out)
+        out = self.layer4(out)
+        out = self.layer5(out)
+        out = out.reshape(out.size(0), -1)
+        out = self.drop_out(out)
+        out = self.fc1(out)
+        out = self.fc2(out)
+        out = self.fc3(out)
+        return out
+
+
 
 
 class CNNModel(Model):
