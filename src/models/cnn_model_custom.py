@@ -2,16 +2,15 @@
 
 import time
 
-import numpy as np
 import torch
+import torch.nn.functional as F
 import torchbearer
 from torch import nn
 from torch import optim
 from torchbearer import Trial
 
-from models import Model, ClassWeightMethod, ImageTrainer
-from utils import class_distribution
-import torch.nn.functional as F
+from models import Model
+from training import ImageTrainer
 
 
 class SimpleCNN(torch.nn.Module):
@@ -26,7 +25,7 @@ class SimpleCNN(torch.nn.Module):
     def forward(self, x):
         x = F.relu(self.conv1(x))
         x = self.pool(x)
-        #print(x.shape)
+        # print(x.shape)
         x = x.view(-1, 18 * 112 * 112)
         x = F.relu(self.fc1(x))
         x = self.fc2(x)
@@ -159,12 +158,13 @@ class VGGNet(nn.Module):
 
 
 class CNNModel(Model):
+
     def __init__(
         self,
         state_dict_path=None,
         eval_mode=False,
     ):
-        super().__init__(str("customcnn").lower())
+        super().__init__(str("customcnn").lower(), apply_softmax=True)
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
         # Create network and apply final layer alteration to match correct number of classes
         self.net = SimpleCNN(self.num_classes)
@@ -190,14 +190,11 @@ class CNNModel(Model):
 
 class CNNTrainer(ImageTrainer):
 
-    loss = nn.CrossEntropyLoss
-
     def __init__(
-        self, num_epochs=10, class_weight_method=ClassWeightMethod.Unweighted,
+        self, num_epochs=10
     ):
         super().__init__()
         self.num_epochs = num_epochs
-        self.class_weight_method = class_weight_method
 
     def train(self, model: CNNModel, **kwargs) -> (float, float):
         # Get transfer model and put it in training mode
@@ -211,25 +208,8 @@ class CNNTrainer(ImageTrainer):
         device = "cuda:0" if torch.cuda.is_available() else "cpu"
         print("Training using", device)
 
-        # Setup loss function
-        if self.class_weight_method != ClassWeightMethod.Unweighted:
-            distribution = class_distribution("data/processed/train")
-            if self.class_weight_method == ClassWeightMethod.SumBased:
-                inv_distribution = [1 - x / np.sum(distribution) for x in distribution]
-                inv_distribution = torch.from_numpy(np.array(inv_distribution)).float()
-            elif self.class_weight_method == ClassWeightMethod.MaxBased:
-                inv_distribution = [np.max(distribution) / x for x in distribution]
-                inv_distribution = torch.from_numpy(np.array(inv_distribution)).float()
-            else:
-                raise IndexError(
-                    "Unknown class weight method " + str(self.class_weight_method)
-                )
-            loss_function = self.loss(inv_distribution.to(device))
-        else:
-            loss_function = self.loss()
-
         # Setup trial
-        trial = Trial(net, optimiser, loss_function, metrics=["loss", "accuracy"]).to(
+        trial = Trial(net, optimiser, nn.CrossEntropyLoss(), metrics=["loss", "accuracy"]).to(
             device
         )
         trial.with_generators(
