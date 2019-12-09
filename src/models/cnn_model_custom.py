@@ -142,7 +142,7 @@ class VGGNet(nn.Module):
         self.drop_out = nn.Dropout()
         self.fc1 = nn.Linear(7 * 7 * 512, 4096)
         self.fc2 = nn.Linear(4096, 1000)
-        self.fc3 = nn.Softmax(num_outputs)
+        self.fc3 = nn.Linear(num_outputs)
 
     def forward(self, x):
         out = self.layer1(x)
@@ -150,14 +150,12 @@ class VGGNet(nn.Module):
         out = self.layer3(out)
         out = self.layer4(out)
         out = self.layer5(out)
-        out = out.reshape(out.size(0), -1)
-        out = self.drop_out(out)
+        out = out.reshape(out.size(0), -1)  # check the dimension
+        out = self.drop_out(out)  # leave out drop out completely
         out = self.fc1(out)
         out = self.fc2(out)
         out = self.fc3(out)
         return out
-
-
 
 
 class CNNModel(Model):
