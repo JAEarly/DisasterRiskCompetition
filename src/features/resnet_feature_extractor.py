@@ -42,9 +42,9 @@ class ResNet(FeatureExtractor):
     """ResNet feature extractor."""
 
     def __init__(
-        self, save_dir="./models/features/", train_dir="./data/processed/train"
+        self, save_dir="./models/features/", root_dir="./data/processed/"
     ):
-        super().__init__("resnet", save_dir=save_dir, train_dir=train_dir)
+        super().__init__("resnet", save_dir=save_dir, root_dir=root_dir)
 
     def setup_model(self) -> (nn.Module, int):
         """
@@ -59,9 +59,9 @@ class ResNetSMOTE(SmoteExtractor):
     """ResNet SMOTE feature extractor."""
 
     def __init__(
-        self, save_dir="./models/features/", train_dir="./data/processed/train"
+        self, save_dir="./models/features/", root_dir="./data/processed/"
     ):
-        super().__init__(ResNet(), save_dir=save_dir, train_dir=train_dir)
+        super().__init__(ResNet(), save_dir=save_dir, root_dir=root_dir)
 
     def setup_model(self) -> (nn.Module, int):
         """
@@ -79,12 +79,12 @@ class ResNetCustom(FeatureExtractor):
         self,
         model_path=DEFAULT_CUSTOM_PATH,
         save_dir="./models/features/",
-        train_dir="./data/processed/train",
+        root_dir="./data/processed/",
     ):
         self.model_path = model_path
         if not os.path.exists(model_path):
             raise FileNotFoundError(model_path)
-        super().__init__("resnet_custom", save_dir=save_dir, train_dir=train_dir)
+        super().__init__("resnet_custom", save_dir=save_dir, root_dir=root_dir)
 
     def setup_model(self) -> (nn.Module, int):
         resnet = setup_resnet_custom(self.model_path)
@@ -122,12 +122,12 @@ class ResNetCustomReduced(ReducedBasicExtractor):
         num_components,
         model_path=DEFAULT_CUSTOM_PATH,
         save_dir="./models/features/",
-        train_dir="./data/processed/train",
+        root_dir="./data/processed/",
     ):
         base_feature_extractor = ResNetCustom(
             model_path=model_path,
             save_dir=save_dir,
-            train_dir=train_dir,
+            root_dir=root_dir,
         )
         super().__init__(base_feature_extractor, num_components)
 
@@ -138,12 +138,12 @@ class ResNetCustomReducedSmote(ReducedSmoteExtractor):
         num_components,
         model_path=DEFAULT_CUSTOM_PATH,
         save_dir="./models/features/",
-        train_dir="./data/processed/train",
+        root_dir="./data/processed/",
     ):
         base_feature_extractor = ResNetCustom(
             model_path=model_path,
             save_dir=save_dir,
-            train_dir=train_dir,
+            root_dir=root_dir,
         )
         super().__init__(base_feature_extractor, num_components)
 

@@ -21,19 +21,19 @@ from models import ModelIterator
 
 def setup_feature_evaluation():
     # Don't use SMOTE feature extractors, just usual normal version
-    feature_extractor = features.ResNetCustom()
+    feature_extractor = features.ResNetCustom(save_dir="./models/features/transfer")
     datasets = FeatureDatasets(feature_extractor)
 
-    # model = models.NNModel(
-    #     models.LinearNN,
-    #     feature_extractor.feature_size,
-    #     state_dict_path="./models/kfold/kfold_resnet_custom_linearnn/best.pth",
-    #     eval_mode=True,
-    # )
-
-    model = models.XGBModel(
-        model_path="./models/kfold/kfold_resnet_custom_xgb/best.pth"
+    model = models.NNModel(
+        models.LinearNN,
+        feature_extractor.feature_size,
+        state_dict_path="./models/transfer/grid_search_resnet_custom_linearnn/best.pth",
+        eval_mode=True,
     )
+
+    # model = models.XGBModel(
+    #     model_path="./models/transfer/grid_search_resnet_custom_xgb/best.pth"
+    # )
 
     print("Running evaluation for", feature_extractor.name, model.name)
     return datasets, model
@@ -44,7 +44,7 @@ def setup_image_evaluation():
     model = models.PretrainedNNModel(
         tv_models.resnet152,
         transfers.final_layer_alteration_resnet,
-        state_dict_path="./models/augmented/grid_search_resnet_custom/best.pth",
+        state_dict_path="./models/transfer/grid_search_resnet_custom_2/best.pth",
         eval_mode=True,
     )
     print("Running evaluation for", model.name)
@@ -100,14 +100,14 @@ def evaluate_all():
 
 
 def evaluate_all_within_class():
-    base_dir = "./models/kfold/kfold_resnet_custom_xgb/"
+    base_dir = "./models/transfer/grid_search_resnet_custom_xgb/"
     all_dir = base_dir + "all/"
     best_filepath = base_dir + "best.pth"
     filepaths = [best_filepath]
     for filename in sorted(os.listdir(all_dir)):
         filepaths.append(all_dir + filename)
 
-    feature_extractor = features.ResNetCustom()
+    feature_extractor = features.ResNetCustom(save_dir="./models/features/transfer/")
     datasets = FeatureDatasets(feature_extractor)
 
     filename_len = max(len(filepaths[1].split("/")[-1]) + 1, len("best.pth "))
@@ -130,9 +130,9 @@ def evaluate_all_within_class():
 
 
 if __name__ == "__main__":
-    # _datasets, _model = setup_feature_evaluation()
+    _datasets, _model = setup_feature_evaluation()
     # _datasets, _model = setup_image_evaluation()
-    # run_evaluation(_datasets, _model)
+    run_evaluation(_datasets, _model)
 
     # evaluate_all()
-    evaluate_all_within_class()
+    # evaluate_all_within_class()

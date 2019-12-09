@@ -362,7 +362,11 @@ class CNNGridSearch(GridSearch):
             class_weight_method=config["class_weight_method"],
             root_dir=self.root_dir,
         )
-        model = PretrainedNNModel(self.model_class, self.model_alteration_function, num_classes=self.num_classes)
+        model = PretrainedNNModel(
+            self.model_class,
+            self.model_alteration_function,
+            num_classes=self.num_classes,
+        )
         val_acc, val_loss = trainer.train(model)
         return val_acc, val_loss, model
 
@@ -375,12 +379,11 @@ class TransferGridSearch(CNNGridSearch):
             class_weight_method=config["class_weight_method"],
             root_dir=self.root_dir,
         )
-        model = PretrainedNNModel(self.model_class, self.model_alteration_function, num_classes=self.num_classes)
 
         model = PretrainedNNModel.create_from_transfer(
             self.model_class,
             self.model_alteration_function,
-            "./models/old_data/grid_search_resnet_custom/best.pth",
+            "./models/old_data/grid_search_resnet_custom/all/images_resnet152_2019-12-08_08:02:14.pth",
             3,
             self.num_classes,
         )
@@ -406,39 +409,44 @@ if __name__ == "__main__":
     #     ],
     # )
 
-    # grid_search = NNGridSearch(
-    #     nn_class=models.LinearNN,
-    #     feature_extractor=features.ResNetCustomReducedSmote(10),
-    #     tag="resnet_custom_reduced_smote_10_linearnn_3",
-    #     repeats=3,
-    # )
-    # grid_search.run(
-    #     epoch_range=[1, 3, 5, 10],
-    #     class_weight_methods=[ClassWeightMethod.Unweighted],
-    #     balance_methods=[BalanceMethod.NoSample],
-    #     dropout_range=[0.0, 0.25, 0.5],
-    # )
-
-    # grid_search = XGBGridSearch(
-    #     feature_extractor=features.ResNetCustomReducedSmote(10),
-    #     tag="resnet_custom_reduced_smote_10_xgb_2",
-    #     repeats=1,
-    # )
-    # grid_search.run(
-    #     num_rounds=[5, 10, 20, 30, 40],
-    # )
-    grid_search = TransferGridSearch(
-        tv_models.resnet152,
-        transfers.final_layer_alteration_resnet,
-        "images",
-        tag="resnet_custom",
-        repeats=1,
-        root_dir="./data/processed/",
-        num_classes=5
+    grid_search = NNGridSearch(
+        nn_class=models.LinearNN,
+        feature_extractor=features.ResNetCustom(
+            model_path="./models/transfer/grid_search_resnet_custom/best.pth",
+            save_dir="./models/features/transfer/",
+        ),
+        tag="resnet_custom_linearnn",
+        repeats=3,
     )
     grid_search.run(
-        epoch_range=[1, 2, 3],
-        class_weight_methods=[
-            ClassWeightMethod.Unweighted,
-        ],
+        epoch_range=[1, 3, 5, 10],
+        class_weight_methods=[ClassWeightMethod.Unweighted],
+        balance_methods=[BalanceMethod.NoSample],
+        dropout_range=[0.0, 0.25, 0.5],
     )
+
+    # grid_search = XGBGridSearch(
+    #     feature_extractor=features.ResNetCustom(
+    #         model_path="./models/transfer/grid_search_resnet_custom/best.pth",
+    #         save_dir="./models/features/transfer/",
+    #     ),
+    #     tag="resnet_custom_xgb",
+    #     repeats=1,
+    # )
+    # grid_search.run(num_rounds=[5, 10, 20, 30, 40],)
+
+    # grid_search = TransferGridSearch(
+    #     tv_models.resnet152,
+    #     transfers.final_layer_alteration_resnet,
+    #     "images",
+    #     tag="resnet_custom_2",
+    #     repeats=1,
+    #     root_dir="./data/processed/",
+    #     num_classes=5
+    # )
+    # grid_search.run(
+    #     epoch_range=[1, 2, 3],
+    #     class_weight_methods=[
+    #         ClassWeightMethod.Unweighted,
+    #     ],
+    # )
