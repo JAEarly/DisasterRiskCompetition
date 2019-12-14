@@ -17,6 +17,7 @@ from features import (
 )
 from training import FeatureTrainer, PretrainedNNTrainer, Trainer
 from models import ModelIterator
+import torch
 
 
 def setup_feature_evaluation():
@@ -44,7 +45,7 @@ def setup_image_evaluation():
     model = models.PretrainedNNModel(
         tv_models.resnet152,
         transfers.final_layer_alteration_resnet,
-        state_dict_path="./models/transfer/grid_search_resnet_custom_2/best.pth",
+        state_dict_path="./models/verified/grid_search_resnet_custom_2/best.pth",
         eval_mode=True,
     )
     print("Running evaluation for", model.name)
@@ -99,7 +100,7 @@ def evaluate_all():
         print(("   {:.3f}   |" * len(results)).format(*results))
 
 
-def evaluate_all_within_class():
+def evaluate_all_within_class_feature():
     base_dir = "./models/transfer/grid_search_resnet_custom_xgb/"
     all_dir = base_dir + "all/"
     best_filepath = base_dir + "best.pth"
@@ -129,10 +130,36 @@ def evaluate_all_within_class():
             print(("{:" + str(filename_len) + "s}").format(model_path.split("/")[-1]) + "| Missing")
 
 
+def evaluate_all_within_class_image():
+    base_dir = "./models/verified/grid_search_resnet_custom_2/"
+    all_dir = base_dir + "all/"
+    best_filepath = base_dir + "best.pth"
+    filepaths = [best_filepath]
+    for filename in sorted(os.listdir(all_dir)):
+        filepaths.append(all_dir + filename)
+
+    datasets = ImageDatasets()
+
+    filename_len = max(len(filepaths[1].split("/")[-1]) + 1, len("best.pth "))
+    print(" " * filename_len + "| Train Acc | Train LL  |  Val Acc  |   Val LL  |  Test Acc |  Test LL  |")
+    for model_path in filepaths:
+        if os.path.exists(model_path):
+            model = models.PretrainedNNModel(
+                tv_models.resnet152,
+                transfers.final_layer_alteration_resnet,
+                state_dict_path=model_path,
+                eval_mode=True,
+            )
+            results = run_evaluation(datasets, model, verbose=False)
+            print(("{:" + str(filename_len) + "s}").format(model_path.split("/")[-1]) + "|" + ("   {:.3f}   |" * len(results)).format(*results))
+        else:
+            print(("{:" + str(filename_len) + "s}").format(model_path.split("/")[-1]) + "| Missing")
+
+
 if __name__ == "__main__":
-    _datasets, _model = setup_feature_evaluation()
+    # _datasets, _model = setup_feature_evaluation()
     # _datasets, _model = setup_image_evaluation()
-    run_evaluation(_datasets, _model)
+    # run_evaluation(_datasets, _model)
 
     # evaluate_all()
-    # evaluate_all_within_class()
+    evaluate_all_within_class_image()

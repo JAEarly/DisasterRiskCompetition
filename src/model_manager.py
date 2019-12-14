@@ -2,10 +2,11 @@ import os
 from azure.storage.blob import BlobServiceClient
 from utils import create_dirs_if_not_found
 
+
 class ModelManager:
 
     container_name = "models"
-    connect_str = "DefaultEndpointsProtocol=https;AccountName=uosdrstorage;AccountKey=q4e4jQTeIPaVyepnVwGd1rJPRiH6+y2pHZ4PBBROuwYxnSdQfU98FTeS30YXHmtq1sm9gURXPe0PseTYrHfDxQ==;EndpointSuffix=core.windows.net"
+    connect_str = "DefaultEndpointsProtocol=https;AccountName=uosdrstoragenew;AccountKey=2/OlhD+m5VFl0vfE6Sl6+yrUTwxmzT1flDEbZtSGy3c7o/RB7BthXX6D+nWO0qraeo+I3mugPDNi3NdtPPTgXg==;EndpointSuffix=core.windows.net"
 
     def __init__(self):
         self.blob_service_client = BlobServiceClient.from_connection_string(
@@ -38,6 +39,7 @@ class ModelManager:
             blob_client.upload_blob(data)
 
     def upload_all(self, base_dir):
+        print("Uploading all from", base_dir)
         for p in os.listdir(base_dir):
             if not os.path.isfile(os.path.join(base_dir, p)) and ("grid_search" in p or "kfold" in p):
                 model_path = os.path.join(base_dir, p, "best.pth")
