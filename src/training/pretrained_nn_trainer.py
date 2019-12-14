@@ -19,9 +19,12 @@ class PretrainedNNTrainer(ImageTrainer):
     loss = nn.CrossEntropyLoss
 
     def __init__(
-        self, num_epochs=10, class_weight_method=ClassWeightMethod.Unweighted, train_dir="./data/processed/train"
+        self,
+        num_epochs=10,
+        class_weight_method=ClassWeightMethod.Unweighted,
+        root_dir="./data/processed/",
     ):
-        super().__init__(train_dir=train_dir)
+        super().__init__(root_dir=root_dir)
         self.num_epochs = num_epochs
         self.class_weight_method = class_weight_method
 
@@ -77,7 +80,14 @@ class PretrainedNNTrainer(ImageTrainer):
 
 
 if __name__ == "__main__":
-    _network_class = torch_models.vgg19_bn
-    _model = PretrainedNNModel(_network_class, transfers.final_layer_alteration_alexnet)
-    _trainer = PretrainedNNTrainer(num_epochs=1)
+    _network_class = torch_models.resnet152
+    _final_layer_alteration = transfers.final_layer_alteration_resnet
+    _model = PretrainedNNModel.create_from_transfer(
+        _network_class,
+        _final_layer_alteration,
+        "./models/old_data/grid_search_resnet_custom/all/images_resnet152_2019-12-08_03:49:37.pth",
+        3,
+        5,
+    )
+    _trainer = PretrainedNNTrainer(num_epochs=1, root_dir="./data/processed/")
     _trainer.train(_model)

@@ -58,6 +58,8 @@ def _aggregate_images() -> None:
                 training_path = os.path.join(
                     INPUT_PATH, country, region, "train", class_name
                 )
+                if not os.path.exists(training_path):
+                    continue
                 files = os.listdir(training_path)
                 random.shuffle(files)
                 for idx, image_name in enumerate(

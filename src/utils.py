@@ -6,6 +6,7 @@ import sys
 from typing import List, Optional
 
 CLASSES = ["concrete_cement", "healthy_metal", "incomplete", "irregular_metal", "other"]
+OLD_CLASSES = ["Complete", "Incomplete", "Foundation"]
 LOCATIONS = {
     "colombia": ["borde_rural", "borde_soacha"],
     "guatemala": ["mixco_1_and_ebenezer", "mixco_3"],
@@ -45,10 +46,22 @@ def get_indexed_class_names() -> List[str]:
     return [str(i) + "_" + class_name for (i, class_name) in enumerate(CLASSES)]
 
 
+def get_indexed_class_names_old() -> List[str]:
+    """Get class names with indices."""
+    return [str(i) + "_" + class_name for (i, class_name) in enumerate(OLD_CLASSES)]
+
+
 def get_indexed_class_name(class_name: str) -> str:
     """Get a single indexed class name."""
     if class_name in CLASSES:
         return str(CLASSES.index(class_name)) + "_" + class_name
+    raise UnknownClassException(f'Unknown class "{class_name}"')
+
+
+def get_indexed_class_name_old(class_name: str) -> str:
+    """Get a single indexed class name."""
+    if class_name in OLD_CLASSES:
+        return str(OLD_CLASSES.index(class_name)) + "_" + class_name
     raise UnknownClassException(f'Unknown class "{class_name}"')
 
 

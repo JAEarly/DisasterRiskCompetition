@@ -107,8 +107,8 @@ class Trainer(ABC):
 class ImageTrainer(Trainer, ABC):
     """Base implementation for image based trainers."""
 
-    def __init__(self, train_dir="./data/processed/train"):
-        self.image_datasets = ImageDatasets(train_dir=train_dir)
+    def __init__(self, root_dir="./data/processed/"):
+        self.image_datasets = ImageDatasets(root_dir=root_dir)
 
 
 class FeatureTrainer(Trainer):

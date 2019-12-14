@@ -33,16 +33,16 @@ def extract_images() -> None:
     print("Extracting images")
     for country, regions in utils.LOCATIONS.items():
         for region in regions:
-            ImageExtractor.run_for_location(country, region)
+            ImageExtractor.run_for_location("data/raw/stac/", "data/interim/", country, region)
 
 
 class ImageExtractor(ABC):
     """Base class for image extraction."""
 
-    def __init__(self, tiff_path, geojson_path, output_path, verified_only=True):
-        self.tiff_path = os.path.join(INPUT_DIR, tiff_path)
-        self.geojson_path = os.path.join(INPUT_DIR, geojson_path)
-        self.output_path = os.path.join(OUTPUT_DIR, output_path)
+    def __init__(self, input_dir, output_dir, tiff_path, geojson_path, output_path, verified_only=True):
+        self.tiff_path = os.path.join(input_dir, tiff_path)
+        self.geojson_path = os.path.join(input_dir, geojson_path)
+        self.output_path = os.path.join(output_dir, output_path)
         self.extraction_required = True  # True if extraction should be run
 
         # Check files exist
@@ -64,11 +64,7 @@ class ImageExtractor(ABC):
                 self.extraction_required = False
             else:
                 # Create and populate new column for projected geometries
-                with rasterio.open(self.tiff_path) as tiff:
-                    tiff_crs = tiff.crs.data
-                    geo_json_dataframe["projected_geometry"] = geo_json_dataframe[
-                        "geometry"
-                    ].to_crs(tiff_crs)
+                geo_json_dataframe = self.parse_dataframe(geo_json_dataframe)
 
                 # Setup roof geometry dataframe
                 self.roof_geometries_dataframe = self.create_roof_geometry_dataframe(
@@ -112,6 +108,14 @@ class ImageExtractor(ABC):
         :return: Save path as string.
         """
 
+    def parse_dataframe(self, geo_json_dataframe):
+        with rasterio.open(self.tiff_path) as tiff:
+            tiff_crs = tiff.crs.data
+            geo_json_dataframe["projected_geometry"] = geo_json_dataframe[
+                "geometry"
+            ].to_crs(tiff_crs)
+        return geo_json_dataframe
+
     def extract_images(self) -> None:
         """
         Run the image extraction. Iterates over each row in the roof dataframe.
@@ -149,7 +153,7 @@ class ImageExtractor(ABC):
             return Image.fromarray(roof_image)
 
     @staticmethod
-    def run_for_location(country: str, region: str) -> None:
+    def run_for_location(input_dir: str, output_dir: str, country: str, region: str) -> None:
         """
         Run the image extraction for a specific location.
         :param country: Location country.
@@ -168,7 +172,7 @@ class ImageExtractor(ABC):
         # Run training (labelled data) extraction
         print("Running image extraction for", country, region, "train")
         extractor = LabelledImageExtractor(
-            tiff_path, geojson_train_path, output_train_path
+            input_dir, output_dir, tiff_path, geojson_train_path, output_train_path
         )
         if extractor.extraction_required:
             extractor.extract_images()
@@ -176,7 +180,7 @@ class ImageExtractor(ABC):
         # Run test (unlabelled data) extraction
         print("Running image extraction for", country, region, "test")
         extractor = UnlabelledImageExtractor(
-            tiff_path, geojson_test_path, output_test_path
+            input_dir, output_dir, tiff_path, geojson_test_path, output_test_path
         )
         if extractor.extraction_required:
             extractor.extract_images()
@@ -224,3 +228,80 @@ class UnlabelledImageExtractor(ImageExtractor):
 
     def get_save_path(self, roof):
         return os.path.join(self.output_path, roof.id + ".png")
+
+
+class OldImageExtractor(ImageExtractor):
+
+    def parse_dataframe(self, geo_json_dataframe):
+        print('Found', len(geo_json_dataframe), 'valid entries')
+        geo_json_dataframe = geo_json_dataframe.dropna(subset=['geometry', 'condition'])
+        print('Found', len(geo_json_dataframe), 'valid entries')
+        with rasterio.open(self.tiff_path) as tiff:
+            tiff_crs = tiff.crs.data
+            geo_json_dataframe["projected_geometry"] = geo_json_dataframe[
+                "geometry"
+            ].to_crs(tiff_crs)
+        return geo_json_dataframe
+
+    def create_roof_geometry_dataframe(self, geo_json_dataframe: DataFrame):
+        return geo_json_dataframe[["condition", "projected_geometry"]]
+
+    def extract_images(self) -> None:
+        """
+        Run the image extraction. Iterates over each row in the roof dataframe.
+        :return: None.
+        """
+        for idx, roof in tqdm(
+            self.roof_geometries_dataframe.iterrows(),
+            total=len(self.roof_geometries_dataframe.index),
+            desc="Extracting images",
+            leave=False,
+        ):
+            roof_image = self.extract_image(idx)
+            roof_image.save(self.get_save_path(roof, idx))
+        time.sleep(1)
+        print("")
+
+    def extract_image(self, roof_idx: int) -> Image:
+        with rasterio.open(self.tiff_path) as tiff:
+            # Get projected geometry for the given roof id
+            row = self.roof_geometries_dataframe.loc[roof_idx]
+
+            # Extract image from tiff file
+            roof_image, _ = mask(tiff, [row.projected_geometry], crop=True, filled=False)
+
+            # Format and return PIL image
+            roof_image = np.transpose(roof_image, (1, 2, 0))
+            return Image.fromarray(roof_image)
+
+    def setup_output_dirs(self):
+        if not os.path.exists(self.output_path):
+            os.makedirs(self.output_path)
+            # Make dirs based on classes
+            for indexed_class_name in utils.get_indexed_class_names_old():
+                os.makedirs(os.path.join(self.output_path, indexed_class_name))
+
+    def get_save_path(self, roof, idx):
+        # Save into class dir
+        return os.path.join(
+            self.output_path,
+            utils.get_indexed_class_name_old(roof.condition),
+            str(idx) + ".png",
+        )
+
+    @staticmethod
+    def run_for_old(input_dir, output_dir):
+        for i in range(12):
+            tiff_path = "grid_" + str(i + 1) + ".tiff"
+            json_path = "grid_" + str(i + 1) + ".json"
+
+            print("Running image extraction for grid", i)
+            extractor = OldImageExtractor(
+                input_dir, output_dir, tiff_path, json_path, "grid_" + str(i)
+            )
+            if extractor.extraction_required:
+                extractor.extract_images()
+
+
+if __name__ == "__main__":
+    OldImageExtractor.run_for_old("./data/raw/old", "./data/interim_old/")
