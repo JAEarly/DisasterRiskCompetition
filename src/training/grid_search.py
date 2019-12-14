@@ -29,7 +29,7 @@ from utils import (
     DualLogger,
 )
 
-ROOT_DIR = "./models/transfer"
+ROOT_DIR = "./models/verified"
 
 
 class GridSearch(ABC):
@@ -383,7 +383,7 @@ class TransferGridSearch(CNNGridSearch):
         model = PretrainedNNModel.create_from_transfer(
             self.model_class,
             self.model_alteration_function,
-            "./models/old_data/grid_search_resnet_custom/all/images_resnet152_2019-12-08_08:02:14.pth",
+            "./models/old_data/grid_search_resnet_custom_2/best.pth",
             3,
             self.num_classes,
         )
@@ -393,37 +393,37 @@ class TransferGridSearch(CNNGridSearch):
 
 
 if __name__ == "__main__":
-    # grid_search = CNNGridSearch(
-    #     tv_models.resnet152,
-    #     transfers.final_layer_alteration_resnet,
-    #     "images",
-    #     tag="resnet_custom",
-    #     repeats=1,
-    #     root_dir="./data/processed_old/",
-    #     num_classes=3
-    # )
-    # grid_search.run(
-    #     epoch_range=[1, 2, 3, 4, 5],
-    #     class_weight_methods=[
-    #         ClassWeightMethod.Unweighted,
-    #     ],
-    # )
-
-    grid_search = NNGridSearch(
-        nn_class=models.LinearNN,
-        feature_extractor=features.ResNetCustom(
-            model_path="./models/transfer/grid_search_resnet_custom/best.pth",
-            save_dir="./models/features/transfer/",
-        ),
-        tag="resnet_custom_linearnn",
-        repeats=3,
+    grid_search = CNNGridSearch(
+        tv_models.resnet152,
+        transfers.final_layer_alteration_resnet,
+        "images",
+        tag="resnet_custom_2",
+        repeats=1,
+        root_dir="./data/processed/",
+        num_classes=5
     )
     grid_search.run(
-        epoch_range=[1, 3, 5, 10],
-        class_weight_methods=[ClassWeightMethod.Unweighted],
-        balance_methods=[BalanceMethod.NoSample],
-        dropout_range=[0.0, 0.25, 0.5],
+        epoch_range=[1, 2, 3, 4, 5],
+        class_weight_methods=[
+            ClassWeightMethod.Unweighted,
+        ],
     )
+
+    # grid_search = NNGridSearch(
+    #     nn_class=models.LinearNN,
+    #     feature_extractor=features.ResNetCustom(
+    #         model_path="./models/transfer/grid_search_resnet_custom/best.pth",
+    #         save_dir="./models/features/transfer/",
+    #     ),
+    #     tag="resnet_custom_linearnn",
+    #     repeats=3,
+    # )
+    # grid_search.run(
+    #     epoch_range=[1, 3, 5, 10],
+    #     class_weight_methods=[ClassWeightMethod.Unweighted],
+    #     balance_methods=[BalanceMethod.NoSample],
+    #     dropout_range=[0.0, 0.25, 0.5],
+    # )
 
     # grid_search = XGBGridSearch(
     #     feature_extractor=features.ResNetCustom(
@@ -439,13 +439,13 @@ if __name__ == "__main__":
     #     tv_models.resnet152,
     #     transfers.final_layer_alteration_resnet,
     #     "images",
-    #     tag="resnet_custom_2",
+    #     tag="resnet_custom_3",
     #     repeats=1,
     #     root_dir="./data/processed/",
     #     num_classes=5
     # )
     # grid_search.run(
-    #     epoch_range=[1, 2, 3],
+    #     epoch_range=[1, 2, 3, 4, 5],
     #     class_weight_methods=[
     #         ClassWeightMethod.Unweighted,
     #     ],
