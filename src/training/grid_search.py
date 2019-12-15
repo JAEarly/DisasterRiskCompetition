@@ -29,7 +29,7 @@ from utils import (
     DualLogger,
 )
 
-ROOT_DIR = "./models/transfer"
+ROOT_DIR = "./models/verified"
 
 
 class GridSearch(ABC):
@@ -210,20 +210,25 @@ class NNGridSearch(GridSearch):
         dropout_range = self._extract_range(
             hyper_parameter_ranges, "dropout_range", [0]
         )
+        smoothing_range = self._extract_range(
+            hyper_parameter_ranges, "smoothing_range", [0]
+        )
 
         # Output parameter values
         print("         Epoch Range:", epoch_range)
         print("     Balance Methods:", [b.name for b in balance_methods])
         print("Class Weight Methods:", [c.name for c in class_weight_methods])
         print("       Dropout Range:", dropout_range)
+        print("     Smoothing Range:", smoothing_range)
 
         # Create configs
         all_configs = (
-            (num_epochs, balance_method, class_weight_method, dropout)
+            (num_epochs, balance_method, class_weight_method, dropout, smoothing)
             for num_epochs in epoch_range
             for balance_method in balance_methods
             for class_weight_method in class_weight_methods
             for dropout in dropout_range
+            for smoothing in smoothing_range
         )
 
         dict_configs = []
@@ -234,6 +239,7 @@ class NNGridSearch(GridSearch):
                     "balance_method": config[1],
                     "class_weight_method": config[2],
                     "dropout": config[3],
+                    "smoothing": config[4],
                 }
             )
 
@@ -245,6 +251,7 @@ class NNGridSearch(GridSearch):
             num_epochs=config["epochs"],
             balance_method=config["balance_method"],
             class_weight_method=config["class_weight_method"],
+            label_smoothing=config["smoothing"],
         )
         model = NNModel(
             self.nn_class,
@@ -415,21 +422,19 @@ if __name__ == "__main__":
     #     ],
     # )
 
-    # grid_search = NNGridSearch(
-    #     nn_class=models.LinearNN,
-    #     feature_extractor=features.ResNetCustom(
-    #         model_path="./models/transfer/grid_search_resnet_custom/best.pth",
-    #         save_dir="./models/features/transfer/",
-    #     ),
-    #     tag="resnet_custom_linearnn",
-    #     repeats=3,
-    # )
-    # grid_search.run(
-    #     epoch_range=[1, 3, 5, 10],
-    #     class_weight_methods=[ClassWeightMethod.Unweighted],
-    #     balance_methods=[BalanceMethod.NoSample],
-    #     dropout_range=[0.0, 0.25, 0.5],
-    # )
+    grid_search = NNGridSearch(
+        nn_class=models.LinearNN,
+        feature_extractor=features.ResNetCustom(),
+        tag="resnet_custom_linearnn_3",
+        repeats=1,
+    )
+    grid_search.run(
+        epoch_range=[2],
+        class_weight_methods=[ClassWeightMethod.Unweighted],
+        balance_methods=[BalanceMethod.NoSample],
+        dropout_range=[0.0],
+        smoothing_range=[0.0, 0.01, 0.05]
+    )
 
     # grid_search = XGBGridSearch(
     #     feature_extractor=features.ResNetCustom(
@@ -441,19 +446,19 @@ if __name__ == "__main__":
     # )
     # grid_search.run(num_rounds=[5, 10, 20, 30, 40],)
 
-    grid_search = TransferGridSearch(
-        tv_models.resnet152,
-        transfers.final_layer_alteration_resnet,
-        "images",
-        "./models/old_data/grid_search_resnet_custom_2/best.pth",
-        tag="resnet_custom_3",
-        repeats=2,
-        root_dir="./data/processed/",
-        num_classes=5
-    )
-    grid_search.run(
-        epoch_range=[1, 2, 3],
-        class_weight_methods=[
-            ClassWeightMethod.Unweighted,
-        ],
-    )
+    # grid_search = TransferGridSearch(
+    #     tv_models.resnet152,
+    #     transfers.final_layer_alteration_resnet,
+    #     "images",
+    #     "./models/old_data/grid_search_resnet_custom_2/best.pth",
+    #     tag="resnet_custom_3",
+    #     repeats=2,
+    #     root_dir="./data/processed/",
+    #     num_classes=5
+    # )
+    # grid_search.run(
+    #     epoch_range=[1, 2, 3],
+    #     class_weight_methods=[
+    #         ClassWeightMethod.Unweighted,
+    #     ],
+    # )
