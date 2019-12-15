@@ -29,7 +29,7 @@ from utils import (
     DualLogger,
 )
 
-ROOT_DIR = "./models/old_data"
+ROOT_DIR = "./models/transfer"
 
 
 class GridSearch(ABC):
@@ -373,6 +373,12 @@ class CNNGridSearch(GridSearch):
 
 class TransferGridSearch(CNNGridSearch):
 
+    def __init__(self, model_class, model_alteration_function, feature_name, original_model_path,
+                 root_dir="./data/processed/", num_classes=5, **kwargs):
+        self.original_model_path = original_model_path
+        super().__init__(model_class, model_alteration_function, feature_name, root_dir,
+                         num_classes, **kwargs)
+
     def _train_model(self, config, **kwargs) -> (float, float, Model):
         trainer = PretrainedNNTrainer(
             num_epochs=config["epochs"],
@@ -383,7 +389,7 @@ class TransferGridSearch(CNNGridSearch):
         model = PretrainedNNModel.create_from_transfer(
             self.model_class,
             self.model_alteration_function,
-            "./models/old_data/grid_search_resnet_custom_2/best.pth",
+            self.original_model_path,
             3,
             self.num_classes,
         )
@@ -393,21 +399,21 @@ class TransferGridSearch(CNNGridSearch):
 
 
 if __name__ == "__main__":
-    grid_search = CNNGridSearch(
-        tv_models.resnet152,
-        transfers.final_layer_alteration_resnet,
-        "images",
-        tag="resnet_custom_2",
-        repeats=1,
-        root_dir="./data/processed_old/",
-        num_classes=3
-    )
-    grid_search.run(
-        epoch_range=[1, 2, 3, 4, 5],
-        class_weight_methods=[
-            ClassWeightMethod.Unweighted,
-        ],
-    )
+    # grid_search = CNNGridSearch(
+    #     tv_models.resnet152,
+    #     transfers.final_layer_alteration_resnet,
+    #     "images",
+    #     tag="resnet_custom_2",
+    #     repeats=1,
+    #     root_dir="./data/processed_old/",
+    #     num_classes=3
+    # )
+    # grid_search.run(
+    #     epoch_range=[1, 2, 3, 4, 5],
+    #     class_weight_methods=[
+    #         ClassWeightMethod.Unweighted,
+    #     ],
+    # )
 
     # grid_search = NNGridSearch(
     #     nn_class=models.LinearNN,
@@ -435,18 +441,19 @@ if __name__ == "__main__":
     # )
     # grid_search.run(num_rounds=[5, 10, 20, 30, 40],)
 
-    # grid_search = TransferGridSearch(
-    #     tv_models.resnet152,
-    #     transfers.final_layer_alteration_resnet,
-    #     "images",
-    #     tag="resnet_custom_3",
-    #     repeats=1,
-    #     root_dir="./data/processed/",
-    #     num_classes=5
-    # )
-    # grid_search.run(
-    #     epoch_range=[1, 2, 3, 4, 5],
-    #     class_weight_methods=[
-    #         ClassWeightMethod.Unweighted,
-    #     ],
-    # )
+    grid_search = TransferGridSearch(
+        tv_models.resnet152,
+        transfers.final_layer_alteration_resnet,
+        "images",
+        "./models/old_data/grid_search_resnet_custom_2/best.pth",
+        tag="resnet_custom_3",
+        repeats=2,
+        root_dir="./data/processed/",
+        num_classes=5
+    )
+    grid_search.run(
+        epoch_range=[1, 2, 3],
+        class_weight_methods=[
+            ClassWeightMethod.Unweighted,
+        ],
+    )
