@@ -26,7 +26,7 @@ from utils import (
     DualLogger,
 )
 
-ROOT_DIR = "./models/verified"
+ROOT_DIR = "./models/semisupervised"
 
 
 class GridSearch(ABC):
@@ -210,6 +210,9 @@ class NNGridSearch(GridSearch):
         smoothing_range = self._extract_range(
             hyper_parameter_ranges, "smoothing_range", [0]
         )
+        alpha_range = self._extract_range(
+            hyper_parameter_ranges, "alpha_range", [0]
+        )
 
         # Output parameter values
         print("         Epoch Range:", epoch_range)
@@ -217,15 +220,17 @@ class NNGridSearch(GridSearch):
         print("Class Weight Methods:", [c.name for c in class_weight_methods])
         print("       Dropout Range:", dropout_range)
         print("     Smoothing Range:", smoothing_range)
+        print("         Alpha Range:", alpha_range)
 
         # Create configs
         all_configs = (
-            (num_epochs, balance_method, class_weight_method, dropout, smoothing)
+            (num_epochs, balance_method, class_weight_method, dropout, smoothing, alpha)
             for num_epochs in epoch_range
             for balance_method in balance_methods
             for class_weight_method in class_weight_methods
             for dropout in dropout_range
             for smoothing in smoothing_range
+            for alpha in alpha_range
         )
 
         dict_configs = []
@@ -237,6 +242,7 @@ class NNGridSearch(GridSearch):
                     "class_weight_method": config[2],
                     "dropout": config[3],
                     "smoothing": config[4],
+                    "alpha": config[5],
                 }
             )
 
@@ -249,6 +255,7 @@ class NNGridSearch(GridSearch):
             balance_method=config["balance_method"],
             class_weight_method=config["class_weight_method"],
             label_smoothing=config["smoothing"],
+            alpha=config["alpha"]
         )
         model = NNModel(
             self.nn_class,
@@ -355,7 +362,7 @@ class CNNGridSearch(GridSearch):
         dict_configs = []
         for config in all_configs:
             dict_configs.append(
-                {"epochs": config[0], "class_weight_method": config[1],}
+                {"epochs": config[0], "class_weight_method": config[1]}
             )
 
         return dict_configs
@@ -422,7 +429,7 @@ if __name__ == "__main__":
     grid_search = NNGridSearch(
         nn_class=models.LinearNN,
         feature_extractor=features.ResNetCustom(),
-        tag="resnet_custom_linearnn_3",
+        tag="resnet_custom_linearnn_4",
         repeats=3,
     )
     grid_search.run(
@@ -430,7 +437,7 @@ if __name__ == "__main__":
         class_weight_methods=[ClassWeightMethod.Unweighted],
         balance_methods=[BalanceMethod.NoSample],
         dropout_range=[0.0, 0.2, 0.4],
-        smoothing_range=[0.0, 0.05, 0.1]
+        alpha_range=[0.0, 0.1, 0.2]
     )
 
     # grid_search = XGBGridSearch(

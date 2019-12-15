@@ -10,7 +10,7 @@ import features
 import models
 from features import BalanceMethod, FeatureExtractor
 from models import NNModel
-from training import Trainer, FeatureTrainer, ClassWeightMethod, SmoothedCrossEntropyLoss, PseudoLabelCrossEntropyLoss
+from training import Trainer, FeatureTrainer, ClassWeightMethod, SmoothedPseudoCrossEntropyLoss
 from torch.nn.modules import CrossEntropyLoss
 
 
@@ -24,11 +24,13 @@ class NNTrainer(FeatureTrainer):
         num_epochs=10,
         class_weight_method=ClassWeightMethod.Unweighted,
         label_smoothing=0,
+        alpha=0,
     ):
         super().__init__(feature_extractor, balance_method=balance_method)
         self.num_epochs = num_epochs
         self.class_weight_method = class_weight_method
         self.label_smoothing = label_smoothing
+        self.alpha = alpha
 
     def train(
         self, model, train_loader: DataLoader = None, validation_loader: DataLoader = None, **kwargs
@@ -50,8 +52,7 @@ class NNTrainer(FeatureTrainer):
         print("Training using", device)
 
         # Setup loss function
-        loss_function = SmoothedCrossEntropyLoss(model.num_classes, smoothing=self.label_smoothing)
-        # loss_function = PseudoLabelCrossEntropyLoss(self.feature_dataset.pseudo_loader, model)
+        loss_function = SmoothedPseudoCrossEntropyLoss(self.feature_dataset.pseudo_loader, model, smoothing=self.label_smoothing, alpha=self.alpha)
 
         # Setup trial
         trial = Trial(net, optimiser, loss_function, metrics=["loss", "accuracy"]).to(
