@@ -30,6 +30,7 @@ class DatasetType(Enum):
     Validation = 2
     Test = 3
     Competition = 4
+    Pseudo = 5
 
 
 class BalanceMethod(Enum):
@@ -54,6 +55,7 @@ class Datasets(ABC):
             self.validation_dataset,
             self.test_dataset,
             self.competition_dataset,
+            self.pseudo_dataset,
         ) = self.create_datasets(balance_method)
 
         # Create dataloaders from datasets.
@@ -69,11 +71,17 @@ class Datasets(ABC):
         self.competition_loader = data.DataLoader(
             self.competition_dataset, batch_size=self.batch_size, shuffle=False
         )
+        if self.pseudo_dataset is not None:
+            self.pseudo_loader = data.DataLoader(
+                self.pseudo_dataset, batch_size=self.batch_size, shuffle=True
+            )
+        else:
+            self.pseudo_dataset = None
 
     @abstractmethod
     def create_datasets(
         self, balance_method: BalanceMethod
-    ) -> Tuple[data.Dataset, data.Dataset, data.Dataset, data.Dataset]:
+    ) -> Tuple[data.Dataset, data.Dataset, data.Dataset, data.Dataset, data.Dataset]:
         """
         Create the train, validation and test datasets.
         :param balance_method: Method for balancing the training dataset.
@@ -94,6 +102,8 @@ class Datasets(ABC):
             return self.test_dataset
         if dataset_type == DatasetType.Competition:
             return self.competition_dataset
+        if dataset_type == DatasetType.Pseudo:
+            return self.pseudo_dataset
         raise IndexError("Could not find dataset for type " + dataset_type.name)
 
     def get_loader(self, dataset_type: DatasetType) -> data.DataLoader:
@@ -110,6 +120,8 @@ class Datasets(ABC):
             return self.test_loader
         if dataset_type == DatasetType.Competition:
             return self.competition_loader
+        if dataset_type == DatasetType.Competition:
+            return self.pseudo_loader
         raise IndexError("Could not find data loader for type " + dataset_type.name)
 
 
@@ -164,9 +176,10 @@ class ImageDatasets(Datasets):
             self.validation_dir, transform=self.transform
         )
         test_dataset = ImageFolderWithFilenames(self.test_dir, transform=self.transform)
-        competition_dataset = CompetitionImageDataset(transform=self.transform)
+        competition_dataset = UnlabelledImageDataset("./data/processed/competition", transform=self.transform)
+        pseudo_dataset = UnlabelledImageDataset("./data/processed/pseudo", transform=self.transform)
 
-        return train_dataset, validation_dataset, test_dataset, competition_dataset
+        return train_dataset, validation_dataset, test_dataset, competition_dataset, pseudo_dataset
 
 
 class FeatureDataset(Dataset):
@@ -303,8 +316,7 @@ class FeatureDatasets(Datasets):
         competition_dataset = CompetitionFeatureDataset(
             self.feature_extractor
         )
-        return train_dataset, validation_dataset, test_dataset, competition_dataset
-
+        return train_dataset, validation_dataset, test_dataset, competition_dataset, None
 
     def get_features_and_labels(
         self, dataset_type: DatasetType
@@ -338,12 +350,10 @@ class FeatureDatasets(Datasets):
         return features
 
 
-class CompetitionImageDataset(ImageFolder):
+class UnlabelledImageDataset(ImageFolder):
     """Competition dataset backed by images."""
 
-    data_dir = "./data/processed/competition"
-
-    def __init__(self, transform=None):
+    def __init__(self, data_dir, transform=None):
         if transform is None:
             transform = transforms.Compose(
                 [
@@ -355,7 +365,7 @@ class CompetitionImageDataset(ImageFolder):
                     ),
                 ]
             )
-        super().__init__(self.data_dir, transform=transform)
+        super().__init__(data_dir, transform=transform)
 
     def __getitem__(self, index):
         path, _ = self.samples[index]

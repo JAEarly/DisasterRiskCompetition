@@ -16,7 +16,7 @@ from features import (
 )
 from features.smote_extractor import smote_type_to_name, SmoteType
 
-DEFAULT_CUSTOM_PATH = "./models/verified/grid_search_resnet_custom/best.pth"
+DEFAULT_CUSTOM_PATH = "./models/verified/grid_search_resnet_custom_2/best.pth"
 
 
 def setup_resnet():
@@ -161,14 +161,16 @@ if __name__ == "__main__":
     # feature_extractor = ResNetSMOTE()
     # print("Extracting features")
     # feature_extractor.extract(DatasetType.Train)
-    # #
-    # print("Creating ResNet custom extractor")
-    # feature_extractor = ResNetCustom()
-    # print("Extracting features")
-    # feature_extractor.extract(DatasetType.Train)
-    # feature_extractor.extract(DatasetType.Validation)
-    # feature_extractor.extract(DatasetType.Test)
-    # feature_extractor.extract(DatasetType.Competition)
+    #
+    print("Creating ResNet custom extractor")
+    feature_extractor = ResNetCustom()
+    print("Extracting features")
+    feature_extractor.extract(DatasetType.Train)
+    feature_extractor.extract(DatasetType.Validation)
+    feature_extractor.extract(DatasetType.Test)
+    feature_extractor.extract(DatasetType.Competition)
+    feature_extractor.extract(DatasetType.Pseudo)
+
     #
     # for _smote_type in SmoteType:
     #     print("Creating ResNet custom", smote_type_to_name(_smote_type), "extractor")
@@ -184,10 +186,10 @@ if __name__ == "__main__":
     # _feature_extractor.extract(DatasetType.Test)
     # _feature_extractor.extract(DatasetType.Competition)
 
-    print("Creating ResNet custom reduced smote extractor")
-    _feature_extractor = ResNetCustomReducedSmote(10)
-    print("Extracting features")
-    _feature_extractor.extract(DatasetType.Train)
-    _feature_extractor.extract(DatasetType.Validation)
-    _feature_extractor.extract(DatasetType.Test)
-    _feature_extractor.extract(DatasetType.Competition)
+    # print("Creating ResNet custom reduced smote extractor")
+    # _feature_extractor = ResNetCustomReducedSmote(10)
+    # print("Extracting features")
+    # _feature_extractor.extract(DatasetType.Train)
+    # _feature_extractor.extract(DatasetType.Validation)
+    # _feature_extractor.extract(DatasetType.Test)
+    # _feature_extractor.extract(DatasetType.Competition)

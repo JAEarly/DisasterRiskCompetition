@@ -29,7 +29,7 @@ from utils import (
     DualLogger,
 )
 
-ROOT_DIR = "./models/verified"
+ROOT_DIR = "./models/old_data"
 
 
 class GridSearch(ABC):
@@ -399,8 +399,8 @@ if __name__ == "__main__":
         "images",
         tag="resnet_custom_2",
         repeats=1,
-        root_dir="./data/processed/",
-        num_classes=5
+        root_dir="./data/processed_old/",
+        num_classes=3
     )
     grid_search.run(
         epoch_range=[1, 2, 3, 4, 5],

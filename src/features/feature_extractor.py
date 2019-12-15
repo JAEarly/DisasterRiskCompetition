@@ -69,7 +69,7 @@ class FeatureExtractor(ABC):
             print("Running feature extraction using", device)
 
             create_dirs_if_not_found(features_dir)
-            if dataset_type is DatasetType.Competition:
+            if dataset_type in [DatasetType.Competition, DatasetType.Pseudo]:
                 self._run_unlabelled_extraction(dataset_type, device)
             else:
                 self._run_labelled_extraction(dataset_type, device)
@@ -111,10 +111,10 @@ class FeatureExtractor(ABC):
         self.extractor_model = self.extractor_model.to(device)
 
         for image, file_id in tqdm(
-            dataset, desc="Extracting features  - competition",
+            dataset, desc="Extracting features - " + dataset_type.name,
         ):
             feature_tensor = self.extractor_model(image.unsqueeze(0).to(device))
-            self._save_tensor(DatasetType.Competition, feature_tensor, file_id)
+            self._save_tensor(dataset_type, feature_tensor, file_id)
 
     def _save_tensor(self, dataset_type, tensor, file_id) -> None:
         """

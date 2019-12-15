@@ -53,7 +53,7 @@ class Trainer(ABC):
         # Get truth and predictions
         y_true = []
         y_pred = []
-        for batch, labels in tqdm(data_loader, leave=False):
+        for batch, labels in tqdm(data_loader, desc='Evaluating model', leave=False):
             y_pred.extend(model.predict_batch(batch).cpu().detach())
             y_true.extend(labels)
 

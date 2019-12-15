@@ -5,6 +5,7 @@ from .datasets import (
     FeatureDatasets,
     BalanceMethod,
 )
+from .pseudo_dataset import PseudoFeatureDataset
 from .feature_extractor import FeatureExtractor, IdentityLayer
 from .smote_extractor import SmoteExtractor, SmoteType
 from .reduced_extractor import ReducedBasicExtractor, ReducedSmoteExtractor
