@@ -74,6 +74,7 @@ class FeatureSemiSupervisedTrainer(SemiSupervisedTrainer, ABC):
             train_with_pseudo_loader = DataLoader(
                 train_with_pseudo_dataset,
                 batch_size=self.feature_trainer.feature_dataset.batch_size,
+                shuffle=True,
             )
 
             model = self.create_fresh_model()
@@ -155,7 +156,7 @@ if __name__ == "__main__":
     _trainer = NNSemiSupervisedTrainer(
         _feature_extractor,
         models.LinearNN,
-        "resnet_custom_linearnn_2",
+        "resnet_custom_linearnn",
         epochs=5,
         dropout=0.4
     )

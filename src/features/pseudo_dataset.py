@@ -1,6 +1,5 @@
 import pickle
 
-import numpy as np
 import os
 from torch.utils.data import Dataset
 from tqdm import tqdm
@@ -28,7 +27,7 @@ class PseudoFeatureDataset(Dataset):
             confidence = max(prediction)
             if confidence > threshold:
                 filenames.append(filename)
-                path2label[filename] = np.argmax(prediction)
+                path2label[filename] = prediction.argmax().item()
         print(str(len(filenames)) + "/" + str(len(all_filenames)), "datapoints above threshold of", threshold)
         return filenames, path2label
 
