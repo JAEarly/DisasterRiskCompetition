@@ -8,14 +8,11 @@ import os
 from abc import ABC, abstractmethod
 from shutil import copyfile
 from texttable import Texttable
-from torchvision import models as tv_models
-from features import SmoteType
 
 import features
+import models
 from features import BalanceMethod, FeatureExtractor
 from model_manager import ModelManager
-from models import transfers
-import models
 from models import (
     NNModel,
     Model,
@@ -426,14 +423,14 @@ if __name__ == "__main__":
         nn_class=models.LinearNN,
         feature_extractor=features.ResNetCustom(),
         tag="resnet_custom_linearnn_3",
-        repeats=1,
+        repeats=3,
     )
     grid_search.run(
-        epoch_range=[2],
+        epoch_range=[2, 4, 6],
         class_weight_methods=[ClassWeightMethod.Unweighted],
         balance_methods=[BalanceMethod.NoSample],
-        dropout_range=[0.0],
-        smoothing_range=[0.0, 0.01, 0.05]
+        dropout_range=[0.0, 0.2, 0.4],
+        smoothing_range=[0.0, 0.05, 0.1]
     )
 
     # grid_search = XGBGridSearch(

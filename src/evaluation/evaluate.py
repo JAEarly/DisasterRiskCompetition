@@ -22,13 +22,13 @@ import torch
 
 def setup_feature_evaluation():
     # Don't use SMOTE feature extractors, just usual normal version
-    feature_extractor = features.ResNetCustom(save_dir="./models/features/transfer")
+    feature_extractor = features.ResNetCustom()
     datasets = FeatureDatasets(feature_extractor)
 
     model = models.NNModel(
         models.LinearNN,
         feature_extractor.feature_size,
-        state_dict_path="./models/transfer/grid_search_resnet_custom_linearnn/best.pth",
+        state_dict_path="./models/verified/grid_search_resnet_custom_linearnn_3/all/resnet_custom_linearnn_2019-12-15_15:36:07.pth",
         eval_mode=True,
     )
 
@@ -157,9 +157,9 @@ def evaluate_all_within_class_image():
 
 
 if __name__ == "__main__":
-    # _datasets, _model = setup_feature_evaluation()
+    _datasets, _model = setup_feature_evaluation()
     # _datasets, _model = setup_image_evaluation()
-    # run_evaluation(_datasets, _model)
+    run_evaluation(_datasets, _model)
 
     # evaluate_all()
-    evaluate_all_within_class_image()
+    # evaluate_all_within_class_image()

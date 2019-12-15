@@ -71,12 +71,9 @@ class Datasets(ABC):
         self.competition_loader = data.DataLoader(
             self.competition_dataset, batch_size=self.batch_size, shuffle=False
         )
-        if self.pseudo_dataset is not None:
-            self.pseudo_loader = data.DataLoader(
-                self.pseudo_dataset, batch_size=self.batch_size, shuffle=True
-            )
-        else:
-            self.pseudo_dataset = None
+        self.pseudo_loader = data.DataLoader(
+            self.pseudo_dataset, batch_size=self.batch_size, shuffle=True
+        )
 
     @abstractmethod
     def create_datasets(
@@ -120,7 +117,7 @@ class Datasets(ABC):
             return self.test_loader
         if dataset_type == DatasetType.Competition:
             return self.competition_loader
-        if dataset_type == DatasetType.Competition:
+        if dataset_type == DatasetType.Pseudo:
             return self.pseudo_loader
         raise IndexError("Could not find data loader for type " + dataset_type.name)
 
@@ -313,10 +310,13 @@ class FeatureDatasets(Datasets):
             self.feature_extractor.get_labels_filepath(DatasetType.Test),
             balance_method=BalanceMethod.NoSample,
         )
-        competition_dataset = CompetitionFeatureDataset(
-            self.feature_extractor
+        competition_dataset = UnlabelledFeatureDataset(
+            self.feature_extractor, DatasetType.Competition
         )
-        return train_dataset, validation_dataset, test_dataset, competition_dataset, None
+        pseudo_dataset = UnlabelledFeatureDataset(
+            self.feature_extractor, DatasetType.Pseudo
+        )
+        return train_dataset, validation_dataset, test_dataset, competition_dataset, pseudo_dataset
 
     def get_features_and_labels(
         self, dataset_type: DatasetType
@@ -377,14 +377,14 @@ class UnlabelledImageDataset(ImageFolder):
         return sample, file_id
 
 
-class CompetitionFeatureDataset(Dataset):
+class UnlabelledFeatureDataset(Dataset):
     """Competition dataset backed with extracted features."""
 
-    def __init__(self, feature_extractor):
+    def __init__(self, feature_extractor, dataset_type: DatasetType):
         super().__init__()
         self.feature_extractor = feature_extractor
         self.feature_extractor.extract(DatasetType.Competition)
-        self.data_dir = self.feature_extractor.get_features_dir(DatasetType.Competition)
+        self.data_dir = self.feature_extractor.get_features_dir(dataset_type)
         self.filenames = os.listdir(self.data_dir)
 
     def __len__(self):

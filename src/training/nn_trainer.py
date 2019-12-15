@@ -10,13 +10,12 @@ import features
 import models
 from features import BalanceMethod, FeatureExtractor
 from models import NNModel
-from training import FeatureTrainer, ClassWeightMethod, SmoothedCrossEntropyLoss
+from training import Trainer, FeatureTrainer, ClassWeightMethod, SmoothedCrossEntropyLoss, PseudoLabelCrossEntropyLoss
+from torch.nn.modules import CrossEntropyLoss
 
 
 class NNTrainer(FeatureTrainer):
     """Neural network trainer."""
-
-    loss = SmoothedCrossEntropyLoss
 
     def __init__(
         self,
@@ -52,13 +51,14 @@ class NNTrainer(FeatureTrainer):
 
         # Setup loss function
         loss_function = SmoothedCrossEntropyLoss(model.num_classes, smoothing=self.label_smoothing)
+        # loss_function = PseudoLabelCrossEntropyLoss(self.feature_dataset.pseudo_loader, model)
 
         # Setup trial
         trial = Trial(net, optimiser, loss_function, metrics=["loss", "accuracy"]).to(
             device
         )
         trial.with_generators(
-            train_loader, test_generator=validation_loader,
+            train_loader
         )
 
         # Actually run the training
@@ -67,10 +67,7 @@ class NNTrainer(FeatureTrainer):
         # Evaluate and show results
         time.sleep(0.1)  # Ensure training has finished
         net.eval()
-        results = trial.evaluate(data_key=torchbearer.TEST_DATA)
-
-        acc = float(results["test_acc"])
-        loss = float(results["test_loss"])
+        acc, loss = Trainer.evaluate(model, validation_loader)
         return acc, loss
 
 
