@@ -35,11 +35,12 @@ class SemiSupervisedTrainer(ABC):
 class FeatureSemiSupervisedTrainer(SemiSupervisedTrainer, ABC):
 
     def __init__(
-        self, feature_extractor, save_tag
+        self, feature_extractor, save_tag, threshold=0.95
     ):
         super().__init__()
         self.feature_extractor = feature_extractor
         self.save_tag = "ss_" + save_tag
+        self.threshold = threshold
         self.save_dir = os.path.join(ROOT_DIR, self.save_tag)
         self.log_path = os.path.join(self.save_dir, "log.txt")
         self.feature_trainer = self.create_base_trainer()
@@ -77,10 +78,21 @@ class FeatureSemiSupervisedTrainer(SemiSupervisedTrainer, ABC):
                 shuffle=True,
             )
 
-            model = self.create_fresh_model()
-            _, val_loss = self.train_model(
-                self.feature_trainer, model, train_with_pseudo_loader, val_loader
-            )
+            tmp_models = []
+            tmp_losses = []
+            for i in range(3):
+                print("Repeat", str(i+1) + "/3")
+                tmp_model = self.create_fresh_model()
+                _, tmp_loss = self.train_model(
+                    self.feature_trainer, tmp_model, train_with_pseudo_loader, val_loader
+                )
+                tmp_models.append(tmp_model)
+                tmp_losses.append(tmp_loss)
+
+            best_idx = int(np.argmin(tmp_losses))
+            val_loss = tmp_losses[best_idx]
+            model = tmp_models[best_idx]
+
             _, train_loss = Trainer.evaluate(model, train_loader)
             _, pseudo_loss = Trainer.evaluate(model, train_with_pseudo_loader)
 
@@ -97,7 +109,7 @@ class FeatureSemiSupervisedTrainer(SemiSupervisedTrainer, ABC):
             model.save(save_path)
 
             print('Creating new pseudo dataset')
-            pseudo_dataset = PseudoFeatureDataset(model, self.feature_extractor.get_features_dir(DatasetType.Pseudo))
+            pseudo_dataset = PseudoFeatureDataset(model, self.feature_extractor.get_features_dir(DatasetType.Pseudo), threshold=self.threshold)
             if num_added is None:
                 num_added = len(pseudo_dataset)
             else:
@@ -130,11 +142,11 @@ class FeatureSemiSupervisedTrainer(SemiSupervisedTrainer, ABC):
 
 
 class NNSemiSupervisedTrainer(FeatureSemiSupervisedTrainer):
-    def __init__(self, feature_extractor, nn_model, save_tag, epochs, dropout):
+    def __init__(self, feature_extractor, nn_model, save_tag, epochs, dropout, threshold=0.95):
         self.nn_model = nn_model
         self.epochs = epochs
         self.dropout = dropout
-        super().__init__(feature_extractor, save_tag)
+        super().__init__(feature_extractor, save_tag, threshold=threshold)
 
     def create_fresh_model(self):
         return models.NNModel(
@@ -155,9 +167,10 @@ if __name__ == "__main__":
     _feature_extractor = ResNetCustom()
     _trainer = NNSemiSupervisedTrainer(
         _feature_extractor,
-        models.LinearNN,
-        "resnet_custom_linearnn",
+        models.BiggerNN,
+        "resnet_custom_biggernn",
         epochs=5,
-        dropout=0.4
+        dropout=0.0,
+        threshold=0.95,
     )
     _trainer.train_semisupervised()

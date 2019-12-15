@@ -9,7 +9,7 @@ import torch
 class PseudoFeatureDataset(Dataset):
 
     def __init__(
-        self, model, features_dir, threshold=0.995
+        self, model, features_dir, threshold=0.95
     ):
         super().__init__()
         self.data_dir = features_dir

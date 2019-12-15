@@ -1,0 +1,51 @@
+
+Step 1
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+     Train Loss: 0.323
+    Pseudo Loss: 0.323
+Validation Loss: 0.558
+Creating new pseudo dataset
+3576/7683 datapoints above threshold of 0.95
+3576 datapoints added
+
+Step 2
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+     Train Loss: 0.324
+    Pseudo Loss: 0.252
+Validation Loss: 0.551
+Creating new pseudo dataset
+3977/7683 datapoints above threshold of 0.95
+401 datapoints added
+
+Step 3
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+     Train Loss: 0.335
+    Pseudo Loss: 0.255
+Validation Loss: 0.560
+Creating new pseudo dataset
+3887/7683 datapoints above threshold of 0.95
+0 datapoints added
+
+Best Loss: 0.550573468208313
+ Avg Loss: 0.5563500920931498
+ Std Loss: 0.0042108585114515075
+
+train_losses = [0.32286766998205474, 0.32392529848826906, 0.3345322238671447]
+pseudo_losses = [0.32286766998205474, 0.25175792189043933, 0.2552620098835907]
+validation_losses = [0.5579854249954224, 0.550573468208313, 0.5604913830757141]
+Uploading models/semisupervised/ss_resnet_custom_biggernn/best.pth

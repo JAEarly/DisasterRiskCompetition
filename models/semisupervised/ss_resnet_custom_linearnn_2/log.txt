@@ -1,0 +1,110 @@
+
+Step 1
+Training using cuda:0
+     Train Loss: 0.357
+    Pseudo Loss: 0.357
+Validation Loss: 0.540
+Creating new pseudo dataset
+1361/7683 datapoints above threshold of 0.975
+1361 datapoints added
+
+Step 2
+Training using cuda:0
+     Train Loss: 0.358
+    Pseudo Loss: 0.322
+Validation Loss: 0.539
+Creating new pseudo dataset
+1946/7683 datapoints above threshold of 0.975
+585 datapoints added
+
+Step 3
+Training using cuda:0
+     Train Loss: 0.353
+    Pseudo Loss: 0.305
+Validation Loss: 0.542
+Creating new pseudo dataset
+2266/7683 datapoints above threshold of 0.975
+320 datapoints added
+
+Step 4
+Training using cuda:0
+     Train Loss: 0.362
+    Pseudo Loss: 0.307
+Validation Loss: 0.550
+Creating new pseudo dataset
+1830/7683 datapoints above threshold of 0.975
+0 datapoints added
+
+Best Loss: 0.5385576486587524
+ Avg Loss: 0.5426195114850998
+ Std Loss: 0.004663073347305944
+
+train_losses = [0.3568030491354322, 0.3575083195732336, 0.35329395351808224, 0.3623864734601229]
+pseudo_losses = [0.356803049162969, 0.3215260880011231, 0.30482518064853636, 0.3068207853707753]
+validation_losses = [0.5397650003433228, 0.5385576486587524, 0.541695237159729, 0.550460159778595]
+Uploading models/semisupervised/ss_resnet_custom_linearnn_2/best.pth
+
+Step 1
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+     Train Loss: 0.358
+    Pseudo Loss: 0.358
+Validation Loss: 0.538
+Creating new pseudo dataset
+1182/7683 datapoints above threshold of 0.975
+1182 datapoints added
+
+Step 2
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+     Train Loss: 0.358
+    Pseudo Loss: 0.326
+Validation Loss: 0.532
+Creating new pseudo dataset
+1539/7683 datapoints above threshold of 0.975
+357 datapoints added
+
+Step 3
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+     Train Loss: 0.354
+    Pseudo Loss: 0.315
+Validation Loss: 0.537
+Creating new pseudo dataset
+1769/7683 datapoints above threshold of 0.975
+230 datapoints added
+
+Step 4
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+     Train Loss: 0.354
+    Pseudo Loss: 0.310
+Validation Loss: 0.536
+Creating new pseudo dataset
+1742/7683 datapoints above threshold of 0.975
+0 datapoints added
+
+Best Loss: 0.5322412848472595
+ Avg Loss: 0.535899743437767
+ Std Loss: 0.0022182380337478842
+
+train_losses = [0.3581419169065941, 0.35759671129819076, 0.3544343582467873, 0.35435534323408097]
+pseudo_losses = [0.3581419169216142, 0.32611977807389403, 0.31492407830188257, 0.3099226461455475]
+validation_losses = [0.5381417274475098, 0.5322412848472595, 0.5369742512702942, 0.5362417101860046]
+Uploading models/semisupervised/ss_resnet_custom_linearnn_2/best.pth
