@@ -3,7 +3,7 @@ import time
 import torch
 import torchbearer
 from torch import optim
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, ConcatDataset
 from torchbearer import Trial
 
 import features
@@ -39,6 +39,10 @@ class NNTrainer(FeatureTrainer):
             train_loader = self.feature_dataset.train_loader
         if validation_loader is None:
             validation_loader = self.feature_dataset.validation_loader
+
+        # TODO REMOVE - JUST TESTING
+        # concat_dataset = ConcatDataset([self.feature_dataset.train_dataset, self.feature_dataset.validation_dataset, self.feature_dataset.test_dataset])
+        # train_loader = DataLoader(concat_dataset, batch_size=8, shuffle=True)
 
         # Get transfer model and put it in training mode
         net = model.net

@@ -40,6 +40,7 @@ class EnsembleTrainer(FeatureTrainer):
                 [
                     self.feature_dataset.train_dataset,
                     self.feature_dataset.validation_dataset,
+                    self.feature_dataset.test_dataset
                 ]
             )
             split_size = int(len(concat_dataset) / k)
@@ -171,4 +172,4 @@ def grid_search_ensemble_trainer(
 
 
 if __name__ == "__main__":
-    grid_search_ensemble_trainer(4, "resnet_custom_linearnn", True)
+    grid_search_ensemble_trainer(4, "resnet_custom_linearnn_all", True)

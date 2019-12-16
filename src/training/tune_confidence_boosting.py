@@ -9,7 +9,7 @@ from features import DatasetType, FeatureDatasets
 
 
 def run_boost_tuning():
-    data_loader, model = setup_feature_evaluation()
+    data_loader, model = setup_ensemble_evaluation()
 
     print('Getting base predictions')
     y_true = []
@@ -83,6 +83,25 @@ def setup_feature_evaluation():
     )
     print("Running boost tuning for", feature_extractor.name, model.name)
     return data_loader, model
+
+
+def setup_ensemble_evaluation():
+    feature_extractor = features.ResNetCustom()
+    data_loader = FeatureDatasets(feature_extractor).get_loader(DatasetType.Validation)
+
+    name = "resnet_custom_linearnn"
+    num_models = 4
+    apply_softmax = True
+
+    base_models = []
+    for _ in range(num_models):
+        model = models.NNModel(
+            models.LinearNN,
+            feature_extractor.feature_size,
+        )
+        base_models.append(model)
+    ensemble_model = models.EnsembleModel(base_models, name, apply_softmax, load=True)
+    return data_loader, ensemble_model
 
 
 if __name__ == "__main__":

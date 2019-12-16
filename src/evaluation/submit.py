@@ -15,7 +15,7 @@ import models.transfers as transfers
 from features import FeatureDatasets, ImageDatasets, DatasetType
 from utils import create_timestamp_str
 
-SUBMISSION_FOLDER = "./submissions/kfold"
+SUBMISSION_FOLDER = "./submissions/top"
 SUBMISSION_FORMAT_PATH = "./data/raw/submission_format.csv"
 DEFAULT_CONFIDENCE_THRESHOLD = 0.99
 
@@ -173,16 +173,16 @@ def _setup_feature_submission():
     feature_extractor = features.ResNetCustom()
     datasets = FeatureDatasets(feature_extractor)
 
-    # model = models.NNModel(
-    #     models.LinearNN,
-    #     feature_extractor.feature_size,
-    #     state_dict_path="./models/verified/grid_search_resnet_custom_linearnn_2/best.pth",
-    #     eval_mode=True,
-    # )
-
-    model = models.XGBModel(
-        model_path="./models/kfold/kfold_resnet_custom_xgb/best.pth"
+    model = models.NNModel(
+        models.LinearNN,
+        feature_extractor.feature_size,
+        state_dict_path="./models/verified/grid_search_resnet_custom_linearnn_10/best.pth",
+        eval_mode=True,
     )
+
+    # model = models.XGBModel(
+    #     model_path="./models/kfold/kfold_resnet_custom_xgb/best.pth"
+    # )
 
     print("Running submission for", feature_extractor.name, model.name, "\n")
     return model, datasets.get_loader(DatasetType.Competition), feature_extractor.name
@@ -201,11 +201,12 @@ def _setup_image_submission():
     print("Running submission for", model.name, "\n")
     return model, datasets.get_loader(DatasetType.Competition), "custom"
 
+
 def _setup_ensemble_submission():
     feature_extractor = features.ResNetCustom()
     datasets = FeatureDatasets(feature_extractor)
 
-    name = "resnet_custom_linearnn"
+    name = "resnet_custom_linearnn_all"
     num_models = 4
     apply_softmax = True
 

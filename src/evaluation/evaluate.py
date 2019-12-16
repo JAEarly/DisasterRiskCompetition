@@ -25,7 +25,7 @@ def setup_feature_evaluation():
     model = models.NNModel(
         models.LinearNN,
         feature_extractor.feature_size,
-        state_dict_path="./models/verified/grid_search_resnet_custom_linearnn_5/best.pth",
+        state_dict_path="./models/verified/grid_search_resnet_custom_linearnn_10/best.pth",
         eval_mode=True,
     )
 
@@ -54,7 +54,7 @@ def setup_ensemble_evaluation():
     feature_extractor = features.ResNetCustom()
     datasets = FeatureDatasets(feature_extractor)
 
-    name = "resnet_custom_linearnn"
+    name = "resnet_custom_linearnn_all"
     num_models = 4
     apply_softmax = True
 
