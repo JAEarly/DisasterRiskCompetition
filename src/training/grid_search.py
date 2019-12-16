@@ -25,6 +25,8 @@ from utils import (
     create_dirs_if_not_found,
     DualLogger,
 )
+from models import transfers
+from torchvision import models as tv_models
 
 ROOT_DIR = "./models/verified"
 
@@ -410,36 +412,36 @@ class TransferGridSearch(CNNGridSearch):
 
 
 if __name__ == "__main__":
-    # grid_search = CNNGridSearch(
-    #     tv_models.resnet152,
-    #     transfers.final_layer_alteration_resnet,
-    #     "images",
-    #     tag="resnet_custom_2",
-    #     repeats=1,
-    #     root_dir="./data/processed_old/",
-    #     num_classes=3
-    # )
-    # grid_search.run(
-    #     epoch_range=[1, 2, 3, 4, 5],
-    #     class_weight_methods=[
-    #         ClassWeightMethod.Unweighted,
-    #     ],
-    # )
-
-    grid_search = NNGridSearch(
-        nn_class=models.LinearNN,
-        feature_extractor=features.ResNetCustom(),
-        tag="resnet_custom_linearnn_10",
+    grid_search = CNNGridSearch(
+        tv_models.resnet152,
+        transfers.final_layer_alteration_resnet,
+        "images",
+        tag="resnet_custom_3",
         repeats=3,
+        root_dir="./data/processed/",
+        num_classes=5
     )
     grid_search.run(
-        epoch_range=[6],
-        class_weight_methods=[ClassWeightMethod.Unweighted],
-        balance_methods=[BalanceMethod.NoSample],
-        dropout_range=[0.4],
-        smoothing_range=[0],
-        alpha_range=[0],
+        epoch_range=[1, 2, 3, 4, 5],
+        class_weight_methods=[
+            ClassWeightMethod.Unweighted,
+        ],
     )
+
+    # grid_search = NNGridSearch(
+    #     nn_class=models.LinearNN,
+    #     feature_extractor=features.ResNetCustom(),
+    #     tag="resnet_custom_linearnn_10",
+    #     repeats=3,
+    # )
+    # grid_search.run(
+    #     epoch_range=[6],
+    #     class_weight_methods=[ClassWeightMethod.Unweighted],
+    #     balance_methods=[BalanceMethod.NoSample],
+    #     dropout_range=[0.4],
+    #     smoothing_range=[0],
+    #     alpha_range=[0],
+    # )
 
     # grid_search = XGBGridSearch(
     #     feature_extractor=features.ResNetCustom(

@@ -11,6 +11,8 @@ from torchvision import models as torch_models
 from models import transfers, PretrainedNNModel
 from training import ClassWeightMethod, ImageTrainer
 from utils import class_distribution
+from torch.utils.data import DataLoader, ConcatDataset
+
 
 
 class PretrainedNNTrainer(ImageTrainer):
@@ -57,12 +59,16 @@ class PretrainedNNTrainer(ImageTrainer):
         else:
             loss_function = self.loss()
 
+        # TODO REMOVE - JUST TESTING
+        concat_dataset = ConcatDataset([self.image_datasets.train_dataset, self.image_datasets.validation_dataset, self.image_datasets.test_dataset])
+        train_loader = DataLoader(concat_dataset, batch_size=8, shuffle=True)
+
         # Setup trial
         trial = Trial(net, optimiser, loss_function, metrics=["loss", "accuracy"]).to(
             device
         )
         trial.with_generators(
-            self.image_datasets.train_loader,
+            train_loader,
             test_generator=self.image_datasets.validation_loader,
         )
 
