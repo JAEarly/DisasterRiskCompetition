@@ -5,9 +5,11 @@ from models import Model
 
 class EnsembleModel(Model):
 
-    def __init__(self, models, tag, apply_softmax):
+    def __init__(self, models, tag, apply_softmax, load=False):
         super().__init__("ensemble_" + tag, apply_softmax)
         self.models = models
+        if load:
+            self.load(self.get_models_dir())
 
     def predict(self, feature_tensor):
         predictions = []
@@ -18,19 +20,16 @@ class EnsembleModel(Model):
 
     def predict_batch(self, feature_batch):
         predictions = []
-        # print(len(self.models))
         for model in self.models:
             predictions.append(model.predict_batch(feature_batch))
-        # print(predictions[0].shape)
         predictions = torch.stack(predictions)
-        # print(predictions.shape)
         prediction = predictions.mean(dim=0)
-        # print(prediction.shape)
-        # exit(0)
         return prediction
 
-    def load(self, num_models):
-        raise NotImplementedError()
+    def load(self, path):
+        for i, model in enumerate(self.models):
+            model_path = os.path.join(path, str(i) + ".pth")
+            model.load(model_path)
 
     def save(self, path):
         for i, model in enumerate(self.models):

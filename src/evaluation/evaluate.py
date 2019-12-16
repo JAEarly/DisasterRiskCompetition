@@ -54,22 +54,18 @@ def setup_ensemble_evaluation():
     feature_extractor = features.ResNetCustom()
     datasets = FeatureDatasets(feature_extractor)
 
-    models_dir = "./models/semisupervised/grid_search_resnet_custom_linearnn_4/all"
+    name = "resnet_custom_linearnn"
+    num_models = 4
+    apply_softmax = True
+
     base_models = []
-    for model_file in os.listdir(models_dir):
-        model_path = models_dir + "/" + model_file
+    for _ in range(num_models):
         model = models.NNModel(
             models.LinearNN,
             feature_extractor.feature_size,
-            state_dict_path=model_path,
-            eval_mode=True,
         )
         base_models.append(model)
-    ensemble_model = EnsembleModel(base_models, "test")
-
-    # model = models.XGBModel(
-    #     model_path="./models/transfer/grid_search_resnet_custom_xgb/best.pth"
-    # )
+    ensemble_model = EnsembleModel(base_models, name, apply_softmax, load=True)
 
     print("Running evaluation for", feature_extractor.name, ensemble_model.name)
     return datasets, ensemble_model

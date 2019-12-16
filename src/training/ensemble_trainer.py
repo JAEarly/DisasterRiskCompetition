@@ -101,7 +101,7 @@ def run_ensemble_trainer(
     num_base_models, tag, apply_softmax, kfold=True, verbose=False
 ):
     feature_extractor = features.ResNetCustom()
-    base_trainer = NNTrainer(feature_extractor, num_epochs=1,)
+    base_trainer = NNTrainer(feature_extractor, num_epochs=6,)
 
     base_models = []
     for _ in range(num_base_models):
@@ -164,8 +164,8 @@ def grid_search_ensemble_trainer(
     best_model.save(models_dir)
     results_file = os.path.join(models_dir, "results.txt")
     with open(results_file, "w") as file:
-        file.write(" Best Acc: " + str(best_acc))
-        file.write("Best Loss: " + str(best_loss))
+        file.write(" Best Acc: " + str(best_acc) + "\n")
+        file.write("Best Loss: " + str(best_loss) + "\n")
 
     return best_model, best_acc, best_loss
 
