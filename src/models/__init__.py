@@ -6,3 +6,4 @@ from .pretrained_model import PretrainedNNModel
 from .xgb_model import XGBModel
 from .transfers import PretrainedModelEnum
 from .model_iterator import ModelIterator
+from .ensemble_model import EnsembleModel

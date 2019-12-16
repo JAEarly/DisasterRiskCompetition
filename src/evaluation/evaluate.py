@@ -2,8 +2,8 @@
 
 import time
 
-from torchvision import models as tv_models
 import os
+from torchvision import models as tv_models
 
 import features
 import models
@@ -12,12 +12,9 @@ from features import (
     DatasetType,
     FeatureDatasets,
     ImageDatasets,
-    BalanceMethod,
-    SmoteExtractor,
 )
-from training import FeatureTrainer, PretrainedNNTrainer, Trainer
-from models import ModelIterator
-import torch
+from models import ModelIterator, EnsembleModel
+from training import Trainer
 
 
 def setup_feature_evaluation():
@@ -50,6 +47,32 @@ def setup_image_evaluation():
     )
     print("Running evaluation for", model.name)
     return image_datasets, model
+
+
+def setup_ensemble_evaluation():
+    # Don't use SMOTE feature extractors, just usual normal version
+    feature_extractor = features.ResNetCustom()
+    datasets = FeatureDatasets(feature_extractor)
+
+    models_dir = "./models/semisupervised/grid_search_resnet_custom_linearnn_4/all"
+    base_models = []
+    for model_file in os.listdir(models_dir):
+        model_path = models_dir + "/" + model_file
+        model = models.NNModel(
+            models.LinearNN,
+            feature_extractor.feature_size,
+            state_dict_path=model_path,
+            eval_mode=True,
+        )
+        base_models.append(model)
+    ensemble_model = EnsembleModel(base_models, "test")
+
+    # model = models.XGBModel(
+    #     model_path="./models/transfer/grid_search_resnet_custom_xgb/best.pth"
+    # )
+
+    print("Running evaluation for", feature_extractor.name, ensemble_model.name)
+    return datasets, ensemble_model
 
 
 def run_evaluation(datasets, model, verbose=True):
@@ -157,8 +180,9 @@ def evaluate_all_within_class_image():
 
 
 if __name__ == "__main__":
-    _datasets, _model = setup_feature_evaluation()
+    # _datasets, _model = setup_feature_evaluation()
     # _datasets, _model = setup_image_evaluation()
+    _datasets, _model = setup_ensemble_evaluation()
     run_evaluation(_datasets, _model)
 
     # evaluate_all()
