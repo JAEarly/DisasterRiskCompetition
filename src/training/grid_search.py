@@ -427,18 +427,18 @@ if __name__ == "__main__":
     # )
 
     grid_search = NNGridSearch(
-        nn_class=models.LinearNN,
+        nn_class=models.BiggerNN,
         feature_extractor=features.ResNetCustom(),
-        tag="resnet_custom_linearnn_5",
+        tag="resnet_custom_biggernn_3",
         repeats=3,
     )
     grid_search.run(
-        epoch_range=[13, 15, 17],
+        epoch_range=[5, 10, 15],
         class_weight_methods=[ClassWeightMethod.Unweighted],
         balance_methods=[BalanceMethod.NoSample],
-        dropout_range=[0.2, 0.3],
-        smoothing_range=[0.0, 0.05],
-        alpha_range=[0.15, 0.25],
+        dropout_range=[0.0, 0.25, 0.5],
+        smoothing_range=[0.0, 0.05, 0.1],
+        alpha_range=[0.0, 0.1, 0.2],
     )
 
     # grid_search = XGBGridSearch(
