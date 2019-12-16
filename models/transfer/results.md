@@ -2,8 +2,6 @@
   
 | Method             |   Feature Extractor   | Train Acc | Train LL  |  Val Acc  |   Val LL  |  Test Acc |  Test LL  |   Cmp LL   |
 | :----------------: | :-------------------: | :-------: | :-------: | :-------: | :-------: | :-------: | :-------: | :--------: |
-| LinearNN           | ResNetCustom          |   0.838   |   0.427   | **0.817** | **0.519** | **0.794** | **0.552** |     -      |
+| LinearNN (2)       | ResNetCustom          |   0.869   |   0.383   |   0.794   |   0.554   |   0.783   | **0.542** |     -      |
+| BiggerNN           | ResNetCustom          |   0.878   |   0.333   |   0.790   |   0.576   |   0.780   |   0.566   |     -      |
 | Retrained (3)      | ResNetCustom          |   0.855   |   0.412   |   0.784   |   0.571   |   0.775   |   0.566   |     -      |
-| XGB                | ResNetCustom          | **0.928** | **0.217** |   0.816   |   0.520   |   0.793   |   0.573   |     -      |
-| Retrained (2)      | ResNetCustom          |   0.819   |   0.473   |   0.782   |   0.580   |   0.779   |   0.604   |     -      |
-| Retrained          | ResNetCustom          |   0.781   |   0.530   |   0.760   |   0.593   |   0.752   |   0.622   |     -      |

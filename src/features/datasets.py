@@ -291,6 +291,7 @@ class FeatureDatasets(Datasets):
         self.feature_extractor.extract(DatasetType.Validation)
         self.feature_extractor.extract(DatasetType.Test)
         self.feature_extractor.extract(DatasetType.Competition)
+        self.feature_extractor.extract(DatasetType.Pseudo)
         super().__init__(balance_method=balance_method)
 
     def create_datasets(self, balance_method):

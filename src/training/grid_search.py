@@ -26,7 +26,7 @@ from utils import (
     DualLogger,
 )
 
-ROOT_DIR = "./models/semisupervised"
+ROOT_DIR = "./models/verified"
 
 
 class GridSearch(ABC):
@@ -429,15 +429,16 @@ if __name__ == "__main__":
     grid_search = NNGridSearch(
         nn_class=models.LinearNN,
         feature_extractor=features.ResNetCustom(),
-        tag="resnet_custom_linearnn_4",
+        tag="resnet_custom_linearnn_5",
         repeats=3,
     )
     grid_search.run(
-        epoch_range=[2, 4, 6],
+        epoch_range=[13, 15, 17],
         class_weight_methods=[ClassWeightMethod.Unweighted],
         balance_methods=[BalanceMethod.NoSample],
-        dropout_range=[0.0, 0.2, 0.4],
-        alpha_range=[0.0, 0.1, 0.2]
+        dropout_range=[0.2, 0.3],
+        smoothing_range=[0.0, 0.05],
+        alpha_range=[0.15, 0.25],
     )
 
     # grid_search = XGBGridSearch(
