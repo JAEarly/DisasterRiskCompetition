@@ -1,11 +1,12 @@
 import torch
-
+import os
 from models import Model
 
 
 class EnsembleModel(Model):
-    def __init__(self, models, tag):
-        super().__init__("ensemble_" + tag, True)
+
+    def __init__(self, models, tag, apply_softmax):
+        super().__init__("ensemble_" + tag, apply_softmax)
         self.models = models
 
     def predict(self, feature_tensor):
@@ -28,8 +29,13 @@ class EnsembleModel(Model):
         # exit(0)
         return prediction
 
-    def load(self, path):
+    def load(self, num_models):
         raise NotImplementedError()
 
     def save(self, path):
-        raise NotImplementedError()
+        for i, model in enumerate(self.models):
+            model_path = os.path.join(path, str(i) + ".pth")
+            model.save(model_path)
+
+    def get_models_dir(self):
+        return "./models/ensemble/" + self.name
