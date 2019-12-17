@@ -25,7 +25,7 @@ def setup_feature_evaluation():
     model = models.NNModel(
         models.LinearNN,
         feature_extractor.feature_size,
-        state_dict_path="./models/verified/grid_search_resnet_custom_linearnn_10/best.pth",
+        state_dict_path="./models/verified/grid_search_resnet_custom_linearnn_13/best.pth",
         eval_mode=True,
     )
 
@@ -42,7 +42,7 @@ def setup_image_evaluation():
     model = models.PretrainedNNModel(
         tv_models.resnet152,
         transfers.final_layer_alteration_resnet,
-        state_dict_path="./models/transfer/grid_search_resnet_custom_3/best.pth",
+        state_dict_path="./models/verified/grid_search_resnet_custom_3/all/images_resnet152_2019-12-17_06:23:56.pth",
         eval_mode=True,
     )
     print("Running evaluation for", model.name)
@@ -177,8 +177,8 @@ def evaluate_all_within_class_image():
 
 if __name__ == "__main__":
     # _datasets, _model = setup_feature_evaluation()
-    # _datasets, _model = setup_image_evaluation()
-    _datasets, _model = setup_ensemble_evaluation()
+    _datasets, _model = setup_image_evaluation()
+    # _datasets, _model = setup_ensemble_evaluation()
     run_evaluation(_datasets, _model)
 
     # evaluate_all()

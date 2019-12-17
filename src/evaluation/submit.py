@@ -176,7 +176,7 @@ def _setup_feature_submission():
     model = models.NNModel(
         models.LinearNN,
         feature_extractor.feature_size,
-        state_dict_path="./models/verified/grid_search_resnet_custom_linearnn_10/best.pth",
+        state_dict_path="./models/verified/grid_search_resnet_custom_linearnn_13/best.pth",
         eval_mode=True,
     )
 
@@ -195,7 +195,7 @@ def _setup_image_submission():
     model = models.PretrainedNNModel(
         tv_models.resnet152,
         transfers.final_layer_alteration_resnet,
-        state_dict_path="./models/grid_search_resnet_custom/best.pth",
+        state_dict_path="./models/verified/grid_search_resnet_custom_3/best.pth",
         eval_mode=True,
     )
     print("Running submission for", model.name, "\n")
@@ -222,9 +222,9 @@ def _setup_ensemble_submission():
 
 
 if __name__ == "__main__":
-    # _model, _competition_loader, _feature_name = _setup_feature_submission()
-    # _model, _competition_dataset, _feature_name = setup_image_submission()
-    _model, _competition_loader, _feature_name = _setup_ensemble_submission()
+    _model, _competition_loader, _feature_name = _setup_feature_submission()
+    # _model, _competition_loader, _feature_name = _setup_image_submission()
+    # _model, _competition_loader, _feature_name = _setup_ensemble_submission()
 
     create_from_model(_model, _competition_loader, _feature_name)
 
