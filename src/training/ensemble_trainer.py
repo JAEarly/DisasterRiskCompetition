@@ -99,14 +99,12 @@ class EnsembleTrainer(FeatureTrainer):
 
 
 def run_ensemble_trainer(
-    num_base_models, tag, apply_softmax, kfold=True, verbose=False
+    num_base_models, tag, apply_softmax, base_trainer, base_model_func, kfold=True, verbose=False
 ):
-    feature_extractor = features.ResNetCustom()
-    base_trainer = NNTrainer(feature_extractor, num_epochs=6,)
-
+    feature_extractor = base_trainer.feature_dataset.feature_extractor
     base_models = []
     for _ in range(num_base_models):
-        base_model = NNModel(LinearNN, feature_extractor.feature_size, dropout=0.4)
+        base_model = base_model_func()
         base_models.append(base_model)
     ensemble_model = EnsembleModel(base_models, tag, apply_softmax)
 
@@ -116,7 +114,7 @@ def run_ensemble_trainer(
 
 
 def run_ensemble_trainer_repeated(
-    k, tag, apply_softmax, repeats=3, kfold=True, verbose=False
+    k, tag, apply_softmax, base_trainer, base_model_func, repeats=3, kfold=True, verbose=False
 ):
     models = []
     accs = []
@@ -124,7 +122,7 @@ def run_ensemble_trainer_repeated(
     for r in range(repeats):
         print("Repeat", str(r + 1) + "/" + str(repeats))
         model, acc, loss = run_ensemble_trainer(
-            k, tag, apply_softmax, kfold=kfold, verbose=verbose
+            k, tag, apply_softmax, base_trainer, base_model_func, kfold=kfold, verbose=verbose
         )
         models.append(model)
         accs.append(acc)
@@ -133,13 +131,13 @@ def run_ensemble_trainer_repeated(
 
 
 def run_ensemble_trainer_iterative(
-    k_max, tag, apply_softmax, repeats=3, kfold=True, verbose=False
+    k_max, tag, apply_softmax, base_trainer, base_model_func, repeats=3, kfold=True, verbose=False
 ):
     accs = []
     losses = []
     for k in range(1, k_max + 1):
         _, repeat_accs, repeat_losses = run_ensemble_trainer_repeated(
-            k, tag, apply_softmax, repeats=repeats, kfold=kfold, verbose=verbose
+            k, tag, apply_softmax, base_trainer, base_model_func, repeats=repeats, kfold=kfold, verbose=verbose
         )
         accs.append(np.mean(repeat_accs))
         losses.append(np.mean(repeat_losses))
@@ -147,10 +145,10 @@ def run_ensemble_trainer_iterative(
 
 
 def grid_search_ensemble_trainer(
-    k, tag, apply_softmax, repeats=3, kfold=True, verbose=False
+    k, tag, apply_softmax, base_trainer, base_model_func, repeats=3, kfold=True, verbose=False
 ):
     models, accs, losses = run_ensemble_trainer_repeated(
-        k, tag, apply_softmax, repeats=repeats, kfold=kfold, verbose=verbose
+        k, tag, apply_softmax, base_trainer, base_model_func, repeats=repeats, kfold=kfold, verbose=verbose
     )
     best_idx = int(np.argmin(losses))
     best_model = models[best_idx]
@@ -172,4 +170,14 @@ def grid_search_ensemble_trainer(
 
 
 if __name__ == "__main__":
-    grid_search_ensemble_trainer(4, "resnet_custom_linearnn_all", True)
+    _feature_extractor = features.ResNetCustom()
+    _base_trainer = NNTrainer(_feature_extractor, num_epochs=6,)
+
+    def _base_model_func():
+        NNModel(LinearNN, _feature_extractor.feature_size, dropout=0.4)
+
+    _num_base_models = 4
+    _tag = "resnet_custom_linearnn_all"
+    _apply_softmax = True
+
+    grid_search_ensemble_trainer(4, _tag, _apply_softmax, _base_trainer, _base_model_func)

@@ -212,9 +212,7 @@ class NNGridSearch(GridSearch):
         smoothing_range = self._extract_range(
             hyper_parameter_ranges, "smoothing_range", [0]
         )
-        alpha_range = self._extract_range(
-            hyper_parameter_ranges, "alpha_range", [0]
-        )
+        alpha_range = self._extract_range(hyper_parameter_ranges, "alpha_range", [0])
 
         # Output parameter values
         print("         Epoch Range:", epoch_range)
@@ -257,7 +255,7 @@ class NNGridSearch(GridSearch):
             balance_method=config["balance_method"],
             class_weight_method=config["class_weight_method"],
             label_smoothing=config["smoothing"],
-            alpha=config["alpha"]
+            alpha=config["alpha"],
         )
         model = NNModel(
             self.nn_class,
@@ -363,9 +361,7 @@ class CNNGridSearch(GridSearch):
 
         dict_configs = []
         for config in all_configs:
-            dict_configs.append(
-                {"epochs": config[0], "class_weight_method": config[1]}
-            )
+            dict_configs.append({"epochs": config[0], "class_weight_method": config[1]})
 
         return dict_configs
 
@@ -385,12 +381,25 @@ class CNNGridSearch(GridSearch):
 
 
 class TransferGridSearch(CNNGridSearch):
-
-    def __init__(self, model_class, model_alteration_function, feature_name, original_model_path,
-                 root_dir="./data/processed/", num_classes=5, **kwargs):
+    def __init__(
+        self,
+        model_class,
+        model_alteration_function,
+        feature_name,
+        original_model_path,
+        root_dir="./data/processed/",
+        num_classes=5,
+        **kwargs
+    ):
         self.original_model_path = original_model_path
-        super().__init__(model_class, model_alteration_function, feature_name, root_dir,
-                         num_classes, **kwargs)
+        super().__init__(
+            model_class,
+            model_alteration_function,
+            feature_name,
+            root_dir,
+            num_classes,
+            **kwargs
+        )
 
     def _train_model(self, config, **kwargs) -> (float, float, Model):
         trainer = PretrainedNNTrainer(
@@ -428,30 +437,32 @@ if __name__ == "__main__":
     #     ],
     # )
 
-    grid_search = NNGridSearch(
-        nn_class=models.LinearNN,
-        feature_extractor=features.ResNetCustom(),
-        tag="resnet_custom_linearnn_13",
-        repeats=3,
+    # grid_search = NNGridSearch(
+    #     nn_class=models.LinearNN,
+    #     feature_extractor=features.ResNetCustom(),
+    #     tag="resnet_custom_linearnn_test",
+    #     repeats=3,
+    # )
+    # grid_search.run(
+    #     epoch_range=[6],
+    #     class_weight_methods=[ClassWeightMethod.Unweighted],
+    #     balance_methods=[BalanceMethod.NoSample],
+    #     dropout_range=[0.4],
+    #     smoothing_range=[0],
+    #     alpha_range=[0],
+    # )
+
+    grid_search = XGBGridSearch(
+        feature_extractor=features.ResNetCustom(), tag="resnet_custom_xgb_11", repeats=1,
     )
     grid_search.run(
-        epoch_range=[6],
-        class_weight_methods=[ClassWeightMethod.Unweighted],
-        balance_methods=[BalanceMethod.NoSample],
-        dropout_range=[0.4],
-        smoothing_range=[0],
-        alpha_range=[0],
+        num_rounds=[15],
+        etas=[0.34],
+        gammas=[0],
+        depths=[3],
+        lambdas=[0.9],
+        c_weights=[1.0]
     )
-
-    # grid_search = XGBGridSearch(
-    #     feature_extractor=features.ResNetCustom(
-    #         model_path="./models/transfer/grid_search_resnet_custom/best.pth",
-    #         save_dir="./models/features/transfer/",
-    #     ),
-    #     tag="resnet_custom_xgb",
-    #     repeats=1,
-    # )
-    # grid_search.run(num_rounds=[5, 10, 20, 30, 40],)
 
     # grid_search = TransferGridSearch(
     #     tv_models.resnet152,

@@ -1,0 +1,96 @@
+         Epoch Range: [1, 2, 3, 4, 5]
+Class Weight Methods: ['Unweighted']
+
+-- Configuration 1/5 --
+epochs - 1
+class_weight_method - ClassWeightMethod.Unweighted
+Repeat 1/3
+Training using cuda:0
+         Epoch Range: [1, 2, 3, 4, 5]
+Class Weight Methods: ['Unweighted']
+
+-- Configuration 1/5 --
+epochs - 1
+class_weight_method - ClassWeightMethod.Unweighted
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.5208880305290222
+ Best Acc: 0.8064516186714172
+ Avg Loss: 0.5932247241338094
+  Avg Acc: 0.7764337062835693
+
+-- Configuration 2/5 --
+epochs - 2
+class_weight_method - ClassWeightMethod.Unweighted
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.5208448171615601
+ Best Acc: 0.8004032373428345
+ Avg Loss: 0.5287011861801147
+  Avg Acc: 0.7874103983243307
+
+-- Configuration 3/5 --
+epochs - 3
+class_weight_method - ClassWeightMethod.Unweighted
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.44074901938438416
+ Best Acc: 0.8326612710952759
+ Avg Loss: 0.4544682701428731
+  Avg Acc: 0.8301971157391866
+
+-- Configuration 4/5 --
+epochs - 4
+class_weight_method - ClassWeightMethod.Unweighted
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.3228308856487274
+ Best Acc: 0.8817204236984253
+ Avg Loss: 0.37483763694763184
+  Avg Acc: 0.8658154209454855
+
+-- Configuration 5/5 --
+epochs - 5
+class_weight_method - ClassWeightMethod.Unweighted
+Repeat 1/3
+Training using cuda:0
+Repeat 2/3
+Training using cuda:0
+Repeat 3/3
+Training using cuda:0
+Best Loss: 0.27433937788009644
+ Best Acc: 0.9025537371635437
+ Avg Loss: 0.30263665318489075
+  Avg Acc: 0.8920250733693441
+
+--- Final Results ---
++-----+-------+-------+-------------------------------------------------------------------------+------------------------------------------+
+| Pos | Loss  |  Acc  |                                 Params                                  |                 Filename                 |
++=====+=======+=======+=========================================================================+==========================================+
+|  1  | 0.274 | 0.903 | {'epochs': 5, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>} | images_resnet152_2019-12-17_15:54:00.pth |
++-----+-------+-------+-------------------------------------------------------------------------+------------------------------------------+
+|  2  | 0.323 | 0.882 | {'epochs': 4, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>} | images_resnet152_2019-12-17_10:37:35.pth |
++-----+-------+-------+-------------------------------------------------------------------------+------------------------------------------+
+|  3  | 0.441 | 0.833 | {'epochs': 3, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>} | images_resnet152_2019-12-17_06:23:56.pth |
++-----+-------+-------+-------------------------------------------------------------------------+------------------------------------------+
+|  4  | 0.521 | 0.800 | {'epochs': 2, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>} | images_resnet152_2019-12-17_02:57:25.pth |
++-----+-------+-------+-------------------------------------------------------------------------+------------------------------------------+
+|  5  | 0.521 | 0.806 | {'epochs': 1, 'class_weight_method': <ClassWeightMethod.Unweighted: 1>} | images_resnet152_2019-12-17_00:18:12.pth |
++-----+-------+-------+-------------------------------------------------------------------------+------------------------------------------+
+Uploading models/verified/grid_search_resnet_custom_3/best.pth

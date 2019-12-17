@@ -173,16 +173,16 @@ def _setup_feature_submission():
     feature_extractor = features.ResNetCustom()
     datasets = FeatureDatasets(feature_extractor)
 
-    model = models.NNModel(
-        models.LinearNN,
-        feature_extractor.feature_size,
-        state_dict_path="./models/verified/grid_search_resnet_custom_linearnn_13/best.pth",
-        eval_mode=True,
-    )
-
-    # model = models.XGBModel(
-    #     model_path="./models/kfold/kfold_resnet_custom_xgb/best.pth"
+    # model = models.NNModel(
+    #     models.LinearNN,
+    #     feature_extractor.feature_size,
+    #     state_dict_path="./models/verified/grid_search_resnet_custom_linearnn_13/best.pth",
+    #     eval_mode=True,
     # )
+
+    model = models.XGBModel(
+        model_path="./models/verified/grid_search_resnet_custom_xgb_11/best.pth"
+    )
 
     print("Running submission for", feature_extractor.name, model.name, "\n")
     return model, datasets.get_loader(DatasetType.Competition), feature_extractor.name

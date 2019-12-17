@@ -22,16 +22,16 @@ def setup_feature_evaluation():
     feature_extractor = features.ResNetCustom()
     datasets = FeatureDatasets(feature_extractor)
 
-    model = models.NNModel(
-        models.LinearNN,
-        feature_extractor.feature_size,
-        state_dict_path="./models/verified/grid_search_resnet_custom_linearnn_13/best.pth",
-        eval_mode=True,
-    )
-
-    # model = models.XGBModel(
-    #     model_path="./models/transfer/grid_search_resnet_custom_xgb/best.pth"
+    # model = models.NNModel(
+    #     models.LinearNN,
+    #     feature_extractor.feature_size,
+    #     state_dict_path="./models/verified/grid_search_resnet_custom_linearnn_13/best.pth",
+    #     eval_mode=True,
     # )
+
+    model = models.XGBModel(
+        model_path="./models/verified/grid_search_resnet_custom_xgb_11/best.pth"
+    )
 
     print("Running evaluation for", feature_extractor.name, model.name)
     return datasets, model
@@ -176,8 +176,8 @@ def evaluate_all_within_class_image():
 
 
 if __name__ == "__main__":
-    # _datasets, _model = setup_feature_evaluation()
-    _datasets, _model = setup_image_evaluation()
+    _datasets, _model = setup_feature_evaluation()
+    # _datasets, _model = setup_image_evaluation()
     # _datasets, _model = setup_ensemble_evaluation()
     run_evaluation(_datasets, _model)
 

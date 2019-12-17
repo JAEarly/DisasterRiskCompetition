@@ -9,6 +9,7 @@ from abc import abstractmethod
 from sklearn.metrics import log_loss, accuracy_score
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+import random
 
 from features import (
     FeatureDatasets,
@@ -134,6 +135,16 @@ class FeatureTrainer(Trainer):
             train_loader
         )
 
+        # TODO Only for training on all!
+        x_val, y_val = self.feature_dataset.get_features_and_labels_from_dataloader(
+            validation_loader
+        )
+        x_test, y_test = self.feature_dataset.get_features_and_labels_from_dataloader(
+            self.feature_dataset.test_loader
+        )
+        x_all = torch.cat([x_train, x_val, x_test])
+        y_all = torch.cat([y_train, y_val, y_test])
+
         if kwargs["pass_val"]:
             x_val, y_val = self.feature_dataset.get_features_and_labels_from_dataloader(
                 validation_loader
@@ -143,7 +154,7 @@ class FeatureTrainer(Trainer):
             del kwargs["pass_val"]
 
         print("Fitting model")
-        model.fit(x_train, y_train, **kwargs)
+        model.fit(x_all, y_all, **kwargs)
 
         val_acc, val_loss = self.evaluate(model, validation_loader,)
 
