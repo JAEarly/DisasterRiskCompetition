@@ -23,14 +23,14 @@ def setup_feature_evaluation():
     datasets = FeatureDatasets(feature_extractor)
 
     # model = models.NNModel(
-    #     models.LinearNN,
+    #     models.BiggerNN,
     #     feature_extractor.feature_size,
-    #     state_dict_path="./models/verified/grid_search_resnet_custom_linearnn_13/best.pth",
+    #     state_dict_path="./models/verified/grid_search_resnet_custom_biggernn_3/best.pth",
     #     eval_mode=True,
     # )
 
     model = models.XGBModel(
-        model_path="./models/verified/grid_search_resnet_custom_xgb_11/best.pth"
+        model_path="./models/verified/grid_search_resnet_custom_xgb_9/best.pth"
     )
 
     print("Running evaluation for", feature_extractor.name, model.name)
@@ -54,7 +54,7 @@ def setup_ensemble_evaluation():
     feature_extractor = features.ResNetCustom()
     datasets = FeatureDatasets(feature_extractor)
 
-    name = "resnet_custom_linearnn_all"
+    name = "resnet_custom_linearnn_all_2"
     num_models = 4
     apply_softmax = True
 
@@ -64,6 +64,7 @@ def setup_ensemble_evaluation():
             models.LinearNN,
             feature_extractor.feature_size,
         )
+        # model = models.XGBModel()
         base_models.append(model)
     ensemble_model = EnsembleModel(base_models, name, apply_softmax, load=True)
 
@@ -176,9 +177,9 @@ def evaluate_all_within_class_image():
 
 
 if __name__ == "__main__":
-    _datasets, _model = setup_feature_evaluation()
+    # _datasets, _model = setup_feature_evaluation()
     # _datasets, _model = setup_image_evaluation()
-    # _datasets, _model = setup_ensemble_evaluation()
+    _datasets, _model = setup_ensemble_evaluation()
     run_evaluation(_datasets, _model)
 
     # evaluate_all()

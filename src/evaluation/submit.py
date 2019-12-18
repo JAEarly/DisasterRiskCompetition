@@ -206,25 +206,26 @@ def _setup_ensemble_submission():
     feature_extractor = features.ResNetCustom()
     datasets = FeatureDatasets(feature_extractor)
 
-    name = "resnet_custom_linearnn_all"
-    num_models = 4
-    apply_softmax = True
+    name = "resnet_custom_xgb"
+    num_models = 2
+    apply_softmax = False
 
     base_models = []
     for _ in range(num_models):
-        model = models.NNModel(
-            models.LinearNN,
-            feature_extractor.feature_size,
-        )
+        # model = models.NNModel(
+        #     models.LinearNN,
+        #     feature_extractor.feature_size,
+        # )
+        model = models.XGBModel()
         base_models.append(model)
     ensemble_model = models.EnsembleModel(base_models, name, apply_softmax, load=True)
     return ensemble_model, datasets.get_loader(DatasetType.Competition), ""
 
 
 if __name__ == "__main__":
-    _model, _competition_loader, _feature_name = _setup_feature_submission()
+    # _model, _competition_loader, _feature_name = _setup_feature_submission()
     # _model, _competition_loader, _feature_name = _setup_image_submission()
-    # _model, _competition_loader, _feature_name = _setup_ensemble_submission()
+    _model, _competition_loader, _feature_name = _setup_ensemble_submission()
 
     create_from_model(_model, _competition_loader, _feature_name)
 

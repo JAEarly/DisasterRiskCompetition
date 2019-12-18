@@ -40,7 +40,7 @@ class NNTrainer(FeatureTrainer):
         if validation_loader is None:
             validation_loader = self.feature_dataset.validation_loader
 
-        # TODO Use all dataset - JUST TESTING
+        # TODO Only for training on all!
         # concat_dataset = ConcatDataset([self.feature_dataset.train_dataset, self.feature_dataset.validation_dataset, self.feature_dataset.test_dataset])
         # train_loader = DataLoader(concat_dataset, batch_size=8, shuffle=True)
 

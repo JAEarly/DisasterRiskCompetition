@@ -437,32 +437,32 @@ if __name__ == "__main__":
     #     ],
     # )
 
-    # grid_search = NNGridSearch(
-    #     nn_class=models.LinearNN,
-    #     feature_extractor=features.ResNetCustom(),
-    #     tag="resnet_custom_linearnn_test",
-    #     repeats=3,
-    # )
-    # grid_search.run(
-    #     epoch_range=[6],
-    #     class_weight_methods=[ClassWeightMethod.Unweighted],
-    #     balance_methods=[BalanceMethod.NoSample],
-    #     dropout_range=[0.4],
-    #     smoothing_range=[0],
-    #     alpha_range=[0],
-    # )
-
-    grid_search = XGBGridSearch(
-        feature_extractor=features.ResNetCustom(), tag="resnet_custom_xgb_11", repeats=1,
+    grid_search = NNGridSearch(
+        nn_class=models.BiggerNN,
+        feature_extractor=features.ResNetCustom(),
+        tag="resnet_custom_linearnn_test",
+        repeats=3,
     )
     grid_search.run(
-        num_rounds=[15],
-        etas=[0.34],
-        gammas=[0],
-        depths=[3],
-        lambdas=[0.9],
-        c_weights=[1.0]
+        epoch_range=[15],
+        class_weight_methods=[ClassWeightMethod.Unweighted],
+        balance_methods=[BalanceMethod.NoSample],
+        dropout_range=[0.5],
+        smoothing_range=[0, 0.01],
+        alpha_range=[0, 0.01]
     )
+
+    # grid_search = XGBGridSearch(
+    #     feature_extractor=features.ResNetCustom(), tag="resnet_custom_xgb_11", repeats=1,
+    # )
+    # grid_search.run(
+    #     num_rounds=[15],
+    #     etas=[0.34],
+    #     gammas=[0],
+    #     depths=[3],
+    #     lambdas=[0.9],
+    #     c_weights=[1.0]
+    # )
 
     # grid_search = TransferGridSearch(
     #     tv_models.resnet152,

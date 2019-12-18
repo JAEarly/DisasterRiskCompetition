@@ -30,7 +30,7 @@ class PretrainedNNTrainer(ImageTrainer):
         self.num_epochs = num_epochs
         self.class_weight_method = class_weight_method
 
-    def train(self, model, **kwargs) -> (float, float):
+    def train(self, model, train_loader: DataLoader = None, validation_loader: DataLoader = None,  **kwargs) -> (float, float):
         # Get transfer model and put it in training mode
         net = model.net
         net.train()
@@ -60,8 +60,8 @@ class PretrainedNNTrainer(ImageTrainer):
             loss_function = self.loss()
 
         # TODO REMOVE - JUST TESTING
-        concat_dataset = ConcatDataset([self.image_datasets.train_dataset, self.image_datasets.validation_dataset, self.image_datasets.test_dataset])
-        train_loader = DataLoader(concat_dataset, batch_size=8, shuffle=True)
+        # concat_dataset = ConcatDataset([self.image_datasets.train_dataset, self.image_datasets.validation_dataset, self.image_datasets.test_dataset])
+        # train_loader = DataLoader(concat_dataset, batch_size=8, shuffle=True)
 
         # Setup trial
         trial = Trial(net, optimiser, loss_function, metrics=["loss", "accuracy"]).to(
@@ -69,7 +69,7 @@ class PretrainedNNTrainer(ImageTrainer):
         )
         trial.with_generators(
             train_loader,
-            test_generator=self.image_datasets.validation_loader,
+            test_generator=validation_loader,
         )
 
         # Actually run the training
