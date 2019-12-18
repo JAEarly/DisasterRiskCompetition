@@ -323,6 +323,22 @@ class XGBGridSearch(GridSearch):
         return val_acc, val_loss, model
 
 
+class SVMGridSearch(GridSearch):
+
+    def __init__(self, feature_extractor, tag=None, repeats=3):
+        super().__init__(feature_extractor.name, tag=tag, repeats=repeats)
+        self.feature_extractor = feature_extractor
+
+    def _create_all_configs(self, hyper_parameter_ranges):
+        return [{}]
+
+    def _train_model(self, config, **kwargs) -> (float, float, Model):
+        trainer = FeatureTrainer(self.feature_extractor)
+        model = models.SVMModel()
+        val_acc, val_loss = trainer.train(model, **config)
+        return val_acc, val_loss, model
+
+
 class CNNGridSearch(GridSearch):
     def __init__(
         self,
@@ -437,20 +453,20 @@ if __name__ == "__main__":
     #     ],
     # )
 
-    grid_search = NNGridSearch(
-        nn_class=models.BiggerNN,
-        feature_extractor=features.ResNetCustom(),
-        tag="resnet_custom_linearnn_test",
-        repeats=3,
-    )
-    grid_search.run(
-        epoch_range=[15],
-        class_weight_methods=[ClassWeightMethod.Unweighted],
-        balance_methods=[BalanceMethod.NoSample],
-        dropout_range=[0.5],
-        smoothing_range=[0, 0.01],
-        alpha_range=[0, 0.01]
-    )
+    # grid_search = NNGridSearch(
+    #     nn_class=models.BiggerNN,
+    #     feature_extractor=features.ResNetCustom(),
+    #     tag="resnet_custom_linearnn_test",
+    #     repeats=3,
+    # )
+    # grid_search.run(
+    #     epoch_range=[15],
+    #     class_weight_methods=[ClassWeightMethod.Unweighted],
+    #     balance_methods=[BalanceMethod.NoSample],
+    #     dropout_range=[0.5],
+    #     smoothing_range=[0, 0.01],
+    #     alpha_range=[0, 0.01]
+    # )
 
     # grid_search = XGBGridSearch(
     #     feature_extractor=features.ResNetCustom(), tag="resnet_custom_xgb_11", repeats=1,
@@ -480,3 +496,10 @@ if __name__ == "__main__":
     #         ClassWeightMethod.Unweighted,
     #     ],
     # )
+
+    grid_search = SVMGridSearch(
+        feature_extractor=features.ResNetCustom(),
+        tag="resnet_custom_svm_test",
+        repeats=3,
+    )
+    grid_search.run()

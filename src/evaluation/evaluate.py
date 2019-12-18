@@ -29,8 +29,12 @@ def setup_feature_evaluation():
     #     eval_mode=True,
     # )
 
-    model = models.XGBModel(
-        model_path="./models/verified/grid_search_resnet_custom_xgb_9/best.pth"
+    # model = models.XGBModel(
+    #     model_path="./models/verified/grid_search_resnet_custom_xgb_9/best.pth"
+    # )
+
+    model = models.SVMModel(
+        model_path="./models/verified/grid_search_resnet_custom_svm_test/best.pth"
     )
 
     print("Running evaluation for", feature_extractor.name, model.name)
@@ -177,9 +181,9 @@ def evaluate_all_within_class_image():
 
 
 if __name__ == "__main__":
-    # _datasets, _model = setup_feature_evaluation()
+    _datasets, _model = setup_feature_evaluation()
     # _datasets, _model = setup_image_evaluation()
-    _datasets, _model = setup_ensemble_evaluation()
+    # _datasets, _model = setup_ensemble_evaluation()
     run_evaluation(_datasets, _model)
 
     # evaluate_all()

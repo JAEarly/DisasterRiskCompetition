@@ -149,7 +149,7 @@ class FeatureTrainer(Trainer):
         # x_all = torch.cat([x_train, x_val, x_test])
         # y_all = torch.cat([y_train, y_val, y_test])
 
-        if kwargs["pass_val"]:
+        if "pass_val" in kwargs and kwargs["pass_val"]:
             x_val, y_val = self.feature_dataset.get_features_and_labels_from_dataloader(
                 validation_loader
             )
