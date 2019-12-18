@@ -330,7 +330,30 @@ class SVMGridSearch(GridSearch):
         self.feature_extractor = feature_extractor
 
     def _create_all_configs(self, hyper_parameter_ranges):
-        return [{}]
+        # Extract hyper parameter ranges
+        c_range = self._extract_range(hyper_parameter_ranges, "c_range", [1.0])
+        gamma_range = self._extract_range(
+            hyper_parameter_ranges,
+            "gamma_range",
+            ["scale"],
+        )
+
+        # Output parameter values
+        print("    C Range:", c_range)
+        print("Gamma Range:", gamma_range)
+
+        # Create configs
+        all_configs = (
+            (c, gamma)
+            for c in c_range
+            for gamma in gamma_range
+        )
+
+        dict_configs = []
+        for config in all_configs:
+            dict_configs.append({"c": config[0], "gamma": config[1]})
+
+        return dict_configs
 
     def _train_model(self, config, **kwargs) -> (float, float, Model):
         trainer = FeatureTrainer(self.feature_extractor)
@@ -499,7 +522,10 @@ if __name__ == "__main__":
 
     grid_search = SVMGridSearch(
         feature_extractor=features.ResNetCustom(),
-        tag="resnet_custom_svm_test",
+        tag="resnet_custom_svm",
         repeats=3,
     )
-    grid_search.run()
+    grid_search.run(
+        c_range=[0.001, 0.01, 0.1, 1, 10],
+        gamma_range=[0.001, 0.01, 0.1, 1],
+    )

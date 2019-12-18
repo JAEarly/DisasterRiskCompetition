@@ -13,7 +13,7 @@ class SVMModel(Model):
     """SVM model implementation."""
 
     def __init__(self, model_path=None):
-        super().__init__("svm", False)
+        super().__init__("svm", True)
         self.svm = None
         if model_path is not None:
             self.load(model_path)
