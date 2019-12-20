@@ -8,12 +8,8 @@ from models import ModelIterator
 def get_estimated_distribution(model, competition_loader):
     predicted_probas = []
     for batch, _ in competition_loader:
-        y_outputs = model.predict_batch(batch)
-        if model.apply_softmax:
-            y_probas = torch.softmax(y_outputs, 1)
-        else:
-            y_probas = y_outputs
-        predicted_probas.extend(y_probas.cpu().detach().numpy())
+        y_pred = model.predict_batch(batch)
+        predicted_probas.extend(y_pred.cpu().detach().numpy())
 
     counts = [0] * 5
     for label in predicted_probas:

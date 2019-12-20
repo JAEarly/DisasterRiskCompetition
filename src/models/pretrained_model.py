@@ -29,10 +29,10 @@ class PretrainedNNModel(Model):
             self.net.eval()
 
     def predict(self, feature_tensor):
-        return self.net(feature_tensor.to(self.device))
+        return torch.softmax(self.net(feature_tensor.to(self.device)), 1)
 
     def predict_batch(self, feature_batch):
-        return self.net(feature_batch.to(self.device))
+        return torch.softmax(self.net(feature_batch.to(self.device)), 1)
 
     def load(self, path):
         self.net.load_state_dict(torch.load(path))

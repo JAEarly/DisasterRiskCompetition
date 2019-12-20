@@ -65,12 +65,6 @@ class Trainer(ABC):
         # Convert from one hot to class ids
         _, y_pred_classes = y_pred.max(1)
 
-        # Calculate prediction probabilities if required
-        if model.apply_softmax:
-            y_probabilities = torch.softmax(y_pred, 1)
-        else:
-            y_probabilities = y_pred
-
         # Create confusion matrix
         y_true_pd = pd.Series(y_true, name="Actual")
         y_pred_pd = pd.Series(y_pred_classes, name="Predicted")
@@ -93,7 +87,7 @@ class Trainer(ABC):
 
         # Print accuracy and log loss
         acc = accuracy_score(y_true, y_pred_classes)
-        ll = log_loss(y_true, y_probabilities, labels=[0, 1, 2, 3, 4])
+        ll = log_loss(y_true, y_pred, labels=[0, 1, 2, 3, 4])
         if verbose:
             print("Accuracy: {:.3f}".format(acc))
             print("Log loss: {:.3f}".format(ll))

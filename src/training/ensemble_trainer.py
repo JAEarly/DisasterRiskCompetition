@@ -197,7 +197,6 @@ class EnsemblePretrainedTrainer(ImageTrainer):
 def run_ensemble_trainer(
     num_base_models,
     tag,
-    apply_softmax,
     base_trainer,
     base_model_func,
     kfold=True,
@@ -208,7 +207,7 @@ def run_ensemble_trainer(
     for _ in range(num_base_models):
         base_model = base_model_func()
         base_models.append(base_model)
-    ensemble_model = EnsembleModel(base_models, tag, apply_softmax)
+    ensemble_model = EnsembleModel(base_models, tag)
 
     trainer = EnsemblePretrainedTrainer(base_trainer)
     return trainer.train(ensemble_model, kfold=kfold, verbose=verbose, **kwargs)
@@ -217,7 +216,6 @@ def run_ensemble_trainer(
 def run_ensemble_trainer_repeated(
     k,
     tag,
-    apply_softmax,
     base_trainer,
     base_model_func,
     repeats=3,
@@ -235,7 +233,6 @@ def run_ensemble_trainer_repeated(
         model, acc, loss, test_acc, test_loss = run_ensemble_trainer(
             k,
             tag,
-            apply_softmax,
             base_trainer,
             base_model_func,
             kfold=kfold,
@@ -273,7 +270,6 @@ def run_ensemble_trainer_repeated(
 def run_ensemble_trainer_iterative(
     k_max,
     tag,
-    apply_softmax,
     base_trainer,
     base_model_func,
     k_min=1,
@@ -292,7 +288,6 @@ def run_ensemble_trainer_iterative(
         acc, loss, test_acc, test_loss = run_ensemble_trainer_repeated(
             k,
             tag,
-            apply_softmax,
             base_trainer,
             base_model_func,
             repeats=repeats,
@@ -310,7 +305,6 @@ def run_ensemble_trainer_iterative(
 def grid_search_ensemble_trainer(
     k,
     tag,
-    apply_softmax,
     base_trainer,
     base_model_func,
     repeats=3,
@@ -325,7 +319,6 @@ def grid_search_ensemble_trainer(
     accs, losses, test_accs, test_losses = search_func(
         k,
         tag,
-        apply_softmax,
         base_trainer,
         base_model_func,
         repeats=repeats,
@@ -379,7 +372,6 @@ if __name__ == "__main__":
     _k_min = 1
     _k_max = 5
     _tag = "resnet_custom_4"
-    _apply_softmax = True
     _iterative = True
     _num_epochs = 1
 
@@ -394,7 +386,6 @@ if __name__ == "__main__":
     grid_search_ensemble_trainer(
         _k_max,
         _tag,
-        _apply_softmax,
         _base_trainer,
         _base_model_func,
         repeats=3,
@@ -406,7 +397,6 @@ if __name__ == "__main__":
     # grid_search_ensemble_trainer(
     #     _num_base_models,
     #     _tag,
-    #     _apply_softmax,
     #     _base_trainer,
     #     _base_model_func,
     #     repeats=3,

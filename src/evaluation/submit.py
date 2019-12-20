@@ -41,12 +41,8 @@ def create_from_model(
     for batch, batch_ids in tqdm(
         competition_loader, desc="Predicting competition dataset"
     ):
-        y_outputs = model.predict_batch(batch)
-        if model.apply_softmax:
-            y_probas = torch.softmax(y_outputs, 1)
-        else:
-            y_probas = y_outputs
-        competition_labels.extend(y_probas.cpu().detach().numpy())
+        y_pred = model.predict_batch(batch)
+        competition_labels.extend(y_pred.cpu().detach().numpy())
         ids.extend(batch_ids)
 
     # Boost if requested
@@ -212,7 +208,6 @@ def _setup_ensemble_submission():
 
     name = "resnet_custom_xgb"
     num_models = 2
-    apply_softmax = False
 
     base_models = []
     for _ in range(num_models):
@@ -222,7 +217,7 @@ def _setup_ensemble_submission():
         # )
         model = models.XGBModel()
         base_models.append(model)
-    ensemble_model = models.EnsembleModel(base_models, name, apply_softmax, load=True)
+    ensemble_model = models.EnsembleModel(base_models, name, load=True)
     return ensemble_model, datasets.get_loader(DatasetType.Competition), ""
 
 

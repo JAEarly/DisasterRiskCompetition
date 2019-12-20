@@ -26,13 +26,13 @@ def run_boost_tuning():
     lower_boost = 0
     higher_boost = 1
 
-    original = evaluate_boosted(y_true, y_pred, 1.0, apply_softmax=model.apply_softmax)
+    original = evaluate_boosted(y_true, y_pred, 1.0)
     best_loss = None
     best_boost = None
 
     for i in range(num_iters):
-        lower_loss = evaluate_boosted(y_true, y_pred, lower_boost, apply_softmax=model.apply_softmax)
-        higher_loss = evaluate_boosted(y_true, y_pred, higher_boost, apply_softmax=model.apply_softmax)
+        lower_loss = evaluate_boosted(y_true, y_pred, lower_boost)
+        higher_loss = evaluate_boosted(y_true, y_pred, higher_boost)
         print(i, lower_boost, lower_loss, higher_boost, higher_loss)
 
         mid_point = lower_boost + (higher_boost - lower_boost)/2
@@ -55,14 +55,8 @@ def run_boost_tuning():
     print('    Threshold:', best_boost)
 
 
-def evaluate_boosted(y_true, y_pred, boost_threshold, apply_softmax):
-    # Calculate prediction probabilities if required
-    if apply_softmax:
-        y_probabilities = torch.softmax(y_pred, 1)
-    else:
-        y_probabilities = y_pred
-
-    y_probabilities = y_probabilities.tolist()
+def evaluate_boosted(y_true, y_pred, boost_threshold):
+    y_probabilities = y_pred.tolist()
 
     # Boost
     y_probabilities = boost_labels(y_probabilities, boost_threshold, confirm=False, verbose=False)
@@ -94,7 +88,6 @@ def setup_ensemble_evaluation():
 
     name = "resnet_custom_linearnn"
     num_models = 4
-    apply_softmax = True
 
     base_models = []
     for _ in range(num_models):
@@ -103,7 +96,7 @@ def setup_ensemble_evaluation():
             feature_extractor.feature_size,
         )
         base_models.append(model)
-    ensemble_model = models.EnsembleModel(base_models, name, apply_softmax, load=True)
+    ensemble_model = models.EnsembleModel(base_models, name, load=True)
     return data_loader, ensemble_model
 
 

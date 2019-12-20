@@ -5,8 +5,8 @@ from models import Model
 
 class EnsembleModel(Model):
 
-    def __init__(self, models, tag, apply_softmax, load=False):
-        super().__init__("ensemble_" + tag, apply_softmax)
+    def __init__(self, models, tag, load=False):
+        super().__init__("ensemble_" + tag)
         self.models = models
         if load:
             self.load(self.get_models_dir())

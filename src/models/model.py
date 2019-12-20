@@ -8,9 +8,8 @@ import torch
 class Model(ABC):
     """Base class for models."""
 
-    def __init__(self, name, apply_softmax, num_classes=5):
+    def __init__(self, name, apply_softmax=False, num_classes=5):
         self.name = name
-        self.apply_softmax = apply_softmax
         self.num_classes = num_classes
 
     @abstractmethod

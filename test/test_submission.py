@@ -66,13 +66,8 @@ class TestSubmission(unittest.TestCase):
 
         for i in tqdm(range(len(test_dataset)), desc="Predicting test dataset"):
             feature, _, file_id = test_dataset.getitem_filename(i)
-
-            y_output = model.predict(feature)
-            if model.apply_softmax:
-                y_probas = torch.softmax(y_output, 0)
-            else:
-                y_probas = y_output
-            competition_labels.append(y_probas.cpu().detach().numpy())
+            y_pred = model.predict(feature)
+            competition_labels.append(y_pred.cpu().detach().numpy())
             ids.append(file_id)
 
         # Get labels distribution

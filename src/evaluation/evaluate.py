@@ -22,20 +22,20 @@ def setup_feature_evaluation():
     feature_extractor = features.ResNetCustom()
     datasets = FeatureDatasets(feature_extractor)
 
-    # model = models.NNModel(
-    #     models.BiggerNN,
-    #     feature_extractor.feature_size,
-    #     state_dict_path="./models/verified/grid_search_resnet_custom_biggernn_3/best.pth",
-    #     eval_mode=True,
-    # )
+    model = models.NNModel(
+        models.LinearNN,
+        feature_extractor.feature_size,
+        state_dict_path="./models/verified/grid_search_resnet_custom_linearnn_14/best.pth",
+        eval_mode=True,
+    )
 
     # model = models.XGBModel(
     #     model_path="./models/verified/grid_search_resnet_custom_xgb_9/best.pth"
     # )
 
-    model = models.SVMModel(
-        model_path="./models/verified/grid_search_resnet_custom_svm_5/best.pth"
-    )
+    # model = models.SVMModel(
+    #     model_path="./models/verified/grid_search_resnet_custom_svm_5/best.pth"
+    # )
 
     print("Running evaluation for", feature_extractor.name, model.name)
     return datasets, model
@@ -60,7 +60,6 @@ def setup_ensemble_evaluation():
 
     name = "resnet_custom_linearnn_all_2"
     num_models = 4
-    apply_softmax = True
 
     base_models = []
     for _ in range(num_models):
@@ -70,7 +69,7 @@ def setup_ensemble_evaluation():
         )
         # model = models.XGBModel()
         base_models.append(model)
-    ensemble_model = EnsembleModel(base_models, name, apply_softmax, load=True)
+    ensemble_model = EnsembleModel(base_models, name, load=True)
 
     print("Running evaluation for", feature_extractor.name, ensemble_model.name)
     return datasets, ensemble_model
@@ -81,7 +80,6 @@ def setup_ensemble_image_evaluation():
 
     name = "resnet_custom_3/best"
     num_models = 4
-    apply_softmax = True
 
     base_models = []
     for _ in range(num_models):
@@ -91,7 +89,7 @@ def setup_ensemble_image_evaluation():
             eval_mode=True,
         )
         base_models.append(model)
-    ensemble_model = EnsembleModel(base_models, name, apply_softmax, load=True)
+    ensemble_model = EnsembleModel(base_models, name, load=True)
 
     print("Running ensemble image evaluation for", ensemble_model.name)
     return image_datasets, ensemble_model

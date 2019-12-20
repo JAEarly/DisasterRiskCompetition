@@ -15,12 +15,8 @@ def get_predicted_distribution_and_per_class_error(model, datasets, dataset_type
     for batch, batch_labels in tqdm(
         loader, desc="Predicting error for " + dataset_type.name, leave=False
     ):
-        y_outputs = model.predict_batch(batch)
-        if model.apply_softmax:
-            y_probas = torch.softmax(y_outputs, 1)
-        else:
-            y_probas = y_outputs
-        predicted_probas.extend(y_probas.cpu().detach().numpy())
+        y_pred = model.predict_batch(batch)
+        predicted_probas.extend(y_pred.cpu().detach().numpy())
 
         if dataset_type is not DatasetType.Competition:
             true_labels.extend(batch_labels)
