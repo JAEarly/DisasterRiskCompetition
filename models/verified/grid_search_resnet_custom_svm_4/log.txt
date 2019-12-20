@@ -1,0 +1,104 @@
+    C Range: [1, 10]
+Gamma Range: [0.001, 0.01, 0.1]
+
+-- Configuration 1/6 --
+c - 1
+gamma - 0.001
+Repeat 1/2
+Loading features
+Fitting model
+Repeat 2/2
+Loading features
+Fitting model
+Best Loss: 0.5530123840590315
+ Best Acc: 0.8071236559139785
+ Avg Loss: 0.5530502477368602
+  Avg Acc: 0.8071236559139785
+
+-- Configuration 2/6 --
+c - 1
+gamma - 0.01
+Repeat 1/2
+Loading features
+Fitting model
+Repeat 2/2
+Loading features
+Fitting model
+Best Loss: 0.5972682045365961
+ Best Acc: 0.8077956989247311
+ Avg Loss: 0.597402506704516
+  Avg Acc: 0.8074596774193548
+
+-- Configuration 3/6 --
+c - 1
+gamma - 0.1
+Repeat 1/2
+Loading features
+Fitting model
+Repeat 2/2
+Loading features
+Fitting model
+Best Loss: 0.6857634843946026
+ Best Acc: 0.7903225806451613
+ Avg Loss: 0.6870362210875371
+  Avg Acc: 0.7903225806451613
+
+-- Configuration 4/6 --
+c - 10
+gamma - 0.001
+Repeat 1/2
+Loading features
+Fitting model
+Repeat 2/2
+Loading features
+Fitting model
+Best Loss: 0.5594107350037864
+ Best Acc: 0.801747311827957
+ Avg Loss: 0.5596536992520718
+  Avg Acc: 0.8020833333333333
+
+-- Configuration 5/6 --
+c - 10
+gamma - 0.01
+Repeat 1/2
+Loading features
+Fitting model
+Repeat 2/2
+Loading features
+Fitting model
+Best Loss: 0.6014934138913637
+ Best Acc: 0.8051075268817204
+ Avg Loss: 0.6020608733575618
+  Avg Acc: 0.804771505376344
+
+-- Configuration 6/6 --
+c - 10
+gamma - 0.1
+Repeat 1/2
+Loading features
+Fitting model
+Repeat 2/2
+Loading features
+Fitting model
+Best Loss: 0.6762917720108084
+ Best Acc: 0.7869623655913979
+ Avg Loss: 0.6765415273081798
+  Avg Acc: 0.7866263440860215
+
+--- Final Results ---
++-----+-------+-------+---------------------------+-------------------------------------------+
+| Pos | Loss  |  Acc  |          Params           |                 Filename                  |
++=====+=======+=======+===========================+===========================================+
+|  1  | 0.553 | 0.807 | {'c': 1, 'gamma': 0.001}  | resnet_custom_svm_2019-12-20_01:59:52.pth |
++-----+-------+-------+---------------------------+-------------------------------------------+
+|  2  | 0.559 | 0.802 | {'c': 10, 'gamma': 0.001} | resnet_custom_svm_2019-12-20_04:45:15.pth |
++-----+-------+-------+---------------------------+-------------------------------------------+
+|  3  | 0.597 | 0.808 |  {'c': 1, 'gamma': 0.01}  | resnet_custom_svm_2019-12-20_02:22:57.pth |
++-----+-------+-------+---------------------------+-------------------------------------------+
+|  4  | 0.601 | 0.805 | {'c': 10, 'gamma': 0.01}  | resnet_custom_svm_2019-12-20_05:09:47.pth |
++-----+-------+-------+---------------------------+-------------------------------------------+
+|  5  | 0.676 | 0.787 |  {'c': 10, 'gamma': 0.1}  | resnet_custom_svm_2019-12-20_07:28:45.pth |
++-----+-------+-------+---------------------------+-------------------------------------------+
+|  6  | 0.686 | 0.790 |  {'c': 1, 'gamma': 0.1}   | resnet_custom_svm_2019-12-20_04:26:14.pth |
++-----+-------+-------+---------------------------+-------------------------------------------+
+Uploading models/verified/grid_search_resnet_custom_svm_4/best.pth
