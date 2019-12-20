@@ -522,10 +522,10 @@ if __name__ == "__main__":
 
     grid_search = SVMGridSearch(
         feature_extractor=features.ResNetCustom(),
-        tag="resnet_custom_svm",
-        repeats=3,
+        tag="resnet_custom_svm_6",
+        repeats=1,
     )
     grid_search.run(
-        c_range=[0.001, 0.01, 0.1, 1, 10],
-        gamma_range=[0.001, 0.01, 0.1, 1],
+        c_range=[1, 4, 7],
+        gamma_range=[0.0002, 0.0005, 0.0008],
     )

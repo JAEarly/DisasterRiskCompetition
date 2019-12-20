@@ -180,8 +180,12 @@ def _setup_feature_submission():
     #     eval_mode=True,
     # )
 
-    model = models.XGBModel(
-        model_path="./models/verified/grid_search_resnet_custom_xgb_11/best.pth"
+    # model = models.XGBModel(
+    #     model_path="./models/verified/grid_search_resnet_custom_xgb_11/best.pth"
+    # )
+
+    model = models.SVMModel(
+        model_path="./models/verified/grid_search_resnet_custom_svm/best.pth"
     )
 
     print("Running submission for", feature_extractor.name, model.name, "\n")
@@ -223,9 +227,9 @@ def _setup_ensemble_submission():
 
 
 if __name__ == "__main__":
-    # _model, _competition_loader, _feature_name = _setup_feature_submission()
+    _model, _competition_loader, _feature_name = _setup_feature_submission()
     # _model, _competition_loader, _feature_name = _setup_image_submission()
-    _model, _competition_loader, _feature_name = _setup_ensemble_submission()
+    # _model, _competition_loader, _feature_name = _setup_ensemble_submission()
 
     create_from_model(_model, _competition_loader, _feature_name)
 

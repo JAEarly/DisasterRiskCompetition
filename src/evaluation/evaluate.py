@@ -34,7 +34,7 @@ def setup_feature_evaluation():
     # )
 
     model = models.SVMModel(
-        model_path="./models/verified/grid_search_resnet_custom_svm_test/best.pth"
+        model_path="./models/verified/grid_search_resnet_custom_svm_5/best.pth"
     )
 
     print("Running evaluation for", feature_extractor.name, model.name)
@@ -74,6 +74,27 @@ def setup_ensemble_evaluation():
 
     print("Running evaluation for", feature_extractor.name, ensemble_model.name)
     return datasets, ensemble_model
+
+
+def setup_ensemble_image_evaluation():
+    image_datasets = ImageDatasets()
+
+    name = "resnet_custom_3/best"
+    num_models = 4
+    apply_softmax = True
+
+    base_models = []
+    for _ in range(num_models):
+        model = models.PretrainedNNModel(
+            tv_models.resnet152,
+            transfers.final_layer_alteration_resnet,
+            eval_mode=True,
+        )
+        base_models.append(model)
+    ensemble_model = EnsembleModel(base_models, name, apply_softmax, load=True)
+
+    print("Running ensemble image evaluation for", ensemble_model.name)
+    return image_datasets, ensemble_model
 
 
 def run_evaluation(datasets, model, verbose=True):
@@ -184,6 +205,7 @@ if __name__ == "__main__":
     _datasets, _model = setup_feature_evaluation()
     # _datasets, _model = setup_image_evaluation()
     # _datasets, _model = setup_ensemble_evaluation()
+    # _datasets, _model = setup_ensemble_image_evaluation()
     run_evaluation(_datasets, _model)
 
     # evaluate_all()

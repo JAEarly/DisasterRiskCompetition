@@ -9,7 +9,7 @@ from features import DatasetType, FeatureDatasets
 
 
 def run_boost_tuning():
-    data_loader, model = setup_ensemble_evaluation()
+    data_loader, model = setup_feature_evaluation()
 
     print('Getting base predictions')
     y_true = []
@@ -75,11 +75,14 @@ def setup_feature_evaluation():
     feature_extractor = features.ResNetCustom()
     data_loader = FeatureDatasets(feature_extractor).get_loader(DatasetType.Validation)
 
-    model = models.NNModel(
-        models.BiggerNN,
-        feature_extractor.feature_size,
-        state_dict_path="./models/kfold_test/best.pth",
-        eval_mode=True,
+    # model = models.NNModel(
+    #     models.BiggerNN,
+    #     feature_extractor.feature_size,
+    #     state_dict_path="./models/kfold_test/best.pth",
+    #     eval_mode=True,
+    # )
+    model = models.SVMModel(
+        model_path="./models/verified/grid_search_resnet_custom_svm_3/best.pth"
     )
     print("Running boost tuning for", feature_extractor.name, model.name)
     return data_loader, model

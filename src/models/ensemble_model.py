@@ -38,3 +38,26 @@ class EnsembleModel(Model):
 
     def get_models_dir(self):
         return "./models/ensemble/" + self.name
+
+
+class PretrainedEnsembleModel(EnsembleModel):
+
+    def predict(self, feature_tensor):
+        predictions = []
+        for model in self.models:
+            model.net = model.net.to(model.device)
+            predictions.append(model.predict(feature_tensor))
+            model.net = model.net.to("cpu")
+        prediction = torch.stack(predictions).mean(dim=1)
+        return prediction
+
+    def predict_batch(self, feature_batch):
+        predictions = []
+        for model in self.models:
+            model.net = model.net.to(model.device)
+            predictions.append(model.predict_batch(feature_batch))
+            model.net = model.net.to("cpu")
+        predictions = torch.stack(predictions)
+        prediction = predictions.mean(dim=0)
+        return prediction
+
